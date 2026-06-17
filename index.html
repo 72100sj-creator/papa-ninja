@@ -125,6 +125,7 @@ input[type=text],input[type=time],select{
 }
 input[type=file]{color:var(--text-dim); font-size:13px;}
 label.field-label{font-size:13px; color:var(--text-dim); display:block; margin:14px 0 6px;}
+input[type=range]{width:100%; accent-color:var(--accent); height:36px;}
 
 .exercise-list-item{
   display:flex; align-items:center; gap:12px;
@@ -155,19 +156,6 @@ nav.bottomnav button{
 nav.bottomnav button.active{color:var(--accent);}
 nav.bottomnav svg{width:22px; height:22px;}
 
-/* ============ MUSIC BAR ============ */
-.music-bar{
-  display:flex; align-items:center; gap:10px;
-  background:var(--surface-2); border-top:1px solid var(--border);
-  padding:10px 16px; font-size:13px;
-}
-.music-bar.hidden{display:none;}
-.music-bar button{
-  background:var(--surface-3); border:none; color:var(--text);
-  width:34px; height:34px; border-radius:50%; font-size:14px; cursor:pointer;
-}
-.music-bar .ml{flex:1; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-
 /* ============ RING / TIMER ============ */
 .ring-wrap{display:flex; justify-content:center; margin:18px 0;}
 .ring-rotate{animation:spin 16s linear infinite;}
@@ -187,6 +175,13 @@ nav.bottomnav svg{width:22px; height:22px;}
 .reps-counter{text-align:center; margin:10px 0 18px;}
 .reps-counter .big{font-family:'JetBrains Mono',monospace; font-size:54px; font-weight:700;}
 .reps-counter .target{color:var(--text-dim); font-size:18px;}
+.btn-rep{
+  min-height:160px;
+  font-size:26px;
+  border-radius:28px;
+  box-shadow:0 12px 30px rgba(62,217,142,0.25);
+}
+.btn-rep:active{transform:scale(0.96);}
 .side-tag{
   display:inline-block; font-size:12px; font-weight:700; color:var(--accent-2);
   border:1px solid var(--accent-2-dim); border-radius:999px; padding:4px 12px; margin-bottom:8px;
@@ -328,6 +323,7 @@ nav.bottomnav svg{width:22px; height:22px;}
           <div id="exerciseListPreview"></div>
         </div>
         <button class="btn btn-primary" id="startBtn">▶ Commencer la séance</button>
+        <button class="btn btn-secondary btn-sm" id="openAppleMusicBtnIntro" style="margin-top:10px;">🎵 Ouvrir Apple Music</button>
         <p class="note" style="text-align:center;">10 mouvements doux pour ton dos. La voix te guidera à chaque étape.</p>
       </div>
 
@@ -347,13 +343,14 @@ nav.bottomnav svg{width:22px; height:22px;}
           <div class="reps-counter">
             <div class="big"><span id="repsCount">0</span><span class="target"> / <span id="repsTarget">10</span></span></div>
           </div>
-          <button class="btn btn-primary" id="repBtn" style="margin-bottom:10px;">+1 répétition</button>
+          <button class="btn btn-primary btn-rep" id="repBtn" style="margin-bottom:14px;">➕ 1 répétition</button>
         </div>
 
         <div class="row" style="margin-top:6px;">
           <button class="btn btn-secondary btn-sm" id="pauseBtn">⏸ Pause</button>
           <button class="btn btn-secondary btn-sm" id="skipBtn">⏭ Passer</button>
         </div>
+        <button class="btn btn-secondary btn-sm" id="openAppleMusicBtnWorkout" style="margin-top:10px;">🎵 Ouvrir Apple Music</button>
         <button class="btn btn-danger btn-sm" id="stopBtn" style="margin-top:10px;">■ Arrêter la séance</button>
 
         <div class="unlock-overlay" id="unlockOverlay" style="display:none;">
@@ -419,10 +416,24 @@ nav.bottomnav svg{width:22px; height:22px;}
       </div>
 
       <div class="card">
+        <div class="card-title">🎙️ Voix de Papa Ninja</div>
+        <label class="field-label">Voix (selon ton téléphone)</label>
+        <select id="voiceSelect"></select>
+        <label class="field-label">Vitesse de parole</label>
+        <input type="range" id="voiceRate" min="0.7" max="1.1" step="0.01">
+        <label class="field-label">Tonalité</label>
+        <input type="range" id="voicePitch" min="0.7" max="1.2" step="0.01">
+        <div class="row" style="margin-top:14px;">
+          <button class="btn btn-secondary btn-sm" id="testVoiceBtn">🔊 Tester la voix</button>
+          <button class="btn btn-primary btn-sm" id="saveVoiceBtn">Enregistrer</button>
+        </div>
+        <p class="note">Papa Ninja essaie de choisir automatiquement une voix féminine parmi celles de ton téléphone (repérées par ♀ dans la liste). Le ton exact dépend des voix installées sur ton appareil — je peux régler la vitesse et la tonalité pour un rendu plus doux et posé, mais je ne peux pas changer le grain de voix lui-même. Teste avant d'enregistrer.</p>
+        <p class="note">Pendant la séance, Papa Ninja t'accueille au début et glisse quelques encouragements après chaque exercice réussi.</p>
+      </div>
+
+      <div class="card">
         <div class="card-title">🎵 Musique pendant la séance</div>
-        <div id="musicOptions"></div>
-        <button class="btn btn-secondary btn-sm" style="margin-top:10px;" id="saveMusicBtn">Enregistrer la musique</button>
-        <p class="note">Astuce simple : tu peux aussi ouvrir Spotify ou YouTube dans une autre appli, lancer ta playlist, puis revenir sur Papa Ninja. La musique continue derrière, et le téléphone baisse souvent automatiquement son volume pendant les annonces vocales.</p>
+        <p class="note" style="margin-top:0;">Apple Music ne propose pas d'intégration directe sans compte développeur Apple. Le bouton « Ouvrir Apple Music » est disponible directement dans l'écran Séance : lance ta playlist là-bas, puis reviens sur Papa Ninja, la musique continue derrière.</p>
       </div>
 
       <div class="card">
@@ -434,12 +445,6 @@ nav.bottomnav svg{width:22px; height:22px;}
 
   </main>
 
-  <div class="music-bar hidden" id="musicBar">
-    <button id="musicToggleBtn">▶</button>
-    <span class="ml" id="musicLabel">Aucune musique</span>
-  </div>
-  <audio id="audioPlayer" loop style="display:none;"></audio>
-  <div id="ytContainer" style="display:none;"></div>
 
   <nav class="bottomnav">
     <button class="active" data-screen="dashboard" onclick="showScreen('dashboard')">
@@ -486,6 +491,20 @@ const COMMENTS = {
   low:["Chaque pas compte, même incomplet.","Tu as commencé, c'est déjà une victoire sur la flemme.","Le ninja qui persévère gagne en force, reviens demain."]
 };
 
+const WELCOME_PHRASES = [
+  "Bonjour. Je suis vraiment contente de t'accompagner aujourd'hui.",
+  "Te revoilà. On y va tout doucement, à ton rythme.",
+  "Bienvenue. Prends une grande respiration, et commençons ensemble."
+];
+const ENCOURAGEMENTS = [
+  "Bravo, tu fais ça très bien.",
+  "Je suis fière de toi, continue comme ça.",
+  "Tu gères parfaitement, encore un peu.",
+  "C'est exactement ça, tu progresses à chaque séance.",
+  "Très joli mouvement, je suis impressionnée.",
+  "Garde ce rythme, tu es sur la bonne voie."
+];
+
 const BADGES = [
   {id:'first', name:'Premier Pas', emoji:'🥋', check: s => s.sessions.length >= 1},
   {id:'streak7', name:'Semaine de Discipline', emoji:'🔥', check: s => s.bestStreak >= 7},
@@ -513,9 +532,9 @@ function defaultData(){
       remindersEnabled:false,
       lastNotifFiredDate:null,
       lastLevelUpPromptDate:null,
-      musicSource:'none',
-      musicUrl:'',
-      musicFileName:''
+      voiceName:'',
+      voiceRate:0.87,
+      voicePitch:1.03
     },
     badgesSeen:[]
   };
@@ -587,76 +606,38 @@ function beep(freq, ms){
     setTimeout(()=>{ osc.stop(); }, ms||150);
   }catch(e){}
 }
-let prevMusicVolume = 1;
-function duckMusic(){
-  const a = document.getElementById('audioPlayer');
-  if(a && !a.paused){ prevMusicVolume = a.volume; a.volume = 0.25; }
+const FEMALE_VOICE_HINTS = ['amélie','amelie','audrey','aurélie','aurelie','céline','celine','charlotte','chantal','claire','élise','elise','emma','julie','julia','léa','lea','manon','marie','nathalie','sophie','virginie','female','femme','f)','(f)','woman','samantha','siri'];
+function getFrenchVoices(){
+  return speechSynthesis.getVoices().filter(v=>v.lang && v.lang.toLowerCase().startsWith('fr'));
 }
-function restoreMusic(){
-  const a = document.getElementById('audioPlayer');
-  if(a){ a.volume = prevMusicVolume || 1; }
+function isLikelyFemaleVoice(v){
+  const n = v.name.toLowerCase();
+  return FEMALE_VOICE_HINTS.some(h=>n.includes(h));
 }
-function speak(text, onend){
+function pickDefaultVoice(voices){
+  return voices.find(isLikelyFemaleVoice) || voices[0];
+}
+function speak(text, onend, override){
   if(!('speechSynthesis' in window)){ if(onend) onend(); return; }
-  duckMusic();
+  const s = DATA.settings;
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'fr-FR'; u.rate = 1; u.pitch = 1;
-  const voices = speechSynthesis.getVoices().filter(v=>v.lang && v.lang.startsWith('fr'));
-  if(voices.length) u.voice = voices[0];
-  u.onend = ()=>{ restoreMusic(); if(onend) onend(); };
-  u.onerror = ()=>{ restoreMusic(); if(onend) onend(); };
+  u.lang = 'fr-FR';
+  u.rate = (override && override.rate!=null) ? override.rate : (s.voiceRate!=null ? s.voiceRate : 0.87);
+  u.pitch = (override && override.pitch!=null) ? override.pitch : (s.voicePitch!=null ? s.voicePitch : 1.03);
+  const voices = getFrenchVoices();
+  const wantedName = (override && override.voiceName!=null) ? override.voiceName : s.voiceName;
+  let chosen = wantedName ? voices.find(v=>v.name===wantedName) : null;
+  if(!chosen && voices.length) chosen = pickDefaultVoice(voices);
+  if(chosen) u.voice = chosen;
+  u.onend = ()=>{ if(onend) onend(); };
+  u.onerror = ()=>{ if(onend) onend(); };
   speechSynthesis.speak(u);
 }
 
-/* ---------- MUSIQUE ---------- */
-function setupMusicFromSettings(){
-  const s = DATA.settings;
-  const bar = document.getElementById('musicBar');
-  const audio = document.getElementById('audioPlayer');
-  const yt = document.getElementById('ytContainer');
-  audio.pause(); audio.src=''; yt.innerHTML=''; yt.style.display='none';
-  if(s.musicSource==='url' && s.musicUrl){
-    audio.src = s.musicUrl;
-    bar.classList.remove('hidden');
-    document.getElementById('musicLabel').textContent = 'Lien audio';
-  } else if(s.musicSource==='youtube' && s.musicUrl){
-    const id = extractYouTubeId(s.musicUrl);
-    if(id){
-      yt.style.display='block';
-      yt.innerHTML = `<iframe width="1" height="1" style="position:absolute; left:-9999px;" src="https://www.youtube.com/embed/${id}?autoplay=0&playlist=${id}&loop=1" allow="autoplay" frameborder="0"></iframe>`;
-      bar.classList.remove('hidden');
-      document.getElementById('musicLabel').textContent = 'Playlist YouTube';
-    } else { bar.classList.add('hidden'); }
-  } else if(s.musicSource==='file' && s.musicFileName){
-    bar.classList.remove('hidden');
-    document.getElementById('musicLabel').textContent = s.musicFileName + ' (re-sélectionne le fichier si le son ne joue pas)';
-  } else {
-    bar.classList.add('hidden');
-  }
+/* ---------- MUSIQUE (Apple Music) ---------- */
+function openAppleMusic(){
+  window.open('https://music.apple.com/', '_blank');
 }
-function extractYouTubeId(url){
-  const m = url.match(/(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{6,})/);
-  return m ? m[1] : null;
-}
-document.getElementById('musicToggleBtn').onclick = function(){
-  const s = DATA.settings;
-  const audio = document.getElementById('audioPlayer');
-  const ytFrame = document.querySelector('#ytContainer iframe');
-  if(s.musicSource==='url' || s.musicSource==='file'){
-    if(audio.paused){ audio.play().catch(()=>{}); this.textContent='⏸'; }
-    else { audio.pause(); this.textContent='▶'; }
-  } else if(s.musicSource==='youtube' && ytFrame){
-    // Lecture simplifiée : recharge l'iframe avec autoplay=1
-    const id = extractYouTubeId(s.musicUrl);
-    if(this.textContent==='▶'){
-      ytFrame.src = `https://www.youtube.com/embed/${id}?autoplay=1&playlist=${id}&loop=1`;
-      this.textContent='⏸';
-    } else {
-      ytFrame.src = `https://www.youtube.com/embed/${id}?autoplay=0&playlist=${id}&loop=1`;
-      this.textContent='▶';
-    }
-  }
-};
 
 /* ---------- CALCULS STATS ---------- */
 function computeStats(){
@@ -817,15 +798,19 @@ function renderProfile(){
   document.getElementById('reminderTime').value = s.reminderTime;
   document.getElementById('enableNotifBtn').textContent = s.remindersEnabled ? '🔔 Rappels activés' : 'Activer les notifications';
 
-  document.getElementById('musicOptions').innerHTML = `
-    <div class="radio-line"><input type="radio" name="msrc" value="none" ${s.musicSource==='none'?'checked':''} onchange="setMusicSource('none')"><label>Aucune musique</label></div>
-    <div class="radio-line"><input type="radio" name="msrc" value="file" ${s.musicSource==='file'?'checked':''} onchange="setMusicSource('file')"><label>Fichier audio sur mon téléphone</label></div>
-    <div id="fileInputWrap" style="display:${s.musicSource==='file'?'block':'none'};"><input type="file" id="musicFileInput" accept="audio/*"></div>
-    <div class="radio-line"><input type="radio" name="msrc" value="url" ${s.musicSource==='url'?'checked':''} onchange="setMusicSource('url')"><label>Lien direct vers un fichier audio (.mp3)</label></div>
-    <div id="urlInputWrap" style="display:${s.musicSource==='url'?'block':'none'};"><input type="text" id="musicUrlInput" placeholder="https://...mp3" value="${s.musicSource==='url'?s.musicUrl:''}"></div>
-    <div class="radio-line"><input type="radio" name="msrc" value="youtube" ${s.musicSource==='youtube'?'checked':''} onchange="setMusicSource('youtube')"><label>Playlist / vidéo YouTube</label></div>
-    <div id="ytInputWrap" style="display:${s.musicSource==='youtube'?'block':'none'};"><input type="text" id="musicYtInput" placeholder="Lien YouTube" value="${s.musicSource==='youtube'?s.musicUrl:''}"></div>
-  `;
+  renderVoiceOptions();
+}
+function renderVoiceOptions(){
+  const s = DATA.settings;
+  const select = document.getElementById('voiceSelect');
+  const voices = getFrenchVoices().slice().sort((a,b)=> (isLikelyFemaleVoice(b)?1:0) - (isLikelyFemaleVoice(a)?1:0));
+  if(voices.length===0){
+    select.innerHTML = `<option value="">Voix par défaut du téléphone</option>`;
+  } else {
+    select.innerHTML = voices.map(v=>`<option value="${v.name}" ${s.voiceName===v.name?'selected':''}>${v.name}${isLikelyFemaleVoice(v)?' ♀':''}</option>`).join('');
+  }
+  document.getElementById('voiceRate').value = s.voiceRate!=null ? s.voiceRate : 0.87;
+  document.getElementById('voicePitch').value = s.voicePitch!=null ? s.voicePitch : 1.03;
 }
 function setLevel(lv){ DATA.settings.level=lv; saveData(); document.getElementById('levelPill').textContent='Niveau '+lv; }
 function toggleDay(val){
@@ -833,31 +818,21 @@ function toggleDay(val){
   if(i>=0) DATA.settings.reminderDays.splice(i,1); else DATA.settings.reminderDays.push(val);
   saveData(); renderProfile();
 }
-function setMusicSource(src){
-  DATA.settings.musicSource = src; saveData(); renderProfile();
-}
-document.getElementById('saveMusicBtn').onclick = function(){
-  const src = DATA.settings.musicSource;
-  if(src==='url'){ DATA.settings.musicUrl = document.getElementById('musicUrlInput').value.trim(); }
-  if(src==='youtube'){ DATA.settings.musicUrl = document.getElementById('musicYtInput').value.trim(); }
-  if(src==='file'){
-    const f = document.getElementById('musicFileInput').files[0];
-    if(f){
-      const url = URL.createObjectURL(f);
-      DATA.settings.musicUrl = url;
-      DATA.settings.musicFileName = f.name;
-    }
-  }
-  saveData();
-  setupMusicFromSettings();
-  if(src==='file' && DATA.settings.musicUrl){
-    document.getElementById('audioPlayer').src = DATA.settings.musicUrl;
-  }
-  if(src==='url' && DATA.settings.musicUrl){
-    document.getElementById('audioPlayer').src = DATA.settings.musicUrl;
-  }
-  alert('Musique enregistrée 🥷');
+document.getElementById('testVoiceBtn').onclick = function(){
+  const rate = parseFloat(document.getElementById('voiceRate').value);
+  const pitch = parseFloat(document.getElementById('voicePitch').value);
+  const voiceName = document.getElementById('voiceSelect').value;
+  speak("Prépare-toi pour le Pont Fessier. 3, 2, 1, c'est parti.", null, {rate, pitch, voiceName});
 };
+document.getElementById('saveVoiceBtn').onclick = function(){
+  DATA.settings.voiceRate = parseFloat(document.getElementById('voiceRate').value);
+  DATA.settings.voicePitch = parseFloat(document.getElementById('voicePitch').value);
+  DATA.settings.voiceName = document.getElementById('voiceSelect').value;
+  saveData();
+  alert('Voix enregistrée 🥷');
+};
+document.getElementById('openAppleMusicBtnIntro').onclick = openAppleMusic;
+document.getElementById('openAppleMusicBtnWorkout').onclick = openAppleMusic;
 document.getElementById('enableNotifBtn').onclick = function(){
   if(!('Notification' in window)){ alert("Les notifications ne sont pas disponibles sur ce navigateur."); return; }
   Notification.requestPermission().then(perm=>{
@@ -870,7 +845,7 @@ document.getElementById('enableNotifBtn').onclick = function(){
 document.getElementById('resetBtn').onclick = function(){
   if(confirm('Supprimer toutes tes données Papa Ninja ? Cette action est définitive.')){
     DATA = defaultData(); saveData();
-    renderDashboard(); renderProfile(); setupMusicFromSettings();
+    renderDashboard(); renderProfile();
     alert('Données réinitialisées.');
   }
 };
@@ -1028,6 +1003,10 @@ function loadExercise(i){
 
   let announce = 'Prépare-toi pour ' + ex.name + '. ' + ex.instruction;
   if(ex.perSide) announce += ' Nous commençons par le côté gauche.';
+  if(i===0){
+    const welcome = WELCOME_PHRASES[Math.floor(Math.random()*WELCOME_PHRASES.length)];
+    announce = welcome + ' ' + announce;
+  }
   speak(announce, ()=>{
     speak("3, 2, 1, c'est parti.", ()=>{
       beep(660,120);
@@ -1099,7 +1078,8 @@ function skipExercise(){
 }
 function completeCurrentExercise(){
   beep(990,180);
-  speak('Exercice terminé.');
+  const encourage = ENCOURAGEMENTS[Math.floor(Math.random()*ENCOURAGEMENTS.length)];
+  speak('Exercice terminé. ' + encourage);
   workout.log.push({id:workout.exercises[workout.index].id, name:workout.exercises[workout.index].name, completed:true});
   setTimeout(()=>goToNextExercise(), 1200);
 }
@@ -1173,10 +1153,12 @@ if('serviceWorker' in navigator){
 
 /* ---------- INIT ---------- */
 function init(){
-  setupMusicFromSettings();
   renderDashboard();
   if('speechSynthesis' in window){
-    speechSynthesis.onvoiceschanged = ()=>{};
+    speechSynthesis.onvoiceschanged = ()=>{
+      const profileScreen = document.getElementById('screen-profile');
+      if(profileScreen && profileScreen.classList.contains('active')) renderVoiceOptions();
+    };
   }
 }
 init();
