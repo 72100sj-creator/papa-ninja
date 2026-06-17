@@ -796,7 +796,7 @@ function renderProfile(){
     return `<div class="day-chip ${on?'on':''}" onclick="toggleDay(${val})">${d}</div>`;
   }).join('');
   document.getElementById('reminderTime').value = s.reminderTime;
-  document.getElementById('enableNotifBtn').textContent = s.remindersEnabled ? '🔔 Rappels activés' : 'Activer les notifications';
+  document.getElementById('enableNotifBtn').textContent = s.remindersEnabled ? '🔕 Désactiver les rappels' : '🔔 Activer les notifications';
 
   renderVoiceOptions();
 }
@@ -834,6 +834,11 @@ document.getElementById('saveVoiceBtn').onclick = function(){
 document.getElementById('openAppleMusicBtnIntro').onclick = openAppleMusic;
 document.getElementById('openAppleMusicBtnWorkout').onclick = openAppleMusic;
 document.getElementById('enableNotifBtn').onclick = function(){
+  if(DATA.settings.remindersEnabled){
+    DATA.settings.remindersEnabled = false;
+    saveData(); renderProfile();
+    return;
+  }
   if(!('Notification' in window)){ alert("Les notifications ne sont pas disponibles sur ce navigateur."); return; }
   Notification.requestPermission().then(perm=>{
     DATA.settings.remindersEnabled = (perm==='granted');
