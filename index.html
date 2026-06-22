@@ -13,273 +13,173 @@
 <link rel="icon" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
-/* ============ TOKENS ============ */
 :root{
-  --bg:#0B1210;
-  --surface:#121A17;
-  --surface-2:#1A2420;
-  --surface-3:#212D27;
-  --border:#233029;
-  --accent:#3ED98E;
-  --accent-dim:#2A9A66;
-  --accent-2:#4F8EF7;
-  --accent-2-dim:#3766B3;
-  --gold:#E0B255;
-  --text:#EAF2EE;
-  --text-dim:#8FA39A;
-  --text-faint:#52645C;
-  --danger:#E2614F;
-  --radius:18px;
-  --radius-sm:12px;
-  --shadow:0 10px 30px rgba(0,0,0,0.5);
-  --safe-top:env(safe-area-inset-top,0px);
-  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#0B1210; --surface:#121A17; --surface-2:#1A2420; --surface-3:#212D27;
+  --border:#233029; --accent:#3ED98E; --accent-dim:#2A9A66;
+  --accent-2:#4F8EF7; --accent-2-dim:#3766B3; --gold:#E0B255;
+  --text:#EAF2EE; --text-dim:#8FA39A; --text-faint:#52645C;
+  --danger:#E2614F; --radius:18px; --radius-sm:12px;
+  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{margin:0;padding:0;height:100%;background:var(--bg);}
-body{
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  color:var(--text);
-  overscroll-behavior:none;
-  -webkit-font-smoothing:antialiased;
-}
-h1,h2,h3,.display{
-  font-family:'Space Grotesk','Inter',sans-serif;
-  letter-spacing:-0.01em;
-  margin:0;
-}
-.mono{font-family:'JetBrains Mono',monospace;}
-button{font-family:inherit;}
-:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
-a{color:var(--accent-2);}
-
-/* ============ LAYOUT SHELL ============ */
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text);overscroll-behavior:none;-webkit-font-smoothing:antialiased;}
+h1,h2,h3{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-0.01em;margin:0;}
+button{font-family:inherit;} :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 #app{
-  max-width:480px;
-  margin:0 auto;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  position:relative;
-  background:
-    radial-gradient(circle at 15% 0%, rgba(62,217,142,0.07), transparent 45%),
-    radial-gradient(circle at 100% 25%, rgba(79,142,247,0.06), transparent 40%),
-    var(--bg);
+  max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;
+  background:radial-gradient(circle at 15% 0%,rgba(62,217,142,.07),transparent 45%),
+             radial-gradient(circle at 100% 25%,rgba(79,142,247,.06),transparent 40%),var(--bg);
 }
-.topbar{
-  padding:calc(18px + var(--safe-top)) 20px 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.topbar .brand{display:flex; align-items:center; gap:10px;}
+.topbar{padding:calc(18px + var(--safe-top)) 20px 14px;display:flex;align-items:center;justify-content:space-between;}
+.topbar .brand{display:flex;align-items:center;gap:10px;}
 .topbar .brand .mark{font-size:24px;}
-.topbar .brand .name{font-size:18px; font-weight:700;}
-.topbar .level-pill{
-  font-size:12px; font-weight:600; color:var(--accent);
-  border:1px solid var(--accent-dim); border-radius:999px;
-  padding:5px 12px; background:rgba(62,217,142,0.08);
-}
-main{flex:1; padding:0 20px 12px;}
+.topbar .brand .name{font-size:18px;font-weight:700;}
+.level-pill{font-size:12px;font-weight:600;border-radius:999px;padding:5px 12px;}
+.phase-1{color:var(--accent);border:1px solid var(--accent-dim);background:rgba(62,217,142,.08);}
+.phase-2{color:var(--accent-2);border:1px solid var(--accent-2-dim);background:rgba(79,142,247,.08);}
+.phase-3{color:var(--gold);border:1px solid rgba(224,178,85,.4);background:rgba(224,178,85,.08);}
+main{flex:1;padding:0 20px 12px;}
 .screen{display:none;}
-.screen.active{display:block; animation:fadeIn .25s ease;}
-@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
-
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:18px;
-  margin-bottom:14px;
-}
-.card-title{
-  font-size:13px; text-transform:uppercase; letter-spacing:0.06em;
-  color:var(--text-dim); font-weight:600; margin-bottom:10px;
-}
-.row{display:flex; gap:12px;}
-.row > *{flex:1;}
-.stat-num{font-size:28px; font-weight:700; font-family:'JetBrains Mono',monospace;}
-.stat-label{font-size:12px; color:var(--text-dim); margin-top:2px;}
-
-.btn{
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  width:100%; min-height:58px;
-  border-radius:var(--radius-sm);
-  border:none;
-  font-size:16px; font-weight:700;
-  cursor:pointer;
-  transition:transform .08s ease, opacity .15s ease;
-}
+.screen.active{display:block;animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
+.card-title{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);font-weight:600;margin-bottom:10px;}
+.row{display:flex;gap:12px;} .row>*{flex:1;}
+.stat-num{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.stat-label{font-size:12px;color:var(--text-dim);margin-top:2px;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:58px;border-radius:var(--radius-sm);border:none;font-size:16px;font-weight:700;cursor:pointer;transition:transform .08s ease,opacity .15s ease;}
 .btn:active{transform:scale(0.97);}
-.btn-primary{background:var(--accent); color:#062019;}
-.btn-secondary{background:var(--surface-3); color:var(--text); border:1px solid var(--border);}
-.btn-ghost{background:transparent; color:var(--text-dim); border:1px solid var(--border);}
-.btn-danger{background:rgba(226,97,79,0.12); color:var(--danger); border:1px solid rgba(226,97,79,0.4);}
-.btn-sm{min-height:44px; font-size:14px;}
-.btn[disabled]{opacity:0.45; cursor:default;}
-
-input[type=text],input[type=time],select{
-  width:100%; padding:14px; border-radius:var(--radius-sm);
-  border:1px solid var(--border); background:var(--surface-2);
-  color:var(--text); font-size:15px;
-}
-input[type=file]{color:var(--text-dim); font-size:13px;}
-label.field-label{font-size:13px; color:var(--text-dim); display:block; margin:14px 0 6px;}
-input[type=range]{width:100%; accent-color:var(--accent); height:36px;}
-
-.exercise-list-item{
-  display:flex; align-items:center; gap:12px;
-  padding:10px 0; border-bottom:1px solid var(--border);
-}
+.btn-primary{background:var(--accent);color:#062019;}
+.btn-secondary{background:var(--surface-3);color:var(--text);border:1px solid var(--border);}
+.btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border);}
+.btn-danger{background:rgba(226,97,79,.12);color:var(--danger);border:1px solid rgba(226,97,79,.4);}
+.btn-sm{min-height:44px;font-size:14px;}
+.btn[disabled]{opacity:.45;cursor:default;}
+input[type=text],input[type=time],select{width:100%;padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:15px;}
+label.field-label{font-size:13px;color:var(--text-dim);display:block;margin:14px 0 6px;}
+input[type=range]{width:100%;accent-color:var(--accent);height:36px;}
+.exercise-list-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
 .exercise-list-item:last-child{border-bottom:none;}
-.ex-num{
-  width:28px; height:28px; border-radius:50%; background:var(--surface-2);
-  display:flex; align-items:center; justify-content:center;
-  font-size:12px; font-weight:700; color:var(--accent); flex-shrink:0;
-}
-.ex-name{font-weight:600; font-size:14.5px;}
-.ex-sub{font-size:12.5px; color:var(--text-dim);}
-
-/* ============ BOTTOM NAV ============ */
-nav.bottomnav{
-  display:flex; justify-content:space-around;
-  padding:10px 8px calc(10px + var(--safe-bottom));
-  background:var(--surface);
-  border-top:1px solid var(--border);
-  position:sticky; bottom:0;
-}
-nav.bottomnav button{
-  background:none; border:none; color:var(--text-faint);
-  display:flex; flex-direction:column; align-items:center; gap:4px;
-  font-size:11px; padding:6px 10px; cursor:pointer; border-radius:10px;
-}
+.ex-num{width:28px;height:28px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.ex-name{font-weight:600;font-size:14.5px;}
+.ex-sub{font-size:12.5px;color:var(--text-dim);}
+nav.bottomnav{display:flex;justify-content:space-around;padding:10px 8px calc(10px + var(--safe-bottom));background:var(--surface);border-top:1px solid var(--border);position:sticky;bottom:0;}
+nav.bottomnav button{background:none;border:none;color:var(--text-faint);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;padding:6px 10px;cursor:pointer;border-radius:10px;}
 nav.bottomnav button.active{color:var(--accent);}
-nav.bottomnav svg{width:22px; height:22px;}
-
-/* ============ RING / TIMER ============ */
-.ring-wrap{display:flex; justify-content:center; margin:18px 0;}
+nav.bottomnav svg{width:22px;height:22px;}
+/* Day bar */
+.day-bar{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none;margin-bottom:14px;}
+.day-bar::-webkit-scrollbar{display:none;}
+.day-pill{flex:0 0 auto;width:44px;display:flex;flex-direction:column;align-items:center;padding:8px 4px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-dim);font-size:10px;cursor:pointer;gap:3px;}
+.day-pill .dpl{font-size:15px;font-weight:700;}
+.day-pill.today{border-color:var(--accent-2);}
+.day-pill.today .dpl{color:var(--accent-2);}
+.day-pill.selected{background:var(--accent);border-color:var(--accent);color:#062019;}
+.day-pill.rest-day{opacity:.5;}
+/* Workout active */
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent-2);text-align:center;margin-bottom:6px;}
+.w-progress-bar{height:3px;background:var(--surface-3);border-radius:2px;margin:4px 0 2px;}
+.w-progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .5s ease;}
+.w-progress-label{font-size:11px;color:var(--text-faint);text-align:center;margin-bottom:10px;}
+.workout-header{text-align:center;margin-bottom:6px;}
+.workout-header .ex-title{font-size:22px;font-weight:700;}
+.workout-header .ex-instruction{font-size:14px;color:var(--text-dim);margin-top:8px;line-height:1.5;padding:0 8px;}
+.ring-wrap{display:flex;justify-content:center;margin:18px 0;}
 .ring-rotate{animation:spin 16s linear infinite;}
-@keyframes spin{from{transform:rotate(0deg);} to{transform:rotate(360deg);}}
-@media (prefers-reduced-motion: reduce){ .ring-rotate{animation:none;} }
-.ring-center-num{font-family:'JetBrains Mono',monospace; font-size:46px; font-weight:700;}
-.ring-center-sub{font-size:13px; color:var(--text-dim); margin-top:2px;}
-
-.workout-header{text-align:center; margin-bottom:6px;}
-.workout-header .ex-title{font-size:22px; font-weight:700;}
-.workout-header .ex-instruction{font-size:14px; color:var(--text-dim); margin-top:8px; line-height:1.5; padding:0 8px;}
-.progress-dots{display:flex; justify-content:center; gap:6px; margin:14px 0;}
-.progress-dots span{width:7px; height:7px; border-radius:50%; background:var(--surface-3);}
-.progress-dots span.done{background:var(--accent);}
-.progress-dots span.now{background:var(--accent-2);}
-
-.reps-counter{text-align:center; margin:10px 0 18px;}
-.reps-counter .big{font-family:'JetBrains Mono',monospace; font-size:54px; font-weight:700;}
-.reps-counter .target{color:var(--text-dim); font-size:18px;}
-.btn-rep{
-  min-height:160px;
-  font-size:26px;
-  border-radius:28px;
-  box-shadow:0 12px 30px rgba(62,217,142,0.25);
-}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@media(prefers-reduced-motion:reduce){.ring-rotate{animation:none;}}
+.ring-center-num{font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;}
+.ring-center-sub{font-size:13px;color:var(--text-dim);margin-top:2px;}
+.reps-counter{text-align:center;margin:10px 0 18px;}
+.reps-counter .big{font-family:'JetBrains Mono',monospace;font-size:54px;font-weight:700;}
+.reps-counter .target{color:var(--text-dim);font-size:18px;}
+.btn-rep{min-height:160px;font-size:26px;border-radius:28px;box-shadow:0 12px 30px rgba(62,217,142,.25);}
 .btn-rep:active{transform:scale(0.96);}
-.side-tag{
-  display:inline-block; font-size:12px; font-weight:700; color:var(--accent-2);
-  border:1px solid var(--accent-2-dim); border-radius:999px; padding:4px 12px; margin-bottom:8px;
-}
-
-.unlock-overlay{
-  position:absolute; inset:0; background:rgba(11,18,16,0.92);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:16px; border-radius:var(--radius); text-align:center; padding:30px; z-index:5;
-}
-
-/* ============ REPORT ============ */
-.report-emoji{font-size:46px; text-align:center; margin-bottom:6px;}
-.report-comment{
-  background:var(--surface-2); border-left:3px solid var(--accent);
-  padding:14px 16px; border-radius:10px; font-style:italic; color:var(--text);
-  margin:14px 0;
-}
-
-/* ============ CALENDAR ============ */
-.cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
-.cal-head button{background:var(--surface-2); border:none; color:var(--text); width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:15px;}
-.cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px;}
-.cal-dow{text-align:center; font-size:11px; color:var(--text-faint); padding-bottom:4px;}
-.cal-day{
-  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
-  border-radius:10px; font-size:13px; background:var(--surface-2); color:var(--text-dim);
-}
+.side-tag{display:inline-block;font-size:12px;font-weight:700;color:var(--accent-2);border:1px solid var(--accent-2-dim);border-radius:999px;padding:4px 12px;margin-bottom:8px;}
+.unlock-overlay{position:absolute;inset:0;background:rgba(11,18,16,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;border-radius:var(--radius);text-align:center;padding:30px;z-index:5;}
+/* Rating */
+.num-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0;}
+.num-btn{padding:14px 4px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;transition:.1s;}
+.num-btn:active{transform:scale(.93);}
+.num-btn.selected{background:var(--accent);color:#062019;border-color:var(--accent);}
+.num-btn.pain-on{background:var(--danger);color:#fff;border-color:var(--danger);}
+/* Report */
+.report-emoji{font-size:46px;text-align:center;margin-bottom:6px;}
+.report-comment{background:var(--surface-2);border-left:3px solid var(--accent);padding:14px 16px;border-radius:10px;font-style:italic;color:var(--text);margin:14px 0;}
+.report-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.report-row:last-child{border-bottom:none;}
+.report-row .rl{color:var(--text-dim);}
+/* Calendar */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-head button{background:var(--surface-2);border:none;color:var(--text);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:15px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.cal-dow{text-align:center;font-size:11px;color:var(--text-faint);padding-bottom:4px;}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:13px;background:var(--surface-2);color:var(--text-dim);}
 .cal-day.empty{background:transparent;}
-.cal-day.done{background:rgba(62,217,142,0.18); color:var(--accent); font-weight:700; border:1px solid var(--accent-dim);}
-.cal-day.partial{background:rgba(224,178,85,0.14); color:var(--gold); border:1px solid rgba(224,178,85,0.4);}
+.cal-day.done{background:rgba(62,217,142,.18);color:var(--accent);font-weight:700;border:1px solid var(--accent-dim);}
+.cal-day.partial{background:rgba(224,178,85,.14);color:var(--gold);border:1px solid rgba(224,178,85,.4);}
 .cal-day.today{box-shadow:0 0 0 2px var(--accent-2) inset;}
-
-.tabs{display:flex; gap:8px; margin-bottom:14px;}
-.tabs button{
-  flex:1; padding:10px; border-radius:10px; border:1px solid var(--border);
-  background:var(--surface-2); color:var(--text-dim); font-weight:600; font-size:13px; cursor:pointer;
-}
-.tabs button.active{background:var(--accent); color:#062019; border-color:var(--accent);}
-
-.history-item{display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);}
+.tabs{display:flex;gap:8px;margin-bottom:14px;}
+.tabs button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-dim);font-weight:600;font-size:13px;cursor:pointer;}
+.tabs button.active{background:var(--accent);color:#062019;border-color:var(--accent);}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);}
 .history-item:last-child{border-bottom:none;}
-.history-item .hd-date{font-weight:600; font-size:14px;}
-.history-item .hd-meta{font-size:12.5px; color:var(--text-dim);}
-.status-pill{font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px;}
-.status-pill.ok{background:rgba(62,217,142,0.15); color:var(--accent);}
-.status-pill.bad{background:rgba(224,178,85,0.15); color:var(--gold);}
-
-/* ============ BADGES ============ */
-.badge-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
-.badge{
-  background:var(--surface-2); border:1px solid var(--border); border-radius:14px;
-  padding:14px 6px; text-align:center; opacity:0.35;
-}
-.badge.unlocked{opacity:1; border-color:var(--accent-dim); background:rgba(62,217,142,0.07);}
+.hd-date{font-weight:600;font-size:14px;}
+.hd-meta{font-size:12.5px;color:var(--text-dim);}
+.status-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;}
+.status-pill.ok{background:rgba(62,217,142,.15);color:var(--accent);}
+.status-pill.bad{background:rgba(224,178,85,.15);color:var(--gold);}
+/* Weekly report dots */
+.week-dots{display:flex;justify-content:space-between;margin:4px 0 2px;}
+.week-dot-col{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.week-dot{width:22px;height:22px;border-radius:50%;background:var(--surface-3);}
+.week-dot.done{background:var(--accent);}
+.week-dot.rest-d{opacity:.3;}
+.week-dot-lbl{font-size:11px;color:var(--text-faint);}
+/* Badges */
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.badge{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:14px 6px;text-align:center;opacity:.35;}
+.badge.unlocked{opacity:1;border-color:var(--accent-dim);background:rgba(62,217,142,.07);}
 .badge .b-emoji{font-size:26px;}
-.badge .b-name{font-size:10.5px; color:var(--text-dim); margin-top:6px; line-height:1.3;}
+.badge .b-name{font-size:10.5px;color:var(--text-dim);margin-top:6px;line-height:1.3;}
 .badge.unlocked .b-name{color:var(--text);}
-
-.banner{
-  background:linear-gradient(135deg, rgba(62,217,142,0.14), rgba(79,142,247,0.10));
-  border:1px solid var(--accent-dim); border-radius:var(--radius);
-  padding:16px; margin-bottom:14px;
-}
-.banner p{font-size:14px; margin:0 0 12px; line-height:1.4;}
-
-.radio-line{display:flex; align-items:center; gap:10px; padding:10px 0;}
-.radio-line input{width:18px; height:18px; accent-color:var(--accent);}
-.checkbox-days{display:flex; gap:8px; flex-wrap:wrap;}
-.day-chip{
-  padding:8px 12px; border-radius:999px; border:1px solid var(--border);
-  background:var(--surface-2); color:var(--text-dim); font-size:13px; cursor:pointer; user-select:none;
-}
-.day-chip.on{background:var(--accent); color:#062019; border-color:var(--accent); font-weight:700;}
-
-.note{font-size:12px; color:var(--text-faint); line-height:1.5; margin-top:8px;}
-.bar-chart{display:flex; align-items:flex-end; gap:8px; height:90px; margin-top:6px;}
-.bar-chart .bar-col{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;}
-.bar-chart .bar{width:100%; background:var(--surface-3); border-radius:6px 6px 0 0; position:relative;}
-.bar-chart .bar .fill{position:absolute; bottom:0; left:0; right:0; background:var(--accent); border-radius:6px 6px 0 0;}
-.bar-chart .bar-lbl{font-size:10px; color:var(--text-faint);}
+.banner{background:linear-gradient(135deg,rgba(62,217,142,.14),rgba(79,142,247,.1));border:1px solid var(--accent-dim);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+.banner p{font-size:14px;margin:0 0 12px;line-height:1.4;}
+.radio-line{display:flex;align-items:center;gap:10px;padding:10px 0;}
+.radio-line input{width:18px;height:18px;accent-color:var(--accent);}
+.checkbox-days{display:flex;gap:8px;flex-wrap:wrap;}
+.day-chip{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-dim);font-size:13px;cursor:pointer;user-select:none;}
+.day-chip.on{background:var(--accent);color:#062019;border-color:var(--accent);font-weight:700;}
+.note{font-size:12px;color:var(--text-faint);line-height:1.5;margin-top:8px;}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:90px;margin-top:6px;}
+.bar-chart .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.bar-chart .bar{width:100%;background:var(--surface-3);border-radius:6px 6px 0 0;position:relative;}
+.bar-chart .bar .fill{position:absolute;bottom:0;left:0;right:0;background:var(--accent);border-radius:6px 6px 0 0;}
+.bar-chart .bar-lbl{font-size:10px;color:var(--text-faint);}
+/* Progression steps */
+.prog-step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);}
+.prog-step:last-child{border-bottom:none;}
+.prog-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.rest-day-card{text-align:center;padding:30px 20px;}
+.rest-day-card .rdc-emoji{font-size:52px;margin-bottom:12px;}
+.rest-day-card p{color:var(--text-dim);font-size:15px;line-height:1.6;}
 </style>
 </head>
 <body>
 <div id="app">
-
   <div class="topbar">
     <div class="brand"><span class="mark">🥷</span><span class="name">Papa Ninja</span></div>
-    <div class="level-pill" id="levelPill">Niveau 1</div>
+    <div class="level-pill phase-1" id="levelPill">Phase 1</div>
   </div>
-
   <main>
 
-    <!-- ============ ACCUEIL / DASHBOARD ============ -->
+    <!-- DASHBOARD -->
     <section class="screen active" id="screen-dashboard">
-
-      <div id="levelUpBanner"></div>
-
+      <div class="card" id="weeklyReportCard">
+        <div class="card-title">📊 Bilan de la semaine</div>
+        <div id="weeklyReportContent"></div>
+      </div>
       <div class="card">
         <div class="card-title">Ton tableau de bord</div>
         <div class="row">
@@ -295,68 +195,70 @@ nav.bottomnav svg{width:22px; height:22px;}
           <div><div class="stat-num" id="statAssiduite">0%</div><div class="stat-label">Assiduité</div></div>
         </div>
       </div>
-
       <div class="card">
         <div class="card-title">Score Ninja</div>
         <div class="ring-wrap" id="scoreRingWrap"></div>
       </div>
-
       <div class="card">
         <div class="card-title">Progression (8 dernières semaines)</div>
         <div class="bar-chart" id="progressChart"></div>
       </div>
-
       <div class="card">
         <div class="card-title">Badges</div>
         <div class="badge-grid" id="badgeGrid"></div>
       </div>
-
       <button class="btn btn-primary" style="margin-top:4px;" onclick="goToWorkoutTab()">⚔️ Démarrer une séance</button>
     </section>
 
-    <!-- ============ SÉANCE ============ -->
+    <!-- SÉANCE -->
     <section class="screen" id="screen-workout">
 
       <div id="workout-intro">
-        <div class="card">
-          <div class="card-title">Programme du jour — <span id="introLevelLabel">Niveau 1</span></div>
-          <div id="exerciseListPreview"></div>
-        </div>
-        <button class="btn btn-primary" id="startBtn">▶ Commencer la séance</button>
+        <div class="day-bar" id="dayBar"></div>
+        <div id="programIntroCard"></div>
+        <button class="btn btn-primary" id="startBtn" style="display:none;">▶ Commencer la séance</button>
         <button class="btn btn-secondary btn-sm" id="openAppleMusicBtnIntro" style="margin-top:10px;">🎵 Ouvrir Apple Music</button>
-        <p class="note" style="text-align:center;">10 mouvements doux pour ton dos. La voix te guidera à chaque étape.</p>
       </div>
 
-      <div id="workout-active" style="display:none; position:relative;">
-        <div class="progress-dots" id="progressDots"></div>
+      <div id="workout-active" style="display:none;position:relative;">
+        <div class="section-label" id="sectionLabel">—</div>
+        <div class="w-progress-bar"><div class="w-progress-fill" id="wProgressFill" style="width:0%"></div></div>
+        <div class="w-progress-label" id="wProgressLabel">Étape 1/1</div>
         <div class="workout-header">
           <span class="side-tag" id="sideTag" style="display:none;"></span>
           <div class="ex-title" id="exTitle">—</div>
           <div class="ex-instruction" id="exInstruction">—</div>
         </div>
-
         <div id="timeModeUI" style="display:none;">
           <div class="ring-wrap" id="timerRingWrap"></div>
         </div>
-
         <div id="repsModeUI" style="display:none;">
           <div class="reps-counter">
             <div class="big"><span id="repsCount">0</span><span class="target"> / <span id="repsTarget">10</span></span></div>
           </div>
           <button class="btn btn-primary btn-rep" id="repBtn" style="margin-bottom:14px;">➕ 1 répétition</button>
         </div>
-
         <div class="row" style="margin-top:6px;">
           <button class="btn btn-secondary btn-sm" id="pauseBtn">⏸ Pause</button>
           <button class="btn btn-secondary btn-sm" id="skipBtn">⏭ Passer</button>
         </div>
         <button class="btn btn-secondary btn-sm" id="openAppleMusicBtnWorkout" style="margin-top:10px;">🎵 Ouvrir Apple Music</button>
         <button class="btn btn-danger btn-sm" id="stopBtn" style="margin-top:10px;">■ Arrêter la séance</button>
-
         <div class="unlock-overlay" id="unlockOverlay" style="display:none;">
           <div style="font-size:40px;">🔊</div>
-          <p style="font-size:14px; color:var(--text-dim); max-width:260px;">Active le son pour entendre les annonces vocales de Papa Ninja.</p>
+          <p style="font-size:14px;color:var(--text-dim);max-width:260px;">Active le son pour entendre les annonces vocales de Papa Ninja.</p>
           <button class="btn btn-primary" id="unlockBtn">Activer le son</button>
+        </div>
+      </div>
+
+      <div id="workout-rating" style="display:none;">
+        <div class="card">
+          <h3 style="text-align:center;font-size:18px;margin-bottom:16px;">Comment s'est passée cette séance ?</h3>
+          <div class="card-title">Effort ressenti (1 = facile · 10 = à fond)</div>
+          <div class="num-grid" id="effortGrid"></div>
+          <div class="card-title" style="margin-top:14px;">Douleur lombaire (0 = aucune · 10 = forte)</div>
+          <div class="num-grid" id="painGrid"></div>
+          <button class="btn btn-primary" id="submitRatingBtn" style="margin-top:20px;">Voir mon rapport 📊</button>
         </div>
       </div>
 
@@ -364,11 +266,13 @@ nav.bottomnav svg{width:22px; height:22px;}
         <div class="card">
           <div class="report-emoji">🥷</div>
           <h2 style="text-align:center;">Rapport Papa Ninja</h2>
-          <p style="text-align:center; color:var(--text-dim); font-size:13px;" id="reportDate">—</p>
+          <p style="text-align:center;color:var(--text-dim);font-size:13px;" id="reportDate">—</p>
           <div class="row" style="margin-top:16px;">
             <div><div class="stat-num" id="reportDuration">0</div><div class="stat-label">Durée (min)</div></div>
-            <div><div class="stat-num" id="reportRate">0%</div><div class="stat-label">Taux de réussite</div></div>
+            <div><div class="stat-num" id="reportRate">0%</div><div class="stat-label">Réussite</div></div>
+            <div><div class="stat-num" id="reportEffortShow">—</div><div class="stat-label">Effort</div></div>
           </div>
+          <div id="reportPainWarning" style="display:none;background:rgba(226,97,79,.1);border:1px solid rgba(226,97,79,.4);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:13px;color:var(--danger);"></div>
           <div class="report-comment" id="reportComment">—</div>
           <div id="newBadgesBox"></div>
         </div>
@@ -376,13 +280,13 @@ nav.bottomnav svg{width:22px; height:22px;}
       </div>
     </section>
 
-    <!-- ============ CALENDRIER ============ -->
+    <!-- CALENDRIER -->
     <section class="screen" id="screen-calendar">
       <div class="tabs">
         <button class="active" id="tabCal" onclick="setCalTab('cal')">Calendrier</button>
         <button id="tabHist" onclick="setCalTab('hist')">Historique</button>
+        <button id="tabWeek" onclick="setCalTab('week')">Rapport</button>
       </div>
-
       <div id="calView" class="card">
         <div class="cal-head">
           <button onclick="changeMonth(-1)">‹</button>
@@ -391,30 +295,24 @@ nav.bottomnav svg{width:22px; height:22px;}
         </div>
         <div class="cal-grid" id="calGrid"></div>
       </div>
-
-      <div id="histView" class="card" style="display:none;">
-        <div id="historyList"></div>
-      </div>
+      <div id="histView" style="display:none;" class="card"><div id="historyList"></div></div>
+      <div id="weekView" style="display:none;" class="card"><div id="weekReportDetail"></div></div>
     </section>
 
-    <!-- ============ PROFIL ============ -->
+    <!-- PROFIL -->
     <section class="screen" id="screen-profile">
-
       <div class="card">
-        <div class="card-title">Niveau de progression</div>
-        <div id="levelChoices"></div>
-        <p class="note">Niveau 2 ajoute 20% de durée aux exercices chronométrés, Niveau 3 ajoute 40%.</p>
+        <div class="card-title">📈 Ta progression automatique</div>
+        <div id="progressionInfo"></div>
       </div>
-
       <div class="card">
         <div class="card-title">🔔 Rappels d'entraînement</div>
         <div class="checkbox-days" id="dayChips"></div>
         <label class="field-label">Heure du rappel</label>
         <input type="time" id="reminderTime" value="18:00">
-        <button class="btn btn-secondary btn-sm" style="margin-top:14px;" id="enableNotifBtn">Activer les notifications</button>
-        <p class="note">Le rappel fonctionne quand Papa Ninja est ouvert ou installé sur ton écran d'accueil. Sur iPhone, les rappels automatiques en arrière-plan sont limités par Apple — pense aussi à programmer une alarme dans l'app Horloge si tu veux être sûr de ne rien manquer.</p>
+        <button class="btn btn-secondary btn-sm" style="margin-top:14px;" id="enableNotifBtn">🔔 Activer les notifications</button>
+        <p class="note">Le rappel fonctionne quand Papa Ninja est ouvert ou installé sur ton écran d'accueil.</p>
       </div>
-
       <div class="card">
         <div class="card-title">🎙️ Voix de Papa Ninja</div>
         <label class="field-label">Voix (selon ton téléphone)</label>
@@ -424,18 +322,15 @@ nav.bottomnav svg{width:22px; height:22px;}
         <label class="field-label">Tonalité</label>
         <input type="range" id="voicePitch" min="0.7" max="1.2" step="0.01">
         <div class="row" style="margin-top:14px;">
-          <button class="btn btn-secondary btn-sm" id="testVoiceBtn">🔊 Tester la voix</button>
+          <button class="btn btn-secondary btn-sm" id="testVoiceBtn">🔊 Tester</button>
           <button class="btn btn-primary btn-sm" id="saveVoiceBtn">Enregistrer</button>
         </div>
-        <p class="note">Papa Ninja essaie de choisir automatiquement une voix féminine parmi celles de ton téléphone (repérées par ♀ dans la liste). Le ton exact dépend des voix installées sur ton appareil — je peux régler la vitesse et la tonalité pour un rendu plus doux et posé, mais je ne peux pas changer le grain de voix lui-même. Teste avant d'enregistrer.</p>
-        <p class="note">Pendant la séance, Papa Ninja t'accueille au début et glisse quelques encouragements après chaque exercice réussi.</p>
+        <p class="note">Les voix repérées par ♀ sont prioritaires. Teste avant d'enregistrer.</p>
       </div>
-
       <div class="card">
         <div class="card-title">🎵 Musique pendant la séance</div>
-        <p class="note" style="margin-top:0;">Apple Music ne propose pas d'intégration directe sans compte développeur Apple. Le bouton « Ouvrir Apple Music » est disponible directement dans l'écran Séance : lance ta playlist là-bas, puis reviens sur Papa Ninja, la musique continue derrière.</p>
+        <p class="note" style="margin-top:0;">Lance Apple Music ou Spotify dans l'appli, puis reviens sur Papa Ninja. Le bouton Apple Music est aussi disponible directement dans l'écran Séance.</p>
       </div>
-
       <div class="card">
         <div class="card-title">Données</div>
         <p class="note" style="margin-top:0;">Toutes tes données restent sur ton téléphone. Aucun compte, aucun envoi sur internet.</p>
@@ -444,144 +339,220 @@ nav.bottomnav svg{width:22px; height:22px;}
     </section>
 
   </main>
-
-
   <nav class="bottomnav">
     <button class="active" data-screen="dashboard" onclick="showScreen('dashboard')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>
-      Accueil
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Accueil
     </button>
     <button data-screen="workout" onclick="showScreen('workout')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-      Séance
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 3 20 12 6 21 6 3"/></svg>Séance
     </button>
     <button data-screen="calendar" onclick="showScreen('calendar')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-      Calendrier
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendrier
     </button>
     <button data-screen="profile" onclick="showScreen('profile')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-      Profil
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil
     </button>
   </nav>
 </div>
-
 <script>
 /* =====================================================================
-   PAPA NINJA 🥷 — MVP — fichier unique HTML/CSS/JS, sans dépendance
+   PAPA NINJA 🥷 v2.1 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-/* ---------- DONNÉES DU PROGRAMME ---------- */
-const EXERCISES = [
-  {id:1, name:"Marche dynamique", type:"time", duration:60, instruction:"Marche sur place en levant bien les genoux, garde le dos droit."},
-  {id:2, name:"Roulements d'épaules", type:"time", duration:60, instruction:"Fais rouler tes épaules lentement vers l'arrière, tête haute."},
-  {id:3, name:"Bascule du bassin", type:"time", duration:60, instruction:"Bascule doucement le bassin d'avant en arrière, sans forcer."},
-  {id:4, name:"Pont fessier", type:"reps", target:10, instruction:"Allongé sur le dos, genoux pliés, pousse les hanches vers le haut."},
-  {id:5, name:"Bird Dog", type:"reps", target:8, perSide:true, instruction:"À quatre pattes, tends un bras et la jambe opposée, dos stable."},
-  {id:6, name:"Dead Bug", type:"reps", target:8, perSide:true, instruction:"Allongé, descends un bras et la jambe opposée sans cambrer le dos."},
-  {id:7, name:"Squat sur chaise", type:"reps", target:10, instruction:"Assieds-toi et relève-toi en gardant le dos droit."},
-  {id:8, name:"Pompes contre un mur", type:"reps", target:10, instruction:"Face à un mur, plie les coudes puis repousse-toi, corps droit."},
-  {id:9, name:"Montées de genoux", type:"time", duration:30, instruction:"Lève les genoux rapidement, buste droit."},
-  {id:10, name:"Respiration du vieux maître 🥷", type:"time", duration:120, instruction:"Inspire profondément par le nez, expire lentement par la bouche."}
-];
+/* ===== PROGRAMMES ===== */
+function addCircuit(list, exercises, rounds, restSec){
+  for(let r=0;r<rounds;r++){
+    if(r>0) list.push({name:'Repos',type:'rest',duration:restSec,
+      section:'Repos ⏸',instruction:'Récupère et respire profondément.',
+      _nextRound:r+1,_totalRounds:rounds,_nextExName:exercises[0].name});
+    exercises.forEach((ex,idx)=>list.push(Object.assign({},ex,{
+      id:(ex.name+r+idx).replace(/\s/g,''),
+      section:'Circuit · Tour '+(r+1)+'/'+rounds,
+      roundNum:r+1,totalRounds:rounds,isFirstInRound:idx===0&&r>0
+    })));
+  }
+}
 
-const COMMENTS = {
-  high:["Mission accomplie. Ton armure lombaire gagne en puissance.","Le vieux maître est fier de toi, séance parfaite 🥷.","Aucune faille dans ta garde aujourd'hui."],
-  mid:["Bonne séance, ton dos te remercie.","Solide entraînement, continue sur cette voie.","La discipline forge le ninja, pas à pas."],
-  low:["Chaque pas compte, même incomplet.","Tu as commencé, c'est déjà une victoire sur la flemme.","Le ninja qui persévère gagne en force, reviens demain."]
+const DAY_PROGRAMS = {
+  0:{name:'Repos',emoji:'🌙',isRest:true,durationLabel:'',
+    restMsg:"Aujourd'hui c'est repos. Ton corps se répare et se renforce pendant la récupération. Profites-en bien."},
+  1:{name:'Renforcement A',emoji:'💪',durationLabel:'~18 min',dayLabel:'Lundi',isRest:false,
+    build(xR,xP){
+      const r=2+xR,list=[];
+      list.push(
+        {name:'Marche dynamique',type:'time',duration:60,section:'Échauffement 🔥',instruction:'Marche sur place en levant bien les genoux.'},
+        {name:"Cercles d'épaules",type:'time',duration:60,section:'Échauffement 🔥',instruction:"Fais rouler tes épaules vers l'arrière, tête haute."},
+        {name:'Bascule du bassin',type:'time',duration:60,section:'Échauffement 🔥',instruction:'Bascule doucement le bassin, sans forcer.'}
+      );
+      addCircuit(list,[
+        {name:'Squat',type:'reps',target:12+xP,instruction:"Pieds largeur épaules, descends comme pour t'asseoir, dos droit."},
+        {name:'Pont fessier',type:'reps',target:12+xP,instruction:'Allongé sur le dos, genoux pliés, pousse les hanches vers le haut en serrant les fessiers.'},
+        {name:'Pompes sur plan de travail',type:'reps',target:10+xP,instruction:'Mains sur le plan, corps droit, descends et repousse lentement.'},
+        {name:'Bird Dog',type:'reps',target:8+xP,perSide:true,instruction:"À quatre pattes, tends un bras et la jambe opposée. Dos stable, regard au sol."},
+        {name:'Gainage sur genoux',type:'time',duration:20,instruction:'Appuie sur les genoux, corps aligné des genoux aux épaules, respire normalement.'},
+      ],r,60);
+      list.push({name:'Respiration du vieux maître 🥷',type:'time',duration:120,section:'Retour au calme 🌿',instruction:'Inspire profondément par le nez, expire lentement par la bouche.'});
+      return list;
+    }
+  },
+  2:{name:'Mobilité lombaire',emoji:'🧘',durationLabel:'~15 min',dayLabel:'Mardi',isRest:false,
+    build(xR,xP){
+      const list=[];
+      list.push(
+        {name:'Chat-vache',type:'time',duration:120,section:'Mobilité 🌊',instruction:"À quatre pattes, alterne dos rond et dos creux doucement en respirant."},
+        {name:'Rotation thoracique',type:'time',duration:120,section:'Mobilité 🌊',instruction:'Assis ou à genoux, tourne le torse gauche puis droite, en gardant le bas du dos stable.'},
+        {name:'Étirement psoas',type:'time',duration:120,section:'Mobilité 🌊',instruction:'En fente basse, pousse doucement le bassin vers l\'avant. 1 minute par côté.'}
+      );
+      addCircuit(list,[
+        {name:'Bird Dog',type:'reps',target:8+xP,perSide:true,instruction:"À quatre pattes, tends un bras et la jambe opposée. Dos stable, sans rotation du bassin."}
+      ],2,20);
+      addCircuit(list,[
+        {name:'Dead Bug',type:'reps',target:8+xP,perSide:true,instruction:'Allongé, descends bras et jambe opposée sans cambrer le dos. Respire à fond.'}
+      ],2,20);
+      list.push({name:'Marche active',type:'time',duration:300,section:'Retour au calme 🌿',instruction:'Marche à bon rythme, bras en mouvement, respiration profonde.'});
+      return list;
+    }
+  },
+  3:{name:'Renforcement B',emoji:'🏋️',durationLabel:'~18 min',dayLabel:'Mercredi',isRest:false,
+    build(xR,xP){
+      const r=2+xR,list=[];
+      addCircuit(list,[
+        {name:'Squat',type:'reps',target:12+xP,instruction:"Pieds largeur épaules, descends lentement comme pour t'asseoir, dos droit."},
+        {name:'Fentes arrière assistées',type:'reps',target:8+xP,perSide:true,instruction:'Recule un pied, abaisse le genou arrière vers le sol. Aide-toi d\'une chaise si besoin.'},
+        {name:'Pont fessier',type:'reps',target:12+xP,instruction:'Allongé, genoux pliés, monte les hanches et serre les fessiers en haut.'},
+        {name:'Pompes inclinées',type:'reps',target:10+xP,instruction:'Mains sur une surface surélevée, corps droit, descends et remonte en contrôle.'},
+        {name:'Gainage',type:'time',duration:20,instruction:'Sur les coudes et les orteils, corps bien aligné. Serre le ventre.'},
+      ],r,60);
+      list.push({name:'Respiration du vieux maître 🥷',type:'time',duration:120,section:'Retour au calme 🌿',instruction:'Inspire profondément par le nez, expire lentement par la bouche.'});
+      return list;
+    }
+  },
+  4:{name:'Récupération active',emoji:'🚶',durationLabel:'~15 min',dayLabel:'Jeudi',isRest:false,
+    build(xR,xP){
+      return [
+        {name:'Marche rapide',type:'time',duration:600,section:'Cardio doux 🚶',instruction:'Marche à bon rythme, bras actifs, dos droit. Tu peux marcher dehors ou sur place.'},
+        {name:'Étirements du dos',type:'time',duration:90,section:'Mobilité 🌿',instruction:'Assis, penche-toi doucement vers l\'avant en laissant le dos s\'arrondir. Respire et relâche.'},
+        {name:'Étirements des hanches',type:'time',duration:90,section:'Mobilité 🌿',instruction:'En position allongée, ramène un genou vers la poitrine, tiens 45 secondes. Change de côté.'},
+        {name:'Respiration du vieux maître 🥷',type:'time',duration:120,section:'Retour au calme 🌿',instruction:'Inspire profondément par le nez, expire lentement par la bouche.'},
+      ];
+    }
+  },
+  5:{name:'Full Body Ninja',emoji:'🥷',durationLabel:'~20 min',dayLabel:'Vendredi',isRest:false,
+    build(xR,xP){
+      const r=3+xR,list=[];
+      list.push(
+        {name:'Marche dynamique',type:'time',duration:60,section:'Échauffement 🔥',instruction:'Marche sur place en levant bien les genoux.'},
+        {name:'Bascule du bassin',type:'time',duration:60,section:'Échauffement 🔥',instruction:'Bascule doucement le bassin, échauffement du bas du dos.'}
+      );
+      addCircuit(list,[
+        {name:'Squat',type:'reps',target:12+xP,instruction:"Pieds largeur épaules, descends lentement, dos droit, poitrine haute."},
+        {name:'Pompes inclinées',type:'reps',target:10+xP,instruction:'Mains sur une surface surélevée. Corps droit. Descends et remonte en contrôle.'},
+        {name:'Bird Dog',type:'reps',target:8+xP,perSide:true,instruction:"À quatre pattes, tends un bras et la jambe opposée. Dos stable."},
+        {name:'Dead Bug',type:'reps',target:8+xP,perSide:true,instruction:'Allongé, descends bras et jambe opposée sans cambrer le dos.'},
+        {name:'Montées de genoux',type:'time',duration:30,instruction:'Lève les genoux rapidement en alternance, buste droit.'},
+      ],r,60);
+      return list;
+    }
+  },
+  6:{name:'Activité libre',emoji:'😎',isRest:true,durationLabel:'15–30 min',
+    restMsg:"Aujourd'hui c'est activité libre. Marche, vélo, skate tranquille… Bouge à ton rythme, 15 à 30 minutes. Le vrai ninja s'adapte à son environnement."},
 };
 
-const WELCOME_PHRASES = [
-  "Bonjour. Je suis vraiment contente de t'accompagner aujourd'hui.",
-  "Te revoilà. On y va tout doucement, à ton rythme.",
-  "Bienvenue. Prends une grande respiration, et commençons ensemble."
+/* ===== PROGRESSION ===== */
+function getProgressionInfo(){
+  const sd = DATA.settings.startDate;
+  if(!sd) return {week:1,phase:1,extraRounds:0,extraReps:0};
+  const days = Math.max(0,Math.floor((Date.now()-new Date(sd))/86400000));
+  const week = Math.floor(days/7)+1;
+  let phase,extraRounds,extraReps;
+  if(week<=4){phase=1;extraRounds=0;extraReps=0;}
+  else if(week<=8){phase=2;extraRounds=1;extraReps=0;}
+  else{phase=3;extraRounds=1;extraReps=2;}
+  return {week,phase,extraRounds,extraReps};
+}
+
+/* ===== PHRASES ===== */
+const WELCOME_PHRASES=[
+  "Bienvenue. Je suis contente de t'accompagner aujourd'hui.",
+  "Te revoilà. On y va doucement, à ton rythme.",
+  "Bonjour. Prends une grande inspiration, et commençons ensemble."
 ];
-const ENCOURAGEMENTS = [
+const ENCOURAGEMENTS=[
   "Bravo, tu fais ça très bien.",
   "Je suis fière de toi, continue comme ça.",
   "Tu gères parfaitement, encore un peu.",
-  "C'est exactement ça, tu progresses à chaque séance.",
-  "Très joli mouvement, je suis impressionnée.",
-  "Garde ce rythme, tu es sur la bonne voie."
+  "C'est exactement ça, ton dos se renforce.",
+  "Très joli mouvement, continue.",
+  "Garde ce rythme, tu es sur la bonne voie.",
+  "Tu progresses à chaque séance, c'est magnifique."
 ];
-
-const BADGES = [
-  {id:'first', name:'Premier Pas', emoji:'🥋', check: s => s.sessions.length >= 1},
-  {id:'streak7', name:'Semaine de Discipline', emoji:'🔥', check: s => s.bestStreak >= 7},
-  {id:'ten', name:'Dix Séances', emoji:'⛩️', check: s => s.completedCount >= 10},
-  {id:'level2', name:'Ceinture Verte', emoji:'🟢', check: s => s.settings.level >= 2},
-  {id:'level3', name:'Ceinture Noire', emoji:'⚫', check: s => s.settings.level >= 3},
-  {id:'streak30', name:'Mois de Fer', emoji:'🛡️', check: s => s.bestStreak >= 30},
-  {id:'fifty', name:'Maître Ninja', emoji:'🥷', check: s => s.completedCount >= 50},
-  {id:'assidu', name:'Assidu', emoji:'📅', check: s => s.assiduite >= 90},
-  {id:'fond', name:'Souffle de Fer', emoji:'🌬️', check: s => s.completedCount >= 25}
+const COMMENTS={
+  high:["Mission accomplie. Ton armure lombaire gagne en puissance.","Séance parfaite, je suis vraiment fière de toi.","Aucune faille dans ta garde aujourd'hui."],
+  mid:["Bonne séance, ton dos te remercie.","Solide entraînement, continue sur cette voie.","La discipline forge le ninja, pas à pas."],
+  low:["Chaque pas compte, même incomplet.","Tu as bougé, c'est déjà une victoire.","Le ninja qui persévère gagne en force."]
+};
+const BADGES=[
+  {id:'first',name:'Premier Pas',emoji:'🥋',check:s=>s.sessions.length>=1},
+  {id:'streak7',name:'Semaine de Discipline',emoji:'🔥',check:s=>s.bestStreak>=7},
+  {id:'ten',name:'Dix Séances',emoji:'⛩️',check:s=>s.completedCount>=10},
+  {id:'phase2',name:'Ceinture Verte',emoji:'🟢',check:s=>(s.week||0)>=5},
+  {id:'phase3',name:'Ceinture Noire',emoji:'⚫',check:s=>(s.week||0)>=9},
+  {id:'streak30',name:'Mois de Fer',emoji:'🛡️',check:s=>s.bestStreak>=30},
+  {id:'fifty',name:'Maître Ninja',emoji:'🥷',check:s=>s.completedCount>=50},
+  {id:'assidu',name:'Assidu',emoji:'📅',check:s=>s.assiduite>=90},
+  {id:'fond',name:'Souffle de Fer',emoji:'🌬️',check:s=>s.completedCount>=25}
 ];
+const DOW=['L','M','M','J','V','S','D'];
+const MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const DAY_SHORT=['D','L','M','M','J','V','S'];
+const DAY_LABELS=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 
-const DOW = ['L','M','M','J','V','S','D'];
-const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-
-/* ---------- STOCKAGE ---------- */
-const STORE_KEY = 'papaNinjaData_v1';
+/* ===== STOCKAGE ===== */
+const STORE_KEY='papaNinjaData_v1';
 function defaultData(){
-  return {
-    sessions: [],
-    settings:{
-      level:1,
-      reminderDays:[1,3,5],
-      reminderTime:'18:00',
-      remindersEnabled:false,
-      lastNotifFiredDate:null,
-      lastLevelUpPromptDate:null,
-      voiceName:'',
-      voiceRate:0.87,
-      voicePitch:1.03
-    },
-    badgesSeen:[]
-  };
+  return{sessions:[],settings:{
+    level:1,startDate:null,
+    reminderDays:[1,3,5],reminderTime:'18:00',remindersEnabled:false,
+    lastNotifFiredDate:null,lastLevelUpPromptDate:null,
+    voiceName:'',voiceRate:0.87,voicePitch:1.03
+  },badgesSeen:[]};
 }
-let DATA = loadData();
+let DATA=loadData();
 function loadData(){
   try{
-    const raw = localStorage.getItem(STORE_KEY);
+    const raw=localStorage.getItem(STORE_KEY);
     if(!raw) return defaultData();
-    const parsed = JSON.parse(raw);
-    return Object.assign(defaultData(), parsed, {settings:Object.assign(defaultData().settings, parsed.settings||{})});
-  }catch(e){ return defaultData(); }
+    const p=JSON.parse(raw);
+    return Object.assign(defaultData(),p,{settings:Object.assign(defaultData().settings,p.settings||{})});
+  }catch(e){return defaultData();}
 }
-function saveData(){ localStorage.setItem(STORE_KEY, JSON.stringify(DATA)); }
+function saveData(){localStorage.setItem(STORE_KEY,JSON.stringify(DATA));}
 
-/* ---------- UTILS ---------- */
-function pad(n){ return String(n).padStart(2,'0'); }
-function todayISO(){ return new Date().toISOString().slice(0,10); }
-function fmtClock(sec){ const m=Math.floor(sec/60), s=sec%60; return pad(m)+':'+pad(s); }
-function fmtHoursMinutes(totalSec){
-  const h=Math.floor(totalSec/3600), m=Math.floor((totalSec%3600)/60);
-  if(h<=0) return m+'min';
-  return h+'h'+(m>0?pad(m):'');
-}
+/* ===== UTILS ===== */
+function pad(n){return String(n).padStart(2,'0');}
+function todayISO(){return new Date().toISOString().slice(0,10);}
+function fmtClock(sec){const m=Math.floor(sec/60),s=sec%60;return pad(m)+':'+pad(s);}
+function fmtHoursMinutes(ts){const h=Math.floor(ts/3600),m=Math.floor((ts%3600)/60);return h>0?h+'h'+(m>0?pad(m):''):m+'min';}
 
-/* ---------- NAVIGATION ---------- */
+/* ===== NAVIGATION ===== */
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
-  document.querySelectorAll('.bottomnav button').forEach(b=>b.classList.toggle('active', b.dataset.screen===name));
+  document.querySelectorAll('.bottomnav button').forEach(b=>b.classList.toggle('active',b.dataset.screen===name));
   if(name==='dashboard') renderDashboard();
   if(name==='calendar') renderCalendar();
   if(name==='profile') renderProfile();
-  if(name==='workout') renderWorkoutIntro();
+  if(name==='workout') renderWorkoutScreen();
 }
-function goToWorkoutTab(){ showScreen('workout'); }
+function goToWorkoutTab(){showScreen('workout');}
 
-/* ---------- RING SVG (élément signature) ---------- */
-function ringSVG(percent, opts){
-  opts = opts || {};
-  const size = opts.size || 220, stroke = opts.stroke || 14;
-  const color = opts.color || 'var(--accent)';
-  const r = (size - stroke)/2, c = size/2, circ = 2*Math.PI*r;
-  const offset = circ * (1 - Math.max(0,Math.min(100,percent))/100);
-  const ticks = [0,90,180,270].map(deg =>
-    `<rect x="${c-2}" y="${stroke/2-9}" width="4" height="9" rx="2" fill="var(--text-faint)" transform="rotate(${deg} ${c} ${c})"/>`
-  ).join('');
+/* ===== RING SVG ===== */
+function ringSVG(percent,opts){
+  opts=opts||{};
+  const size=opts.size||220,stroke=opts.stroke||14,color=opts.color||'var(--accent)';
+  const r=(size-stroke)/2,c=size/2,circ=2*Math.PI*r;
+  const offset=circ*(1-Math.max(0,Math.min(100,percent))/100);
+  const ticks=[0,90,180,270].map(deg=>`<rect x="${c-2}" y="${stroke/2-9}" width="4" height="9" rx="2" fill="var(--text-faint)" transform="rotate(${deg} ${c} ${c})"/>`).join('');
   return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
     <g class="ring-rotate" style="transform-origin:${c}px ${c}px;">${ticks}</g>
     <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="${stroke}"/>
@@ -591,578 +562,594 @@ function ringSVG(percent, opts){
   </svg>`;
 }
 
-/* ---------- VOIX & SON ---------- */
-let audioCtx = null;
-function getCtx(){ if(!audioCtx){ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } return audioCtx; }
-function beep(freq, ms){
-  try{
-    const ctx = getCtx();
-    if(ctx.state==='suspended') ctx.resume();
-    const osc = ctx.createOscillator(), gain = ctx.createGain();
-    osc.frequency.value = freq||880;
-    gain.gain.value = 0.06;
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.start();
-    setTimeout(()=>{ osc.stop(); }, ms||150);
-  }catch(e){}
+/* ===== AUDIO ===== */
+let audioCtx=null;
+function getCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function beep(freq,ms){
+  try{const ctx=getCtx();if(ctx.state==='suspended')ctx.resume();
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.frequency.value=freq||880;gain.gain.value=0.06;
+    osc.connect(gain);gain.connect(ctx.destination);osc.start();
+    setTimeout(()=>osc.stop(),ms||150);}catch(e){}
 }
-const FEMALE_VOICE_HINTS = ['amélie','amelie','audrey','aurélie','aurelie','céline','celine','charlotte','chantal','claire','élise','elise','emma','julie','julia','léa','lea','manon','marie','nathalie','sophie','virginie','female','femme','f)','(f)','woman','samantha','siri'];
-function getFrenchVoices(){
-  return speechSynthesis.getVoices().filter(v=>v.lang && v.lang.toLowerCase().startsWith('fr'));
-}
-function isLikelyFemaleVoice(v){
-  const n = v.name.toLowerCase();
-  return FEMALE_VOICE_HINTS.some(h=>n.includes(h));
-}
-function pickDefaultVoice(voices){
-  return voices.find(isLikelyFemaleVoice) || voices[0];
-}
-function speak(text, onend, override){
-  if(!('speechSynthesis' in window)){ if(onend) onend(); return; }
-  const s = DATA.settings;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'fr-FR';
-  u.rate = (override && override.rate!=null) ? override.rate : (s.voiceRate!=null ? s.voiceRate : 0.87);
-  u.pitch = (override && override.pitch!=null) ? override.pitch : (s.voicePitch!=null ? s.voicePitch : 1.03);
-  const voices = getFrenchVoices();
-  const wantedName = (override && override.voiceName!=null) ? override.voiceName : s.voiceName;
-  let chosen = wantedName ? voices.find(v=>v.name===wantedName) : null;
-  if(!chosen && voices.length) chosen = pickDefaultVoice(voices);
-  if(chosen) u.voice = chosen;
-  u.onend = ()=>{ if(onend) onend(); };
-  u.onerror = ()=>{ if(onend) onend(); };
+
+/* ===== VOIX ===== */
+const FVHINTS=['amélie','amelie','audrey','céline','celine','charlotte','claire','elise','emma','julie','julia','lea','léa','manon','marie','nathalie','sophie','virginie','female','femme','woman','samantha','siri'];
+function getFrenchVoices(){return speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().startsWith('fr'));}
+function isFemale(v){const n=v.name.toLowerCase();return FVHINTS.some(h=>n.includes(h));}
+function pickVoice(voices){return voices.find(isFemale)||voices[0];}
+function speak(text,onend,override){
+  if(!('speechSynthesis' in window)){if(onend)onend();return;}
+  const s=DATA.settings,u=new SpeechSynthesisUtterance(text);
+  u.lang='fr-FR';
+  u.rate=override&&override.rate!=null?override.rate:(s.voiceRate!=null?s.voiceRate:0.87);
+  u.pitch=override&&override.pitch!=null?override.pitch:(s.voicePitch!=null?s.voicePitch:1.03);
+  const voices=getFrenchVoices();
+  const wn=override&&override.voiceName!=null?override.voiceName:s.voiceName;
+  let chosen=wn?voices.find(v=>v.name===wn):null;
+  if(!chosen&&voices.length)chosen=pickVoice(voices);
+  if(chosen)u.voice=chosen;
+  u.onend=()=>{if(onend)onend();};u.onerror=()=>{if(onend)onend();};
   speechSynthesis.speak(u);
 }
+function openAppleMusic(){window.open('https://music.apple.com/','_blank');}
 
-/* ---------- MUSIQUE (Apple Music) ---------- */
-function openAppleMusic(){
-  window.open('https://music.apple.com/', '_blank');
-}
-
-/* ---------- CALCULS STATS ---------- */
+/* ===== STATS ===== */
 function computeStats(){
-  const sessions = DATA.sessions;
-  const completed = sessions.filter(s=>s.completed);
-  const completedCount = completed.length;
-  const totalSessions = sessions.length;
-  const now = new Date();
-  const thisMonth = sessions.filter(s=>{
-    const d = new Date(s.date);
-    return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
-  });
-  const totalTime = sessions.reduce((a,s)=>a+s.durationSec,0);
-
-  const doneDates = Array.from(new Set(completed.map(s=>s.date))).sort();
-  let bestStreak = 0, run = 0, prevDate = null;
+  const sessions=DATA.sessions,completed=sessions.filter(s=>s.completed);
+  const completedCount=completed.length,totalSessions=sessions.length;
+  const now=new Date();
+  const thisMonth=sessions.filter(s=>{const d=new Date(s.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  const totalTime=sessions.reduce((a,s)=>a+s.durationSec,0);
+  const doneDates=Array.from(new Set(completed.map(s=>s.date))).sort();
+  let bestStreak=0,run=0,prevDate=null;
   doneDates.forEach(d=>{
-    if(prevDate){
-      const diff = (new Date(d) - new Date(prevDate))/86400000;
-      run = diff===1 ? run+1 : 1;
-    } else { run = 1; }
-    bestStreak = Math.max(bestStreak, run);
-    prevDate = d;
+    if(prevDate){const diff=(new Date(d)-new Date(prevDate))/86400000;run=diff===1?run+1:1;}
+    else run=1;bestStreak=Math.max(bestStreak,run);prevDate=d;
   });
-
-  let currentStreak = 0;
-  let cursor = new Date();
-  const doneSet = new Set(doneDates);
-  if(!doneSet.has(todayISO())) cursor.setDate(cursor.getDate()-1);
-  while(doneSet.has(cursor.toISOString().slice(0,10))){
-    currentStreak++;
-    cursor.setDate(cursor.getDate()-1);
-  }
-
-  const dayOfMonth = now.getDate();
-  const weeksElapsed = Math.max(1, Math.ceil(dayOfMonth/7));
-  const assiduite = Math.min(100, Math.round((thisMonth.length / (weeksElapsed*3))*100));
-
-  const score = completedCount*10 + bestStreak*3 + DATA.settings.level*20;
-
-  return {sessions, completedCount, totalSessions, thisMonthCount:thisMonth.length, totalTime,
-           bestStreak, currentStreak, assiduite, score, settings:DATA.settings};
+  let currentStreak=0,cursor=new Date();
+  const doneSet=new Set(doneDates);
+  if(!doneSet.has(todayISO()))cursor.setDate(cursor.getDate()-1);
+  while(doneSet.has(cursor.toISOString().slice(0,10))){currentStreak++;cursor.setDate(cursor.getDate()-1);}
+  const dom=now.getDate(),we=Math.max(1,Math.ceil(dom/7));
+  const assiduite=Math.min(100,Math.round((thisMonth.length/(we*3))*100));
+  const progInfo=getProgressionInfo();
+  const score=completedCount*10+bestStreak*3+progInfo.phase*20;
+  return{sessions,completedCount,totalSessions,thisMonthCount:thisMonth.length,totalTime,
+    bestStreak,currentStreak,assiduite,score,settings:DATA.settings,
+    week:progInfo.week,phase:progInfo.phase};
 }
 
-/* ---------- DASHBOARD ---------- */
+/* ===== DASHBOARD ===== */
 function renderDashboard(){
-  const st = computeStats();
-  document.getElementById('levelPill').textContent = 'Niveau ' + DATA.settings.level;
-  document.getElementById('statTotal').textContent = st.totalSessions;
-  document.getElementById('statMonth').textContent = st.thisMonthCount;
-  document.getElementById('statTime').textContent = fmtHoursMinutes(st.totalTime);
-  document.getElementById('statStreak').textContent = st.currentStreak;
-  document.getElementById('statBest').textContent = st.bestStreak;
-  document.getElementById('statAssiduite').textContent = st.assiduite + '%';
-
-  document.getElementById('scoreRingWrap').innerHTML =
-    ringSVG(Math.min(100, st.score/3), {size:150, stroke:12, color:'var(--accent-2)'}) +
-    `<div style="position:absolute;"></div>`;
-  const wrap = document.getElementById('scoreRingWrap');
-  wrap.style.position='relative'; wrap.style.display='flex'; wrap.style.justifyContent='center';
-  wrap.innerHTML = `<div style="position:relative; display:inline-block;">
-    ${ringSVG(Math.min(100, st.score/3), {size:150, stroke:12, color:'var(--accent-2)'})}
-    <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+  const st=computeStats(),pi=getProgressionInfo();
+  const pill=document.getElementById('levelPill');
+  pill.textContent=DATA.settings.startDate?`Phase ${pi.phase} · Sem. ${pi.week}`:`Phase ${pi.phase}`;
+  pill.className='level-pill phase-'+pi.phase;
+  document.getElementById('statTotal').textContent=st.totalSessions;
+  document.getElementById('statMonth').textContent=st.thisMonthCount;
+  document.getElementById('statTime').textContent=fmtHoursMinutes(st.totalTime);
+  document.getElementById('statStreak').textContent=st.currentStreak;
+  document.getElementById('statBest').textContent=st.bestStreak;
+  document.getElementById('statAssiduite').textContent=st.assiduite+'%';
+  const wrap=document.getElementById('scoreRingWrap');
+  wrap.style.cssText='position:relative;display:flex;justify-content:center;';
+  wrap.innerHTML=`<div style="position:relative;display:inline-block;">
+    ${ringSVG(Math.min(100,st.score/3),{size:150,stroke:12,color:'var(--accent-2)'})}
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
       <div class="stat-num" style="font-size:26px;">${st.score}</div>
       <div class="stat-label">points</div>
-    </div>
-  </div>`;
-
-  renderProgressChart(st);
-  renderBadges(st);
-  renderLevelUpBanner(st);
+    </div></div>`;
+  renderProgressChart(st);renderBadges(st);renderWeeklyReport();
 }
-
 function renderProgressChart(st){
-  const weeks = [];
-  const now = new Date();
+  const now=new Date(),weeks=[];
   for(let i=7;i>=0;i--){
-    const start = new Date(now); start.setDate(now.getDate() - i*7 - now.getDay());
-    const end = new Date(start); end.setDate(start.getDate()+7);
-    const count = DATA.sessions.filter(s=>{
-      const d = new Date(s.date);
-      return d>=start && d<end && s.completed;
-    }).length;
-    weeks.push(count);
+    const s=new Date(now);s.setDate(now.getDate()-i*7-now.getDay());
+    const e=new Date(s);e.setDate(s.getDate()+7);
+    weeks.push(DATA.sessions.filter(sess=>{const d=new Date(sess.date);return d>=s&&d<e&&sess.completed;}).length);
   }
-  const max = Math.max(1, ...weeks);
-  const html = weeks.map((c,i)=>`
-    <div class="bar-col">
-      <div class="bar" style="height:${70}px;">
-        <div class="fill" style="height:${(c/max)*100}%;"></div>
-      </div>
-      <div class="bar-lbl">${i===7?'cette sem.':('-'+(7-i)+'sem')}</div>
-    </div>`).join('');
-  document.getElementById('progressChart').innerHTML = html;
+  const max=Math.max(1,...weeks);
+  document.getElementById('progressChart').innerHTML=weeks.map((c,i)=>`
+    <div class="bar-col"><div class="bar" style="height:70px;"><div class="fill" style="height:${(c/max)*100}%;"></div></div>
+    <div class="bar-lbl">${i===7?'S.':('-'+(7-i))}</div></div>`).join('');
 }
-
 function renderBadges(st){
-  const html = BADGES.map(b=>{
-    const unlocked = b.check(st);
-    return `<div class="badge ${unlocked?'unlocked':''}">
-      <div class="b-emoji">${b.emoji}</div>
-      <div class="b-name">${b.name}</div>
-    </div>`;
+  document.getElementById('badgeGrid').innerHTML=BADGES.map(b=>{
+    const u=b.check(st);
+    return `<div class="badge ${u?'unlocked':''}"><div class="b-emoji">${b.emoji}</div><div class="b-name">${b.name}</div></div>`;
   }).join('');
-  document.getElementById('badgeGrid').innerHTML = html;
-
-  // détecter nouveaux badges débloqués pour la fenêtre de rapport
-  const unlockedIds = BADGES.filter(b=>b.check(st)).map(b=>b.id);
-  window._latestUnlockedBadges = unlockedIds;
+  window._latestUnlockedBadges=BADGES.filter(b=>b.check(st)).map(b=>b.id);
 }
-
-function renderLevelUpBanner(st){
-  const box = document.getElementById('levelUpBanner');
-  const s = DATA.settings;
-  if(s.level>=3){ box.innerHTML=''; return; }
-  const last14 = DATA.sessions.filter(sess=>{
-    const diffDays = (new Date() - new Date(sess.date))/86400000;
-    return diffDays<=14 && sess.completed;
-  }).length;
-  const lastPrompt = s.lastLevelUpPromptDate ? (new Date()-new Date(s.lastLevelUpPromptDate))/86400000 : 999;
-  if(last14>=6 && lastPrompt>=7){
-    box.innerHTML = `<div class="banner">
-      <p>🥷 Tu es régulier depuis deux semaines. Prêt à passer au <strong>Niveau ${s.level+1}</strong> ?</p>
-      <div class="row">
-        <button class="btn btn-primary btn-sm" onclick="acceptLevelUp()">Oui, niveau supérieur</button>
-        <button class="btn btn-ghost btn-sm" onclick="dismissLevelUp()">Plus tard</button>
-      </div>
-    </div>`;
-  } else {
-    box.innerHTML = '';
-  }
-}
-function acceptLevelUp(){
-  DATA.settings.level = Math.min(3, DATA.settings.level+1);
-  DATA.settings.lastLevelUpPromptDate = todayISO();
-  saveData(); renderDashboard();
-}
-function dismissLevelUp(){
-  DATA.settings.lastLevelUpPromptDate = todayISO();
-  saveData(); renderDashboard();
-}
-
-/* ---------- PROFIL ---------- */
-function renderProfile(){
-  const s = DATA.settings;
-  document.getElementById('levelChoices').innerHTML = [1,2,3].map(lv=>`
-    <div class="radio-line">
-      <input type="radio" name="lvl" value="${lv}" id="lvl${lv}" ${s.level===lv?'checked':''} onchange="setLevel(${lv})">
-      <label for="lvl${lv}">Niveau ${lv} ${lv===1?'(programme de base)':lv===2?'(+20% durée)':'(+40% durée)'}</label>
-    </div>`).join('');
-
-  document.getElementById('dayChips').innerHTML = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map((d,i)=>{
-    const dayNum = i+1>6?0:i+1; // 1=Lun...6=Sam,0=Dim ; our array index 0..6 maps Mon..Sun
-    const val = i===6?0:i+1;
-    const on = s.reminderDays.includes(val);
-    return `<div class="day-chip ${on?'on':''}" onclick="toggleDay(${val})">${d}</div>`;
+function renderWeeklyReport(){
+  const now=new Date(),dow=now.getDay()===0?7:now.getDay();
+  const monday=new Date(now);monday.setDate(now.getDate()-dow+1);monday.setHours(0,0,0,0);
+  const sunday=new Date(monday);sunday.setDate(monday.getDate()+6);sunday.setHours(23,59,59,999);
+  const ws=DATA.sessions.filter(s=>{const d=new Date(s.date);return d>=monday&&d<=sunday;});
+  const doneDays=new Set(ws.map(s=>new Date(s.date).getDay()));
+  const dayNums=[1,2,3,4,5,6,0];
+  const dots=dayNums.map((d,i)=>{
+    const done=doneDays.has(d),isRest=d===0||d===6;
+    return `<div class="week-dot-col"><div class="week-dot ${done?'done':''} ${isRest&&!done?'rest-d':''}"></div><div class="week-dot-lbl">${DOW[i]}</div></div>`;
   }).join('');
-  document.getElementById('reminderTime').value = s.reminderTime;
-  document.getElementById('enableNotifBtn').textContent = s.remindersEnabled ? '🔕 Désactiver les rappels' : '🔔 Activer les notifications';
+  const rated=ws.filter(s=>s.effort!=null);
+  const prated=ws.filter(s=>s.pain!=null);
+  const avgE=rated.length?Math.round(rated.reduce((a,s)=>a+s.effort,0)/rated.length*10)/10:null;
+  const avgP=prated.length?Math.round(prated.reduce((a,s)=>a+s.pain,0)/prated.length*10)/10:null;
+  let msg=ws.length===0?'Aucune séance cette semaine. C\'est le moment idéal pour commencer.':
+          ws.length>=4?'Semaine exceptionnelle ! Ton corps se renforce de jour en jour.':
+          ws.length>=2?'Bonne semaine ! La régularité est la clé du ninja.':
+          'Tu as bougé cette semaine. Chaque séance compte.';
+  if(avgP!=null&&avgP>=6)msg+=' ⚠️ Douleur lombaire élevée cette semaine : réduis l\'intensité ou consulte un professionnel.';
+  document.getElementById('weeklyReportContent').innerHTML=`
+    <div class="week-dots">${dots}</div>
+    <div class="row" style="margin-top:14px;">
+      <div><div class="stat-num" style="font-size:22px;">${ws.length}</div><div class="stat-label">Séances</div></div>
+      ${avgE!=null?`<div><div class="stat-num" style="font-size:22px;">${avgE}/10</div><div class="stat-label">Effort moy.</div></div>`:''}
+      ${avgP!=null?`<div><div class="stat-num" style="font-size:22px;color:${avgP>=6?'var(--danger)':avgP>=3?'var(--gold)':'var(--accent)'};">${avgP}/10</div><div class="stat-label">Douleur moy.</div></div>`:''}
+    </div>
+    <p class="note" style="margin-top:10px;">${msg}</p>`;
+}
 
-  renderVoiceOptions();
-}
-function renderVoiceOptions(){
-  const s = DATA.settings;
-  const select = document.getElementById('voiceSelect');
-  const voices = getFrenchVoices().slice().sort((a,b)=> (isLikelyFemaleVoice(b)?1:0) - (isLikelyFemaleVoice(a)?1:0));
-  if(voices.length===0){
-    select.innerHTML = `<option value="">Voix par défaut du téléphone</option>`;
-  } else {
-    select.innerHTML = voices.map(v=>`<option value="${v.name}" ${s.voiceName===v.name?'selected':''}>${v.name}${isLikelyFemaleVoice(v)?' ♀':''}</option>`).join('');
-  }
-  document.getElementById('voiceRate').value = s.voiceRate!=null ? s.voiceRate : 0.87;
-  document.getElementById('voicePitch').value = s.voicePitch!=null ? s.voicePitch : 1.03;
-}
-function setLevel(lv){ DATA.settings.level=lv; saveData(); document.getElementById('levelPill').textContent='Niveau '+lv; }
-function toggleDay(val){
-  const i = DATA.settings.reminderDays.indexOf(val);
-  if(i>=0) DATA.settings.reminderDays.splice(i,1); else DATA.settings.reminderDays.push(val);
-  saveData(); renderProfile();
-}
-document.getElementById('testVoiceBtn').onclick = function(){
-  const rate = parseFloat(document.getElementById('voiceRate').value);
-  const pitch = parseFloat(document.getElementById('voicePitch').value);
-  const voiceName = document.getElementById('voiceSelect').value;
-  speak("Prépare-toi pour le Pont Fessier. 3, 2, 1, c'est parti.", null, {rate, pitch, voiceName});
-};
-document.getElementById('saveVoiceBtn').onclick = function(){
-  DATA.settings.voiceRate = parseFloat(document.getElementById('voiceRate').value);
-  DATA.settings.voicePitch = parseFloat(document.getElementById('voicePitch').value);
-  DATA.settings.voiceName = document.getElementById('voiceSelect').value;
-  saveData();
-  alert('Voix enregistrée 🥷');
-};
-document.getElementById('openAppleMusicBtnIntro').onclick = openAppleMusic;
-document.getElementById('openAppleMusicBtnWorkout').onclick = openAppleMusic;
-document.getElementById('enableNotifBtn').onclick = function(){
-  if(DATA.settings.remindersEnabled){
-    DATA.settings.remindersEnabled = false;
-    saveData(); renderProfile();
-    return;
-  }
-  if(!('Notification' in window)){ alert("Les notifications ne sont pas disponibles sur ce navigateur."); return; }
-  Notification.requestPermission().then(perm=>{
-    DATA.settings.remindersEnabled = (perm==='granted');
-    DATA.settings.reminderTime = document.getElementById('reminderTime').value || '18:00';
-    saveData(); renderProfile();
-    if(perm!=='granted'){ alert("Autorisation refusée. Tu peux la changer dans les réglages de ton navigateur."); }
+/* ===== SÉANCE — INTRO ===== */
+let selectedDay=null,workoutPhase='intro';
+function setWorkoutPhase(phase){
+  workoutPhase=phase;
+  ['intro','active','rating','report'].forEach(p=>{
+    document.getElementById('workout-'+p).style.display=p===phase?'block':'none';
   });
-};
-document.getElementById('resetBtn').onclick = function(){
-  if(confirm('Supprimer toutes tes données Papa Ninja ? Cette action est définitive.')){
-    DATA = defaultData(); saveData();
-    renderDashboard(); renderProfile();
-    alert('Données réinitialisées.');
-  }
-};
-function checkAndFireReminder(){
-  const s = DATA.settings;
-  if(!s.remindersEnabled) return;
-  const now = new Date();
-  const day = now.getDay(); // 0=dim..6=sam
-  const hhmm = pad(now.getHours())+':'+pad(now.getMinutes());
-  if(s.reminderDays.includes(day) && hhmm===s.reminderTime && s.lastNotifFiredDate!==todayISO()){
-    if(Notification.permission==='granted'){
-      new Notification('Papa Ninja 🥷', {body:'Il est temps de renforcer ton armure.'});
-      s.lastNotifFiredDate = todayISO();
-      saveData();
-    }
-  }
+  if(phase==='active') document.getElementById('workout-active').style.position='relative';
 }
-setInterval(checkAndFireReminder, 20000);
-
-/* ---------- CALENDRIER & HISTORIQUE ---------- */
-let calCursor = new Date();
-function setCalTab(tab){
-  document.getElementById('tabCal').classList.toggle('active', tab==='cal');
-  document.getElementById('tabHist').classList.toggle('active', tab==='hist');
-  document.getElementById('calView').style.display = tab==='cal' ? 'block':'none';
-  document.getElementById('histView').style.display = tab==='hist' ? 'block':'none';
-  if(tab==='hist') renderHistoryList();
+function renderWorkoutScreen(){
+  if(workoutPhase==='active'||workoutPhase==='rating'||workoutPhase==='report') return;
+  setWorkoutPhase('intro');
+  const day=selectedDay!==null?selectedDay:new Date().getDay();
+  renderDayBar(day);
+  renderDayIntro(day);
 }
-function changeMonth(delta){
-  calCursor.setMonth(calCursor.getMonth()+delta);
-  renderCalendar();
-}
-function renderCalendar(){
-  document.getElementById('calMonthLabel').textContent = MONTHS[calCursor.getMonth()] + ' ' + calCursor.getFullYear();
-  const year = calCursor.getFullYear(), month = calCursor.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const startOffset = (firstDay.getDay()+6)%7; // lundi=0
-  const daysInMonth = new Date(year, month+1, 0).getDate();
-
-  const completedDates = new Set(DATA.sessions.filter(s=>s.completed).map(s=>s.date));
-  const partialDates = new Set(DATA.sessions.filter(s=>!s.completed).map(s=>s.date));
-  const todayStr = todayISO();
-
-  let html = DOW.map(d=>`<div class="cal-dow">${d}</div>`).join('');
-  for(let i=0;i<startOffset;i++) html += '<div class="cal-day empty"></div>';
-  for(let d=1; d<=daysInMonth; d++){
-    const dateStr = year+'-'+pad(month+1)+'-'+pad(d);
-    let cls = 'cal-day';
-    if(completedDates.has(dateStr)) cls += ' done';
-    else if(partialDates.has(dateStr)) cls += ' partial';
-    if(dateStr===todayStr) cls += ' today';
-    html += `<div class="${cls}">${d}</div>`;
-  }
-  document.getElementById('calGrid').innerHTML = html;
-}
-function renderHistoryList(){
-  const sorted = [...DATA.sessions].sort((a,b)=> new Date(b.startedAt) - new Date(a.startedAt));
-  if(sorted.length===0){
-    document.getElementById('historyList').innerHTML = `<p class="note">Aucune séance enregistrée pour le moment. Lance ta première séance depuis l'onglet Séance.</p>`;
-    return;
-  }
-  document.getElementById('historyList').innerHTML = sorted.map(s=>{
-    const d = new Date(s.startedAt);
-    const doneCount = s.exercisesDone.filter(e=>e.completed).length;
-    return `<div class="history-item">
-      <div>
-        <div class="hd-date">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} • ${pad(d.getHours())}:${pad(d.getMinutes())}</div>
-        <div class="hd-meta">${fmtClock(s.durationSec)} • ${doneCount}/10 exercices</div>
-      </div>
-      <span class="status-pill ${s.completed?'ok':'bad'}">${s.completed?'Terminée':'Incomplète'}</span>
-    </div>`;
+function renderDayBar(active){
+  const today=new Date().getDay();
+  document.getElementById('dayBar').innerHTML=[1,2,3,4,5,6,0].map(d=>{
+    const prog=DAY_PROGRAMS[d];
+    const isToday=d===today,isSel=d===active;
+    return `<button class="day-pill ${isSel?'selected':''} ${isToday&&!isSel?'today':''} ${prog.isRest?'rest-day':''}"
+      onclick="selectWorkoutDay(${d})">
+      <span class="dpl">${prog.emoji}</span>${DAY_SHORT[d]}</button>`;
   }).join('');
 }
-
-/* ---------- MOTEUR DE SÉANCE ---------- */
-let workout = null;
-
-function scaleExercise(e, level){
-  const factor = level===1?1:level===2?1.2:1.4;
-  if(e.type==='time'){
-    return Object.assign({}, e, {duration: Math.max(15, Math.round(e.duration*factor/5)*5)});
+function selectWorkoutDay(day){
+  selectedDay=day;renderDayBar(day);renderDayIntro(day);
+}
+function renderDayIntro(dayNum){
+  const prog=DAY_PROGRAMS[dayNum];
+  const card=document.getElementById('programIntroCard');
+  const startBtn=document.getElementById('startBtn');
+  if(prog.isRest){
+    startBtn.style.display='none';
+    card.innerHTML=`<div class="card"><div class="rest-day-card">
+      <div class="rdc-emoji">${prog.emoji}</div>
+      <h3>${prog.name}</h3>
+      <p>${prog.restMsg}</p>
+    </div></div>`;
+  } else {
+    startBtn.style.display='block';
+    startBtn.onclick=()=>startWorkout(dayNum);
+    const pi=getProgressionInfo();
+    const exList=prog.build(pi.extraRounds,pi.extraReps);
+    const exercises=exList.filter(e=>e.type!=='rest');
+    let idx=0,lastSection='';
+    const items=exercises.map(ex=>{
+      if(ex.type==='rest') return '';
+      const sectionChanged=ex.section&&ex.section!==lastSection;
+      lastSection=ex.section||lastSection;
+      const secHtml=sectionChanged?`<div style="font-size:10px;font-weight:700;color:var(--accent-2);text-transform:uppercase;letter-spacing:.06em;padding:8px 0 2px;">${ex.section}</div>`:'';
+      const sub=ex.type==='time'?fmtClock(ex.duration):(ex.perSide?`${ex.target} rép. × 2 côtés`:`${ex.target} répétitions`);
+      idx++;
+      return `${secHtml}<div class="exercise-list-item">
+        <div class="ex-num">${idx}</div>
+        <div><div class="ex-name">${ex.name}</div><div class="ex-sub">${sub}</div></div>
+      </div>`;
+    }).join('');
+    card.innerHTML=`<div class="card">
+      <div class="card-title">${prog.emoji} ${prog.name} — ${prog.durationLabel}</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">Phase ${pi.phase} · Semaine ${pi.week}${pi.extraRounds>0?' · +1 tour':''} ${pi.extraReps>0?' · +'+pi.extraReps+' rép.':''}</div>
+      ${items}
+    </div>`;
   }
-  return Object.assign({}, e);
 }
 
-function renderWorkoutIntro(){
-  document.getElementById('workout-intro').style.display='block';
-  document.getElementById('workout-active').style.display='none';
-  document.getElementById('workout-report').style.display='none';
-  document.getElementById('introLevelLabel').textContent = 'Niveau ' + DATA.settings.level;
-  const scaled = EXERCISES.map(e=>scaleExercise(e, DATA.settings.level));
-  document.getElementById('exerciseListPreview').innerHTML = scaled.map((e,i)=>`
-    <div class="exercise-list-item">
-      <div class="ex-num">${i+1}</div>
-      <div>
-        <div class="ex-name">${e.name}</div>
-        <div class="ex-sub">${e.type==='time' ? fmtClock(e.duration) : (e.perSide? e.target+' rép. x2 côtés' : e.target+' répétitions')}</div>
-      </div>
-    </div>`).join('');
-}
-document.getElementById('startBtn').onclick = startWorkout;
+/* ===== SÉANCE — MOTEUR ===== */
+let workout=null;
+let _pendingSession=null,_pendingRate=0;
+let _ratingEffort=null,_ratingPain=null;
 
-function startWorkout(){
-  workout = {
-    level: DATA.settings.level,
-    exercises: EXERCISES.map(e=>scaleExercise(e, DATA.settings.level)),
-    index: 0,
-    side: 0, // 0 = côté 1 (ou unique), 1 = côté 2
-    repsCount: 0,
-    timeRemaining: 0,
-    timerId: null,
-    startedAt: new Date().toISOString(),
-    log: [], // {id, name, completed}
-    audioUnlocked: false
+function startWorkout(dayNum){
+  const pi=getProgressionInfo();
+  const prog=DAY_PROGRAMS[dayNum];
+  const exercises=prog.build(pi.extraRounds,pi.extraReps);
+  workout={
+    exercises,index:0,side:0,repsCount:0,
+    timeRemaining:0,timerId:null,paused:false,
+    startedAt:new Date().toISOString(),
+    log:[],programDay:dayNum,programName:prog.name
   };
-  document.getElementById('workout-intro').style.display='none';
-  document.getElementById('workout-active').style.display='block';
+  setWorkoutPhase('active');
   document.getElementById('unlockOverlay').style.display='flex';
+  renderProgressDots();
 }
-document.getElementById('unlockBtn').onclick = function(){
-  workout.audioUnlocked = true;
+document.getElementById('unlockBtn').onclick=function(){
   beep(880,80);
   document.getElementById('unlockOverlay').style.display='none';
   loadExercise(0);
 };
-
-document.getElementById('pauseBtn').onclick = togglePause;
-document.getElementById('skipBtn').onclick = skipExercise;
-document.getElementById('stopBtn').onclick = stopWorkout;
-document.getElementById('repBtn').onclick = addRep;
-
 function renderProgressDots(){
-  const total = workout.exercises.length;
-  let html = '';
-  for(let i=0;i<total;i++){
-    let cls = 'progress-dots-x';
-    if(i<workout.index) cls = 'done';
-    else if(i===workout.index) cls = 'now';
-    html += `<span class="${i<workout.index?'done':(i===workout.index?'now':'')}"></span>`;
-  }
-  document.getElementById('progressDots').innerHTML = html;
+  const total=workout.exercises.filter(e=>e.type!=='rest').length;
+  const done=workout.log.filter(l=>l.completed).length;
+  const pct=total>0?(done/total)*100:0;
+  document.getElementById('wProgressFill').style.width=pct+'%';
+  document.getElementById('wProgressLabel').textContent=`${done} / ${total} exercices`;
 }
-
 function loadExercise(i){
-  if(i >= workout.exercises.length){ finishWorkout(true); return; }
-  workout.index = i;
-  workout.side = 0;
-  workout.repsCount = 0;
-  const ex = workout.exercises[i];
+  if(i>=workout.exercises.length){finishWorkout(true);return;}
+  workout.index=i;workout.side=0;workout.repsCount=0;
+  clearInterval(workout.timerId);
+  const ex=workout.exercises[i];
   renderProgressDots();
-  document.getElementById('exTitle').textContent = ex.name;
-  document.getElementById('exInstruction').textContent = ex.instruction;
-  document.getElementById('sideTag').style.display = ex.perSide ? 'inline-block' : 'none';
-  if(ex.perSide) document.getElementById('sideTag').textContent = 'Côté gauche';
-
-  let announce = 'Prépare-toi pour ' + ex.name + '. ' + ex.instruction;
-  if(ex.perSide) announce += ' Nous commençons par le côté gauche.';
-  if(i===0){
-    const welcome = WELCOME_PHRASES[Math.floor(Math.random()*WELCOME_PHRASES.length)];
-    announce = welcome + ' ' + announce;
-  }
-  speak(announce, ()=>{
-    speak("3, 2, 1, c'est parti.", ()=>{
-      beep(660,120);
-      if(ex.type==='time') startTimedExercise(ex);
-      else startRepsExercise(ex);
+  document.getElementById('sectionLabel').textContent=ex.section||'';
+  if(ex.type==='rest'){
+    document.getElementById('exTitle').textContent='Repos';
+    document.getElementById('exInstruction').textContent=ex.instruction||'Récupère et respire.';
+    document.getElementById('sideTag').style.display='none';
+    document.getElementById('timeModeUI').style.display='block';
+    document.getElementById('repsModeUI').style.display='none';
+    document.getElementById('pauseBtn').disabled=true;
+    const nextEx=workout.exercises[i+1];
+    const roundMsg=ex._nextRound?` Tour ${ex._nextRound} dans ${Math.ceil(ex.duration/60)} minute.`:'';
+    speak('Repos.'+roundMsg+' Récupère et respire profondément.');
+    workout.timeRemaining=ex.duration;
+    drawTimerRing(ex.duration,workout.timeRemaining,true);
+    workout.timerId=setInterval(()=>{
+      if(workout.paused)return;
+      workout.timeRemaining--;
+      drawTimerRing(ex.duration,workout.timeRemaining,true);
+      if(workout.timeRemaining===10&&nextEx){speak('Prépare-toi pour '+nextEx.name+'.');}
+      if(workout.timeRemaining<=0){clearInterval(workout.timerId);loadExercise(i+1);}
+    },1000);
+  } else {
+    document.getElementById('pauseBtn').disabled=false;
+    document.getElementById('sideTag').style.display=ex.perSide?'inline-block':'none';
+    if(ex.perSide) document.getElementById('sideTag').textContent='Côté gauche';
+    document.getElementById('exTitle').textContent=ex.name;
+    document.getElementById('exInstruction').textContent=ex.instruction;
+    let announce='';
+    if(i===0){const w=WELCOME_PHRASES[Math.floor(Math.random()*WELCOME_PHRASES.length)];announce=w+' ';}
+    if(ex.isFirstInRound) announce+=`Tour ${ex.roundNum} sur ${ex.totalRounds}. `;
+    announce+=`Prépare-toi pour ${ex.name}. ${ex.instruction}`;
+    if(ex.perSide) announce+=' On commence par le côté gauche.';
+    speak(announce,()=>{
+      speak("3, 2, 1, c'est parti.",()=>{
+        beep(660,120);
+        if(ex.type==='time') startTimedExercise(ex);
+        else startRepsExercise(ex);
+      });
     });
-  });
+  }
 }
-
+function drawTimerRing(total,remaining,isRest){
+  const pct=((total-remaining)/total)*100;
+  const color=isRest?'var(--accent-2)':'var(--accent)';
+  document.getElementById('timerRingWrap').innerHTML=`<div style="position:relative;display:inline-block;">
+    ${ringSVG(pct,{size:220,stroke:14,color})}
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+      <div class="ring-center-num">${fmtClock(Math.max(0,remaining))}</div>
+      <div class="ring-center-sub">${isRest?'repos':'restant'}</div>
+    </div></div>`;
+}
 function startTimedExercise(ex){
   document.getElementById('timeModeUI').style.display='block';
   document.getElementById('repsModeUI').style.display='none';
-  document.getElementById('pauseBtn').disabled = false;
-  workout.timeRemaining = ex.duration;
-  drawTimerRing(ex.duration, workout.timeRemaining);
-  clearInterval(workout.timerId);
-  workout.timerId = setInterval(()=>{
-    if(workout.paused) return;
+  workout.timeRemaining=ex.duration;
+  drawTimerRing(ex.duration,workout.timeRemaining,false);
+  workout.timerId=setInterval(()=>{
+    if(workout.paused)return;
     workout.timeRemaining--;
-    drawTimerRing(ex.duration, workout.timeRemaining);
-    if(workout.timeRemaining<=0){
-      clearInterval(workout.timerId);
-      completeCurrentExercise();
-    }
-  }, 1000);
-}
-function drawTimerRing(total, remaining){
-  const pct = ((total-remaining)/total)*100;
-  document.getElementById('timerRingWrap').innerHTML = `<div style="position:relative; display:inline-block;">
-    ${ringSVG(pct, {size:220, stroke:14, color:'var(--accent)'})}
-    <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-      <div class="ring-center-num mono">${fmtClock(Math.max(0,remaining))}</div>
-      <div class="ring-center-sub">restant</div>
-    </div>
-  </div>`;
+    drawTimerRing(ex.duration,workout.timeRemaining,false);
+    if(workout.timeRemaining<=0){clearInterval(workout.timerId);completeCurrentExercise();}
+  },1000);
 }
 function startRepsExercise(ex){
   document.getElementById('timeModeUI').style.display='none';
   document.getElementById('repsModeUI').style.display='block';
-  document.getElementById('pauseBtn').disabled = true;
-  const target = ex.target;
-  document.getElementById('repsTarget').textContent = target;
-  document.getElementById('repsCount').textContent = workout.repsCount;
+  document.getElementById('repsTarget').textContent=ex.target;
+  document.getElementById('repsCount').textContent=0;
+  workout.repsCount=0;
 }
 function addRep(){
-  const ex = workout.exercises[workout.index];
+  const ex=workout.exercises[workout.index];
   workout.repsCount++;
-  document.getElementById('repsCount').textContent = workout.repsCount;
-  if(workout.repsCount >= ex.target){
-    if(ex.perSide && workout.side===0){
-      workout.side = 1;
-      workout.repsCount = 0;
-      document.getElementById('repsCount').textContent = 0;
-      document.getElementById('sideTag').textContent = 'Côté droit';
-      speak("Côté droit, c'est parti.", ()=>beep(660,120));
-    } else {
-      completeCurrentExercise();
-    }
+  document.getElementById('repsCount').textContent=workout.repsCount;
+  if(workout.repsCount>=ex.target){
+    if(ex.perSide&&workout.side===0){
+      workout.side=1;workout.repsCount=0;
+      document.getElementById('repsCount').textContent=0;
+      document.getElementById('sideTag').textContent='Côté droit';
+      speak("Côté droit, c'est parti.",()=>beep(660,120));
+    } else {completeCurrentExercise();}
   }
 }
 function togglePause(){
-  workout.paused = !workout.paused;
-  document.getElementById('pauseBtn').textContent = workout.paused ? '▶ Reprendre' : '⏸ Pause';
+  workout.paused=!workout.paused;
+  document.getElementById('pauseBtn').textContent=workout.paused?'▶ Reprendre':'⏸ Pause';
 }
 function skipExercise(){
   clearInterval(workout.timerId);
-  workout.log.push({id:workout.exercises[workout.index].id, name:workout.exercises[workout.index].name, completed:false});
-  goToNextExercise();
+  const ex=workout.exercises[workout.index];
+  if(ex.type!=='rest') workout.log.push({name:ex.name,completed:false});
+  loadExercise(workout.index+1);
 }
 function completeCurrentExercise(){
   beep(990,180);
-  const encourage = ENCOURAGEMENTS[Math.floor(Math.random()*ENCOURAGEMENTS.length)];
-  speak('Exercice terminé. ' + encourage);
-  workout.log.push({id:workout.exercises[workout.index].id, name:workout.exercises[workout.index].name, completed:true});
-  setTimeout(()=>goToNextExercise(), 1200);
-}
-function goToNextExercise(){
-  loadExercise(workout.index+1);
+  const enc=ENCOURAGEMENTS[Math.floor(Math.random()*ENCOURAGEMENTS.length)];
+  speak('Exercice terminé. '+enc);
+  workout.log.push({name:workout.exercises[workout.index].name,completed:true});
+  renderProgressDots();
+  setTimeout(()=>loadExercise(workout.index+1),1200);
 }
 function stopWorkout(){
-  if(confirm('Arrêter la séance maintenant ? Ta progression sera enregistrée comme incomplète.')){
+  if(confirm('Arrêter la séance maintenant ? La progression sera enregistrée comme incomplète.')){
     clearInterval(workout.timerId);
-    // marquer les exercices restants comme non faits
-    for(let i=workout.index; i<workout.exercises.length; i++){
-      if(!workout.log.find(l=>l.id===workout.exercises[i].id)){
-        workout.log.push({id:workout.exercises[i].id, name:workout.exercises[i].name, completed:false});
-      }
+    for(let i=workout.index;i<workout.exercises.length;i++){
+      const ex=workout.exercises[i];
+      if(ex.type!=='rest'&&!workout.log.find(l=>l.name===ex.name))
+        workout.log.push({name:ex.name,completed:false});
     }
     finishWorkout(false);
   }
 }
 function finishWorkout(reachedEnd){
   clearInterval(workout.timerId);
-  const durationSec = Math.max(1, Math.round((Date.now() - new Date(workout.startedAt).getTime())/1000));
-  const completedCount = workout.log.filter(l=>l.completed).length;
-  const rate = Math.round((completedCount/workout.exercises.length)*100);
-  const session = {
-    id: 's_'+Date.now(),
-    date: workout.startedAt.slice(0,10),
-    startedAt: workout.startedAt,
-    durationSec,
-    exercisesDone: workout.log,
-    completed: rate===100,
-    level: workout.level
+  const durationSec=Math.max(1,Math.round((Date.now()-new Date(workout.startedAt))/1000));
+  const completedCount=workout.log.filter(l=>l.completed).length;
+  const totalEx=workout.log.length;
+  const rate=totalEx>0?Math.round((completedCount/totalEx)*100):0;
+  const session={
+    id:'s_'+Date.now(),date:workout.startedAt.slice(0,10),startedAt:workout.startedAt,
+    durationSec,exercisesDone:workout.log,completed:rate>=80,
+    programDay:workout.programDay,programName:workout.programName,
+    effort:null,pain:null
   };
-  DATA.sessions.push(session);
-  saveData();
-
-  const beforeBadges = (window._latestUnlockedBadges||[]).slice();
-  const st = computeStats();
-  const afterUnlocked = BADGES.filter(b=>b.check(st)).map(b=>b.id);
-  const newBadges = afterUnlocked.filter(id=>!beforeBadges.includes(id));
-
-  showReport(session, rate, newBadges);
+  if(!DATA.settings.startDate) DATA.settings.startDate=session.date;
+  DATA.sessions.push(session);saveData();
+  _pendingSession=session;_pendingRate=rate;
+  speak("Séance terminée. Excellent travail. Prenons un moment pour noter comment tu te sens.");
+  showRatingScreen();
 }
-function showReport(session, rate, newBadges){
-  document.getElementById('workout-active').style.display='none';
-  document.getElementById('workout-report').style.display='block';
-  const d = new Date(session.startedAt);
-  document.getElementById('reportDate').textContent = d.toLocaleDateString('fr-FR',{weekday:'long', day:'numeric', month:'long'});
-  document.getElementById('reportDuration').textContent = Math.round(session.durationSec/60);
-  document.getElementById('reportRate').textContent = rate+'%';
-  const tier = rate===100?'high':rate>=70?'mid':'low';
-  const list = COMMENTS[tier];
-  document.getElementById('reportComment').textContent = list[Math.floor(Math.random()*list.length)];
-  const box = document.getElementById('newBadgesBox');
-  if(newBadges.length){
-    const defs = BADGES.filter(b=>newBadges.includes(b.id));
-    box.innerHTML = `<div class="banner" style="margin-top:14px;"><p>🎉 Nouveau badge débloqué : ${defs.map(b=>b.emoji+' '+b.name).join(', ')}</p></div>`;
+
+/* ===== RATING ===== */
+function showRatingScreen(){
+  _ratingEffort=null;_ratingPain=null;
+  setWorkoutPhase('rating');
+  let eHtml='',pHtml='';
+  for(let i=1;i<=10;i++) eHtml+=`<button class="num-btn" data-val="${i}" onclick="selectRating('effort',${i})">${i}</button>`;
+  for(let i=0;i<=10;i++) pHtml+=`<button class="num-btn" data-val="${i}" onclick="selectRating('pain',${i})">${i}</button>`;
+  document.getElementById('effortGrid').innerHTML=eHtml;
+  document.getElementById('painGrid').innerHTML=pHtml;
+}
+function selectRating(type,val){
+  if(type==='effort'){
+    _ratingEffort=val;
+    document.querySelectorAll('#effortGrid .num-btn').forEach(b=>b.classList.remove('selected'));
+    document.querySelector(`#effortGrid .num-btn[data-val="${val}"]`).classList.add('selected');
   } else {
-    box.innerHTML = '';
+    _ratingPain=val;
+    document.querySelectorAll('#painGrid .num-btn').forEach(b=>b.classList.remove('selected','pain-on'));
+    const btn=document.querySelector(`#painGrid .num-btn[data-val="${val}"]`);
+    btn.classList.add(val>=6?'pain-on':'selected');
   }
 }
+document.getElementById('submitRatingBtn').onclick=function(){
+  const idx=DATA.sessions.findIndex(s=>s.id===_pendingSession.id);
+  if(idx>=0){DATA.sessions[idx].effort=_ratingEffort;DATA.sessions[idx].pain=_ratingPain;saveData();}
+  const beforeBadges=window._latestUnlockedBadges||[];
+  const st=computeStats();
+  const newBadges=BADGES.filter(b=>b.check(st)&&!beforeBadges.includes(b.id));
+  showReport(_ratingEffort,_ratingPain,newBadges);
+};
+function showReport(effort,pain,newBadges){
+  setWorkoutPhase('report');
+  const d=new Date(_pendingSession.startedAt);
+  document.getElementById('reportDate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('reportDuration').textContent=Math.round(_pendingSession.durationSec/60);
+  document.getElementById('reportRate').textContent=_pendingRate+'%';
+  document.getElementById('reportEffortShow').textContent=effort!=null?effort+'/10':'—';
+  const painWarn=document.getElementById('reportPainWarning');
+  if(pain!=null&&pain>=7){
+    painWarn.style.display='block';
+    painWarn.textContent='⚠️ Tu as signalé une douleur lombaire de '+pain+'/10. Pense à adapter l\'intensité et à consulter un professionnel si ça persiste.';
+  } else {painWarn.style.display='none';}
+  const tier=_pendingRate===100?'high':_pendingRate>=70?'mid':'low';
+  const list=COMMENTS[tier];
+  document.getElementById('reportComment').textContent=list[Math.floor(Math.random()*list.length)];
+  const box=document.getElementById('newBadgesBox');
+  box.innerHTML=newBadges.length?`<div class="banner" style="margin-top:14px;"><p>🎉 Nouveau badge : ${newBadges.map(b=>b.emoji+' '+b.name).join(', ')}</p></div>`:'';
+}
 function backToDashboardFromReport(){
+  workoutPhase='intro';selectedDay=null;
   showScreen('dashboard');
 }
+document.getElementById('pauseBtn').onclick=togglePause;
+document.getElementById('skipBtn').onclick=skipExercise;
+document.getElementById('stopBtn').onclick=stopWorkout;
+document.getElementById('repBtn').onclick=addRep;
+document.getElementById('openAppleMusicBtnIntro').onclick=openAppleMusic;
+document.getElementById('openAppleMusicBtnWorkout').onclick=openAppleMusic;
 
-/* ---------- SERVICE WORKER (mode hors-ligne) ---------- */
-if('serviceWorker' in navigator){
-  window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
-  });
+/* ===== CALENDRIER ===== */
+const DOW_FR=['L','M','M','J','V','S','D'];
+let calCursor=new Date();
+function setCalTab(tab){
+  document.getElementById('tabCal').classList.toggle('active',tab==='cal');
+  document.getElementById('tabHist').classList.toggle('active',tab==='hist');
+  document.getElementById('tabWeek').classList.toggle('active',tab==='week');
+  document.getElementById('calView').style.display=tab==='cal'?'block':'none';
+  document.getElementById('histView').style.display=tab==='hist'?'block':'none';
+  document.getElementById('weekView').style.display=tab==='week'?'block':'none';
+  if(tab==='hist') renderHistoryList();
+  if(tab==='week') renderWeekReportDetail();
+}
+function changeMonth(delta){calCursor.setMonth(calCursor.getMonth()+delta);renderCalendar();}
+function renderCalendar(){
+  document.getElementById('calMonthLabel').textContent=MONTHS[calCursor.getMonth()]+' '+calCursor.getFullYear();
+  const yr=calCursor.getFullYear(),mo=calCursor.getMonth();
+  const firstDay=new Date(yr,mo,1),startOffset=(firstDay.getDay()+6)%7;
+  const daysInMonth=new Date(yr,mo+1,0).getDate();
+  const cDates=new Set(DATA.sessions.filter(s=>s.completed).map(s=>s.date));
+  const pDates=new Set(DATA.sessions.filter(s=>!s.completed).map(s=>s.date));
+  const todayStr=todayISO();
+  let html=DOW_FR.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  for(let i=0;i<startOffset;i++) html+='<div class="cal-day empty"></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=yr+'-'+pad(mo+1)+'-'+pad(d);
+    let cls='cal-day';
+    if(cDates.has(ds))cls+=' done';
+    else if(pDates.has(ds))cls+=' partial';
+    if(ds===todayStr)cls+=' today';
+    html+=`<div class="${cls}">${d}</div>`;
+  }
+  document.getElementById('calGrid').innerHTML=html;
+}
+function renderHistoryList(){
+  const sorted=[...DATA.sessions].sort((a,b)=>new Date(b.startedAt)-new Date(a.startedAt));
+  if(!sorted.length){document.getElementById('historyList').innerHTML='<p class="note">Aucune séance enregistrée. Lance ta première séance depuis l\'onglet Séance.</p>';return;}
+  document.getElementById('historyList').innerHTML=sorted.map(s=>{
+    const d=new Date(s.startedAt);
+    const doneCount=s.exercisesDone?s.exercisesDone.filter(e=>e.completed).length:0;
+    const eff=s.effort!=null?` · Effort ${s.effort}/10`:'';
+    const pn=s.pain!=null?` · Douleur ${s.pain}/10`:'';
+    return `<div class="history-item">
+      <div><div class="hd-date">${d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} · ${pad(d.getHours())}:${pad(d.getMinutes())}</div>
+      <div class="hd-meta">${s.programName||'Séance'} · ${fmtClock(s.durationSec)}${eff}${pn}</div></div>
+      <span class="status-pill ${s.completed?'ok':'bad'}">${s.completed?'✓ Terminée':'Incomplète'}</span>
+    </div>`;
+  }).join('');
+}
+function renderWeekReportDetail(){
+  const now=new Date(),dow=now.getDay()===0?7:now.getDay();
+  const monday=new Date(now);monday.setDate(now.getDate()-dow+1);monday.setHours(0,0,0,0);
+  const sunday=new Date(monday);sunday.setDate(monday.getDate()+6);sunday.setHours(23,59,59,999);
+  const ws=DATA.sessions.filter(s=>{const d=new Date(s.date);return d>=monday&&d<=sunday;});
+  const rated=ws.filter(s=>s.effort!=null),prated=ws.filter(s=>s.pain!=null);
+  const avgE=rated.length?Math.round(rated.reduce((a,s)=>a+s.effort,0)/rated.length*10)/10:null;
+  const avgP=prated.length?Math.round(prated.reduce((a,s)=>a+s.pain,0)/prated.length*10)/10:null;
+  const fmt=d=>d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+  document.getElementById('weekReportDetail').innerHTML=`
+    <p style="font-size:12px;color:var(--text-dim);margin:0 0 14px;">Semaine du ${fmt(monday)} au ${fmt(sunday)}</p>
+    <div class="row">
+      <div><div class="stat-num" style="font-size:22px;">${ws.length}</div><div class="stat-label">Séances totales</div></div>
+      ${avgE!=null?`<div><div class="stat-num" style="font-size:22px;">${avgE}/10</div><div class="stat-label">Effort moyen</div></div>`:''}
+    </div>
+    ${avgP!=null?`<div class="row" style="margin-top:14px;"><div><div class="stat-num" style="font-size:22px;color:${avgP>=6?'var(--danger)':avgP>=3?'var(--gold)':'var(--accent)'};">${avgP}/10</div><div class="stat-label">Douleur lombaire</div></div></div>`:''}
+    <div style="margin-top:16px;">${ws.map(s=>{const d=new Date(s.startedAt);return `<div class="report-row"><span class="rl">${d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'})}</span><span>${s.programName||'Séance'}${s.effort!=null?' · Effort '+s.effort:''}</span></div>`;}).join('')||'<p class="note">Aucune séance cette semaine.</p>'}</div>
+    ${avgP!=null&&avgP>=6?`<div style="margin-top:14px;padding:12px;background:rgba(226,97,79,.1);border-radius:10px;font-size:13px;color:var(--danger);">⚠️ Douleur moyenne élevée cette semaine. Pense à prendre un jour de repos supplémentaire et à consulter si nécessaire.</div>`:''}`;
 }
 
-/* ---------- INIT ---------- */
+/* ===== PROFIL ===== */
+function renderProfile(){
+  const s=DATA.settings;
+  document.getElementById('dayChips').innerHTML=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map((d,i)=>{
+    const val=i===6?0:i+1;const on=s.reminderDays.includes(val);
+    return `<div class="day-chip ${on?'on':''}" onclick="toggleDay(${val})">${d}</div>`;
+  }).join('');
+  document.getElementById('reminderTime').value=s.reminderTime;
+  document.getElementById('enableNotifBtn').textContent=s.remindersEnabled?'🔕 Désactiver les rappels':'🔔 Activer les notifications';
+  renderVoiceOptions();renderProgressionInfo();
+}
+function renderVoiceOptions(){
+  const s=DATA.settings,select=document.getElementById('voiceSelect');
+  const voices=getFrenchVoices().slice().sort((a,b)=>(isFemale(b)?1:0)-(isFemale(a)?1:0));
+  select.innerHTML=voices.length===0?'<option value="">Voix par défaut</option>':
+    voices.map(v=>`<option value="${v.name}" ${s.voiceName===v.name?'selected':''}>${v.name}${isFemale(v)?' ♀':''}</option>`).join('');
+  document.getElementById('voiceRate').value=s.voiceRate!=null?s.voiceRate:0.87;
+  document.getElementById('voicePitch').value=s.voicePitch!=null?s.voicePitch:1.03;
+}
+function renderProgressionInfo(){
+  const pi=getProgressionInfo();
+  const phases=[
+    {num:1,label:'Fondations',weeks:'Sem. 1–4',desc:'Programme de base. Apprends les bons gestes.'},
+    {num:2,label:'Progression',weeks:'Sem. 5–8',desc:'+1 tour supplémentaire par circuit.'},
+    {num:3,label:'Maîtrise',weeks:'Sem. 9–12',desc:'+2 répétitions par exercice.'},
+  ];
+  const stepsHtml=phases.map(p=>{
+    const active=pi.phase===p.num,done=pi.phase>p.num;
+    return `<div class="prog-step">
+      <div class="prog-step-num" style="background:${done?'var(--accent)':active?'var(--accent-2)':'var(--surface-3)'};color:${done||active?'#062019':'var(--text-faint)'};">${done?'✓':p.num}</div>
+      <div><div style="font-weight:600;font-size:14px;color:${active?'var(--text)':'var(--text-dim)'};">Phase ${p.num} — ${p.label}</div>
+      <div style="font-size:12px;color:var(--text-faint);">${p.weeks} · ${p.desc}</div></div>
+    </div>`;
+  }).join('');
+  const info=DATA.settings.startDate
+    ?`<p style="font-size:13px;color:var(--text-dim);margin:10px 0 0;">Tu es en Semaine ${pi.week}${pi.week<13?', Phase '+pi.phase+'.':', programme complet atteint 🥷.'}${pi.phase<3?' La progression évolue automatiquement avec la régularité.':''}</p>`
+    :'<p class="note">La progression démarre automatiquement à ta première séance complète.</p>';
+  document.getElementById('progressionInfo').innerHTML=stepsHtml+info;
+}
+function toggleDay(val){
+  const i=DATA.settings.reminderDays.indexOf(val);
+  if(i>=0)DATA.settings.reminderDays.splice(i,1);else DATA.settings.reminderDays.push(val);
+  saveData();renderProfile();
+}
+document.getElementById('testVoiceBtn').onclick=function(){
+  const rate=parseFloat(document.getElementById('voiceRate').value);
+  const pitch=parseFloat(document.getElementById('voicePitch').value);
+  const voiceName=document.getElementById('voiceSelect').value;
+  speak("Prépare-toi pour le Pont Fessier. 3, 2, 1, c'est parti.",null,{rate,pitch,voiceName});
+};
+document.getElementById('saveVoiceBtn').onclick=function(){
+  DATA.settings.voiceRate=parseFloat(document.getElementById('voiceRate').value);
+  DATA.settings.voicePitch=parseFloat(document.getElementById('voicePitch').value);
+  DATA.settings.voiceName=document.getElementById('voiceSelect').value;
+  saveData();alert('Voix enregistrée 🥷');
+};
+document.getElementById('enableNotifBtn').onclick=function(){
+  if(DATA.settings.remindersEnabled){DATA.settings.remindersEnabled=false;saveData();renderProfile();return;}
+  if(!('Notification' in window)){alert("Les notifications ne sont pas disponibles sur ce navigateur.");return;}
+  Notification.requestPermission().then(perm=>{
+    DATA.settings.remindersEnabled=perm==='granted';
+    DATA.settings.reminderTime=document.getElementById('reminderTime').value||'18:00';
+    saveData();renderProfile();
+    if(perm!=='granted')alert("Autorisation refusée. Change-la dans les réglages du navigateur.");
+  });
+};
+document.getElementById('resetBtn').onclick=function(){
+  if(confirm('Supprimer toutes tes données Papa Ninja ? Cette action est définitive.')){
+    DATA=defaultData();saveData();renderDashboard();renderProfile();
+    alert('Données réinitialisées.');
+  }
+};
+
+/* ===== NOTIFICATIONS ===== */
+function checkAndFireReminder(){
+  const s=DATA.settings;if(!s.remindersEnabled)return;
+  const now=new Date(),day=now.getDay(),hhmm=pad(now.getHours())+':'+pad(now.getMinutes());
+  if(s.reminderDays.includes(day)&&hhmm===s.reminderTime&&s.lastNotifFiredDate!==todayISO()){
+    if(Notification.permission==='granted'){
+      new Notification('Papa Ninja 🥷',{body:"Il est temps de renforcer ton armure."});
+      s.lastNotifFiredDate=todayISO();saveData();
+    }
+  }
+}
+setInterval(checkAndFireReminder,20000);
+
+/* ===== SERVICE WORKER ===== */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js').catch(()=>{}));
+}
+
+/* ===== INIT ===== */
 function init(){
   renderDashboard();
   if('speechSynthesis' in window){
-    speechSynthesis.onvoiceschanged = ()=>{
-      const profileScreen = document.getElementById('screen-profile');
-      if(profileScreen && profileScreen.classList.contains('active')) renderVoiceOptions();
+    speechSynthesis.onvoiceschanged=()=>{
+      if(document.getElementById('screen-profile').classList.contains('active'))renderVoiceOptions();
     };
   }
 }
