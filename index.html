@@ -164,10 +164,54 @@ nav.bottomnav svg{width:22px;height:22px;}
 .rest-day-card{text-align:center;padding:30px 20px;}
 .rest-day-card .rdc-emoji{font-size:52px;margin-bottom:12px;}
 .rest-day-card p{color:var(--text-dim);font-size:15px;line-height:1.6;}
+/* Bannière mise à jour */
+#updateBanner{display:none;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 16px;background:linear-gradient(135deg,rgba(62,217,142,.18),rgba(79,142,247,.14));
+  border-bottom:1px solid var(--accent-dim);position:sticky;top:0;z-index:100;}
+#updateBanner.show{display:flex;}
+#updateBanner p{font-size:13px;margin:0;color:var(--text);flex:1;}
+#updateBanner button{flex-shrink:0;padding:8px 14px;border-radius:10px;border:none;
+  background:var(--accent);color:#062019;font-size:13px;font-weight:700;cursor:pointer;}
+/* Modal changelog */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);
+  display:flex;align-items:flex-end;z-index:200;animation:fadeIn .2s ease;}
+.modal-sheet{background:var(--surface);border-radius:24px 24px 0 0;
+  padding:24px 20px calc(24px + var(--safe-bottom));width:100%;max-height:80vh;overflow-y:auto;}
+.modal-sheet h2{font-size:20px;margin-bottom:4px;}
+.modal-sheet .version-tag{font-size:12px;color:var(--accent);font-weight:600;
+  background:rgba(62,217,142,.1);padding:4px 10px;border-radius:999px;display:inline-block;margin-bottom:16px;}
+.modal-sheet ul{padding:0 0 0 18px;margin:0;}
+.modal-sheet ul li{font-size:14px;color:var(--text-dim);margin-bottom:8px;line-height:1.4;}
+.modal-sheet ul li strong{color:var(--text);}
+/* Footer version */
+.version-footer{text-align:center;font-size:11px;color:var(--text-faint);
+  padding:10px 0 calc(4px + var(--safe-bottom));letter-spacing:.04em;}
 </style>
 </head>
 <body>
 <div id="app">
+
+  <!-- Bannière mise à jour -->
+  <div id="updateBanner">
+    <p>🥷 Nouvelle version de Papa Ninja disponible.</p>
+    <button onclick="applyUpdate()">Mettre à jour</button>
+  </div>
+
+  <!-- Modal changelog (affiché une seule fois par version) -->
+  <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
+    <div class="modal-sheet">
+      <h2>🥷 Papa Ninja</h2>
+      <span class="version-tag">Nouveautés V2.2</span>
+      <ul>
+        <li><strong>Mises à jour automatiques</strong> — Détection et installation sans manipulation.</li>
+        <li><strong>Bluetooth amélioré</strong> — Session audio maintenue tout au long de la séance pour AirPods et enceintes.</li>
+        <li><strong>Écran allumé</strong> — Wake Lock actif pendant l'entraînement.</li>
+        <li><strong>Service Worker optimisé</strong> — Toujours la dernière version, cache géré automatiquement.</li>
+        <li><strong>Version visible</strong> — Numéro de version affiché en bas du tableau de bord.</li>
+      </ul>
+      <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
+    </div>
+  </div>
   <div class="topbar">
     <div class="brand"><span class="mark">🥷</span><span class="name">Papa Ninja</span></div>
     <div class="level-pill phase-1" id="levelPill">Phase 1</div>
@@ -354,11 +398,67 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil
     </button>
   </nav>
-</div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.2</div></div>
 <script>
 /* =====================================================================
-   PAPA NINJA 🥷 v2.1 — Programme 7 jours avec progression automatique
+   PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
+
+const APP_VERSION = '2.2';
+
+/* ===== MISE À JOUR AUTOMATIQUE ===== */
+let _swRegistration = null;
+
+function applyUpdate() {
+  if (_swRegistration && _swRegistration.waiting) {
+    _swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+  }
+  window.location.reload();
+}
+
+function showUpdateBanner() {
+  document.getElementById('updateBanner').classList.add('show');
+}
+
+function openChangelog() {
+  document.getElementById('changelogModal').style.display = 'flex';
+}
+
+function closeChangelog(evt) {
+  if (evt && evt.target !== document.getElementById('changelogModal')) return;
+  document.getElementById('changelogModal').style.display = 'none';
+}
+
+function checkShowChangelog() {
+  const seen = localStorage.getItem('papaNinjaSeenVersion');
+  if (seen !== APP_VERSION) {
+    localStorage.setItem('papaNinjaSeenVersion', APP_VERSION);
+    setTimeout(() => openChangelog(), 800);
+  }
+}
+
+function initServiceWorkerUpdates() {
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.ready.then(reg => {
+    _swRegistration = reg;
+    // Nouveau SW déjà en attente (ex : page rechargée après install)
+    if (reg.waiting) { showUpdateBanner(); return; }
+    // Nouveau SW en cours d'installation
+    reg.addEventListener('updatefound', () => {
+      const sw = reg.installing;
+      sw.addEventListener('statechange', () => {
+        if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+          showUpdateBanner();
+        }
+      });
+    });
+  });
+  // Nouveau SW a pris le contrôle → rechargement propre
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) { refreshing = true; window.location.reload(); }
+  });
+}
 
 /* ===== PROGRAMMES ===== */
 function addCircuit(list, exercises, rounds, restSec){
@@ -598,6 +698,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 /* ===== AUDIO BLUETOOTH — déverrouillage session iOS ===== */
+// Joue un micro-silence via AudioContext pour forcer le routage vers Bluetooth/enceinte
 async function unlockAudioSession(){
   try{
     const ctx=getCtx();
@@ -606,6 +707,17 @@ async function unlockAudioSession(){
     const src=ctx.createBufferSource();
     src.buffer=buf;src.connect(ctx.destination);src.start(0);
   }catch(e){}
+}
+// Keepalive : maintient la session audio active toute la séance (évite les coupures Bluetooth)
+let _audioKATimer=null;
+function startAudioKeepAlive(){
+  clearInterval(_audioKATimer);
+  _audioKATimer=setInterval(async()=>{
+    if(workoutPhase==='active') await unlockAudioSession();
+  },25000);
+}
+function stopAudioKeepAlive(){
+  clearInterval(_audioKATimer);_audioKATimer=null;
 }
 
 /* ===== VOIX ===== */
@@ -814,6 +926,7 @@ function startWorkout(dayNum){
 }
 document.getElementById('unlockBtn').onclick=async function(){
   await unlockAudioSession();   // route audio vers Bluetooth / enceinte externe
+  startAudioKeepAlive();        // maintient la session active toute la séance
   await requestWakeLock();      // empêche la mise en veille de l'écran
   beep(880,80);
   document.getElementById('unlockOverlay').style.display='none';
@@ -936,6 +1049,7 @@ function stopWorkout(){
   if(confirm('Arrêter la séance maintenant ? La progression sera enregistrée comme incomplète.')){
     clearInterval(workout.timerId);
     releaseWakeLock();
+    stopAudioKeepAlive();
     for(let i=workout.index;i<workout.exercises.length;i++){
       const ex=workout.exercises[i];
       if(ex.type!=='rest'&&!workout.log.find(l=>l.name===ex.name))
@@ -947,6 +1061,7 @@ function stopWorkout(){
 function finishWorkout(reachedEnd){
   clearInterval(workout.timerId);
   releaseWakeLock();
+  stopAudioKeepAlive();
   const durationSec=Math.max(1,Math.round((Date.now()-new Date(workout.startedAt))/1000));
   const completedCount=workout.log.filter(l=>l.completed).length;
   const totalEx=workout.log.length;
@@ -1180,12 +1295,17 @@ setInterval(checkAndFireReminder,20000);
 
 /* ===== SERVICE WORKER ===== */
 if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js').catch(()=>{}));
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('service-worker.js')
+      .catch(()=>{});
+  });
 }
 
 /* ===== INIT ===== */
 function init(){
   renderDashboard();
+  checkShowChangelog();
+  initServiceWorkerUpdates();
   if('speechSynthesis' in window){
     speechSynthesis.onvoiceschanged=()=>{
       if(document.getElementById('screen-profile').classList.contains('active'))renderVoiceOptions();
