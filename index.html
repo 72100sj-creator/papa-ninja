@@ -244,6 +244,7 @@ nav.bottomnav svg{width:22px;height:22px;}
         </div>
         <button class="btn btn-secondary btn-sm" id="openAppleMusicBtnWorkout" style="margin-top:10px;">🎵 Ouvrir Apple Music</button>
         <button class="btn btn-danger btn-sm" id="stopBtn" style="margin-top:10px;">■ Arrêter la séance</button>
+        <p class="note" id="wakeLockNote" style="text-align:center;margin-top:8px;display:none;">📺 Écran maintenu allumé</p>
         <div class="unlock-overlay" id="unlockOverlay" style="display:none;">
           <div style="font-size:40px;">🔊</div>
           <p style="font-size:14px;color:var(--text-dim);max-width:260px;">Active le son pour entendre les annonces vocales de Papa Ninja.</p>
@@ -573,6 +574,40 @@ function beep(freq,ms){
     setTimeout(()=>osc.stop(),ms||150);}catch(e){}
 }
 
+/* ===== WAKE LOCK (écran allumé pendant la séance) ===== */
+let wakeLock=null;
+async function requestWakeLock(){
+  try{
+    if('wakeLock' in navigator){
+      wakeLock=await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release',()=>{
+        wakeLock=null;
+        const note=document.getElementById('wakeLockNote');
+        if(note) note.style.display='none';
+      });
+      const note=document.getElementById('wakeLockNote');
+      if(note) note.style.display='block';
+    }
+  }catch(e){}
+}
+function releaseWakeLock(){
+  if(wakeLock){wakeLock.release().catch(()=>{});wakeLock=null;}
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&workoutPhase==='active') requestWakeLock();
+});
+
+/* ===== AUDIO BLUETOOTH — déverrouillage session iOS ===== */
+async function unlockAudioSession(){
+  try{
+    const ctx=getCtx();
+    if(ctx.state==='suspended') await ctx.resume();
+    const buf=ctx.createBuffer(1,1,22050);
+    const src=ctx.createBufferSource();
+    src.buffer=buf;src.connect(ctx.destination);src.start(0);
+  }catch(e){}
+}
+
 /* ===== VOIX ===== */
 const FVHINTS=['amélie','amelie','audrey','céline','celine','charlotte','claire','elise','emma','julie','julia','lea','léa','manon','marie','nathalie','sophie','virginie','female','femme','woman','samantha','siri'];
 function getFrenchVoices(){return speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().startsWith('fr'));}
@@ -777,7 +812,9 @@ function startWorkout(dayNum){
   document.getElementById('unlockOverlay').style.display='flex';
   renderProgressDots();
 }
-document.getElementById('unlockBtn').onclick=function(){
+document.getElementById('unlockBtn').onclick=async function(){
+  await unlockAudioSession();   // route audio vers Bluetooth / enceinte externe
+  await requestWakeLock();      // empêche la mise en veille de l'écran
   beep(880,80);
   document.getElementById('unlockOverlay').style.display='none';
   loadExercise(0);
@@ -898,6 +935,7 @@ function completeCurrentExercise(){
 function stopWorkout(){
   if(confirm('Arrêter la séance maintenant ? La progression sera enregistrée comme incomplète.')){
     clearInterval(workout.timerId);
+    releaseWakeLock();
     for(let i=workout.index;i<workout.exercises.length;i++){
       const ex=workout.exercises[i];
       if(ex.type!=='rest'&&!workout.log.find(l=>l.name===ex.name))
@@ -908,6 +946,7 @@ function stopWorkout(){
 }
 function finishWorkout(reachedEnd){
   clearInterval(workout.timerId);
+  releaseWakeLock();
   const durationSec=Math.max(1,Math.round((Date.now()-new Date(workout.startedAt))/1000));
   const completedCount=workout.log.filter(l=>l.completed).length;
   const totalEx=workout.log.length;
