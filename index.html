@@ -920,7 +920,23 @@ document.getElementById('unlockBtn').onclick=async function(){
   await requestWakeLock();
   beep(880,80);
   document.getElementById('unlockOverlay').style.display='none';
-  loadExercise(0);
+
+  // Pré-chauffe le moteur TTS iOS : instancie AVSpeechSynthesizer en silence
+  // pendant que l'utilisateur voit l'overlay disparaître.
+  // Sans ça, la première annonce arrive avant que le moteur soit prêt (200–600 ms de latence iOS).
+  if('speechSynthesis' in window){
+    speechSynthesis.cancel(); // vide la file au cas où
+    const warmup=new SpeechSynthesisUtterance('\u00A0'); // espace insécable — quasi-instantané
+    warmup.volume=0;
+    warmup.rate=2;
+    // Choisir la voix dès maintenant pour éviter le délai async de getVoices()
+    const voices=getFrenchVoices();
+    if(voices.length) warmup.voice=pickVoice(voices);
+    speechSynthesis.speak(warmup);
+  }
+
+  // 750 ms : délai minimal pour que le moteur TTS et la liste des voix soient prêts
+  setTimeout(()=>loadExercise(0), 750);
 };
 function renderProgressDots(){
   const total=workout.exercises.filter(e=>e.type!=='rest').length;
