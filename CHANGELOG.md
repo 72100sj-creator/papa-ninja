@@ -1,3 +1,10 @@
+## V2.4 — Juin 2026
+- ✅ Correctif démarrage audio : pré-chauffe du moteur TTS iOS (AVSpeechSynthesizer) + délai 750 ms
+- ✅ Première annonce vocale de séance toujours jouée en entier
+- ✅ speechSynthesis.cancel() au démarrage pour vider toute file résiduelle
+- ✅ Voix sélectionnée dès l'unlock pour éviter le délai async de getVoices()
+- ✅ Service Worker mis à jour (cache papa-ninja-v2.4)
+
 # Papa Ninja 🥷 — Journal des versions
 
 ## V2.3 — Juin 2026

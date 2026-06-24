@@ -201,13 +201,12 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V2.3</span>
+      <span class="version-tag">Nouveautés V2.4</span>
       <ul>
-        <li><strong>Audio stabilisé</strong> — Suppression du correctif Bluetooth expérimental qui interrompait Apple Music. Le son fonctionne normalement, Bluetooth actif en mode Safari.</li>
-        <li><strong>Mises à jour automatiques</strong> — Détection et installation sans manipulation (V2.2).</li>
-        <li><strong>Écran allumé</strong> — Wake Lock actif pendant l'entraînement (V2.2).</li>
-        <li><strong>Service Worker optimisé</strong> — Toujours la dernière version, cache géré automatiquement (V2.2).</li>
-        <li><strong>Version visible</strong> — Numéro de version en bas du tableau de bord (V2.2).</li>
+        <li><strong>Correctif démarrage audio</strong> — La première annonce vocale n'est plus perdue. Le moteur vocal iOS est maintenant pré-initialisé avant la première consigne.</li>
+        <li><strong>Audio stabilisé (V2.3)</strong> — Suppression du correctif Bluetooth expérimental qui interrompait Apple Music.</li>
+        <li><strong>Mises à jour automatiques (V2.2)</strong> — Détection et installation sans manipulation.</li>
+        <li><strong>Écran allumé (V2.2)</strong> — Wake Lock actif pendant l'entraînement.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -398,13 +397,13 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.3</div></div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.4</div></div>
 <script>
 /* =====================================================================
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '2.3';
+const APP_VERSION = '2.4';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
