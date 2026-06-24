@@ -203,11 +203,11 @@ nav.bottomnav svg{width:22px;height:22px;}
       <h2>🥷 Papa Ninja</h2>
       <span class="version-tag">Nouveautés V2.3</span>
       <ul>
-        <li><strong>Correctif Bluetooth iPhone PWA V2.3</strong> — Session audio HTMLAudioElement en boucle : AirPods, enceintes et casques Bluetooth fonctionnent maintenant en mode PWA installée.</li>
-        <li><strong>Logs de diagnostic audio</strong> — Consultables dans la console du navigateur pour vérifier la session Bluetooth.</li>
+        <li><strong>Audio stabilisé</strong> — Suppression du correctif Bluetooth expérimental qui interrompait Apple Music. Le son fonctionne normalement, Bluetooth actif en mode Safari.</li>
         <li><strong>Mises à jour automatiques</strong> — Détection et installation sans manipulation (V2.2).</li>
         <li><strong>Écran allumé</strong> — Wake Lock actif pendant l'entraînement (V2.2).</li>
         <li><strong>Service Worker optimisé</strong> — Toujours la dernière version, cache géré automatiquement (V2.2).</li>
+        <li><strong>Version visible</strong> — Numéro de version en bas du tableau de bord (V2.2).</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -697,98 +697,18 @@ document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&workoutPhase==='active') requestWakeLock();
 });
 
-/* ===== AUDIO BLUETOOTH — Solution #1 : HTMLAudioElement + WAV silencieux généré en JS ===== */
-// POURQUOI : AudioContext (ancienne méthode) utilise la session "interactive" → ne force PAS Bluetooth.
-// HTMLAudioElement.play() force iOS en AVAudioSessionCategoryPlayback → Bluetooth prioritaire.
-// Une fois cette session établie en boucle, speechSynthesis suit la même route (AirPods, enceintes…).
-
-function createSilentWAV() {
-  // Génère un fichier WAV 3 secondes / 8kHz / mono / 16-bit en pur JavaScript (aucun fichier externe)
-  const sampleRate = 8000, duration = 3;
-  const numSamples = sampleRate * duration;
-  const buffer = new ArrayBuffer(44 + numSamples * 2);
-  const v = new DataView(buffer);
-  const ws = (o, s) => s.split('').forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
-  ws(0, 'RIFF'); v.setUint32(4, 36 + numSamples * 2, true);
-  ws(8, 'WAVE'); ws(12, 'fmt ');
-  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
-  v.setUint32(24, sampleRate, true); v.setUint32(28, sampleRate * 2, true);
-  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
-  ws(36, 'data'); v.setUint32(40, numSamples * 2, true);
-  // PCM data = zéros (silence complet), déjà initialisé à 0
-  console.log('[PapaNinja Audio] 🎵 WAV silencieux généré —', Math.round((44 + numSamples * 2) / 1024), 'Ko, durée', duration, 's, loop=true');
-  return URL.createObjectURL(new Blob([buffer], {type: 'audio/wav'}));
-}
-
-let _btAudioEl = null, _btWatchdogTimer = null, _silentWAVUrl = null;
-
-async function startBTAudioLoop() {
-  if (_btAudioEl && !_btAudioEl.paused) {
-    console.log('[PapaNinja Audio] ✅ Loop déjà active — rien à faire');
-    return;
-  }
-  console.log('[PapaNinja Audio] 🚀 Démarrage session Bluetooth (HTMLAudioElement)...');
-  if (!_silentWAVUrl) _silentWAVUrl = createSilentWAV();
-  _btAudioEl = new Audio();
-  _btAudioEl.src = _silentWAVUrl;
-  _btAudioEl.loop = true;
-  _btAudioEl.volume = 0.001; // 0,1 % — inaudible en pratique
-  _btAudioEl.addEventListener('play',  () => console.log('[PapaNinja Audio] ▶️  Loop démarrée — AVAudioSessionCategoryPlayback → Bluetooth actif'));
-  _btAudioEl.addEventListener('pause', () => console.log('[PapaNinja Audio] ⏸  Loop pausée — route Bluetooth peut être perdue'));
-  _btAudioEl.addEventListener('error', e  => console.warn('[PapaNinja Audio] ❌ Erreur loop:', e.message||e));
-  try {
-    await _btAudioEl.play();
-    console.log('[PapaNinja Audio] ✅ HTMLAudioElement.play() réussi — session Bluetooth établie');
-    logAudioDevices();
-  } catch(e) {
-    console.warn('[PapaNinja Audio] ❌ HTMLAudioElement.play() échoué:', e.message, '— vérifier geste utilisateur');
-  }
-  // Watchdog toutes les 10s : vérifie que la loop reste vivante, relance si nécessaire
-  clearInterval(_btWatchdogTimer);
-  _btWatchdogTimer = setInterval(() => {
-    if (!_btAudioEl) return;
-    const etat = _btAudioEl.paused ? '⏸ PAUSÉE' : '▶️ active';
-    console.log('[PapaNinja Audio] 🔍 Watchdog —', etat, '| position:', _btAudioEl.currentTime.toFixed(2) + 's');
-    if (_btAudioEl.paused && workoutPhase === 'active') {
-      console.log('[PapaNinja Audio] 🔄 Loop interrompue, relance...');
-      _btAudioEl.play().catch(e => console.warn('[PapaNinja Audio] ❌ Relance échouée:', e.message));
-    }
-  }, 10000);
-}
-
-function stopBTAudioLoop() {
-  clearInterval(_btWatchdogTimer); _btWatchdogTimer = null;
-  if (_btAudioEl) {
-    _btAudioEl.pause(); _btAudioEl.src = ''; _btAudioEl = null;
-    console.log('[PapaNinja Audio] ⏹  Loop arrêtée — fin de séance, session audio libérée');
-  }
-}
-
-function logAudioDevices() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-    console.log('[PapaNinja Audio] ℹ️  enumerateDevices non disponible sur cet appareil');
-    return;
-  }
-  navigator.mediaDevices.enumerateDevices().then(devices => {
-    const sorties = devices.filter(d => d.kind === 'audiooutput');
-    if (sorties.length === 0) {
-      console.log('[PapaNinja Audio] 🔊 Sorties audio : labels masqués par iOS (normal sans permission microphone)');
-    } else {
-      sorties.forEach(d => console.log('[PapaNinja Audio] 🎧 Sortie audio détectée :', d.label || ('ID:' + d.deviceId.slice(0,8))));
-    }
-  }).catch(e => console.log('[PapaNinja Audio] enumerateDevices erreur:', e.message));
-}
-
-// Backup secondaire : AudioContext unlock (maintenu pour compatibilité)
-async function unlockAudioSession() {
-  try {
-    const ctx = getCtx();
-    if (ctx.state === 'suspended') await ctx.resume();
-    const buf = ctx.createBuffer(1, 1, 22050);
-    const src = ctx.createBufferSource();
-    src.buffer = buf; src.connect(ctx.destination); src.start(0);
-    console.log('[PapaNinja Audio] 🔓 AudioContext déverrouillé (backup) — état:', ctx.state);
-  } catch(e) { console.warn('[PapaNinja Audio] AudioContext unlock échoué:', e.message); }
+/* ===== AUDIO — déverrouillage AudioContext (geste utilisateur requis par iOS) ===== */
+// Note : en PWA standalone iOS, speechSynthesis sort sur le speaker interne quel que soit
+// le périphérique Bluetooth connecté. C'est une contrainte Apple non contournable en JavaScript.
+// En mode Safari, le Bluetooth fonctionne normalement.
+async function unlockAudioSession(){
+  try{
+    const ctx=getCtx();
+    if(ctx.state==='suspended') await ctx.resume();
+    const buf=ctx.createBuffer(1,1,22050);
+    const src=ctx.createBufferSource();
+    src.buffer=buf;src.connect(ctx.destination);src.start(0);
+  }catch(e){}
 }
 
 /* ===== VOIX ===== */
@@ -996,11 +916,8 @@ function startWorkout(dayNum){
   renderProgressDots();
 }
 document.getElementById('unlockBtn').onclick=async function(){
-  console.log('[PapaNinja Audio] 👆 Geste utilisateur détecté — initialisation audio...');
-  console.log('[PapaNinja Audio] ℹ️  Mode:', window.navigator.standalone ? 'PWA standalone' : 'Safari navigateur');
-  await unlockAudioSession();   // backup AudioContext
-  await startBTAudioLoop();     // solution principale : HTMLAudioElement → Bluetooth iOS
-  await requestWakeLock();      // écran allumé pendant la séance
+  await unlockAudioSession();
+  await requestWakeLock();
   beep(880,80);
   document.getElementById('unlockOverlay').style.display='none';
   loadExercise(0);
@@ -1122,7 +1039,6 @@ function stopWorkout(){
   if(confirm('Arrêter la séance maintenant ? La progression sera enregistrée comme incomplète.')){
     clearInterval(workout.timerId);
     releaseWakeLock();
-    stopBTAudioLoop();
     for(let i=workout.index;i<workout.exercises.length;i++){
       const ex=workout.exercises[i];
       if(ex.type!=='rest'&&!workout.log.find(l=>l.name===ex.name))
@@ -1134,7 +1050,6 @@ function stopWorkout(){
 function finishWorkout(reachedEnd){
   clearInterval(workout.timerId);
   releaseWakeLock();
-  stopBTAudioLoop();
   const durationSec=Math.max(1,Math.round((Date.now()-new Date(workout.startedAt))/1000));
   const completedCount=workout.log.filter(l=>l.completed).length;
   const totalEx=workout.log.length;
