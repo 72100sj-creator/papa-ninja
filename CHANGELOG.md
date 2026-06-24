@@ -1,5 +1,13 @@
 # Papa Ninja 🥷 — Journal des versions
 
+## V2.3 — Juin 2026
+- ✅ Correctif Bluetooth iPhone PWA : HTMLAudioElement + WAV silencieux généré en JS (AVAudioSessionCategoryPlayback)
+- ✅ Logs de diagnostic audio dans la console ([PapaNinja Audio])
+- ✅ Watchdog audio toutes les 10 secondes — relance automatique si la session est interrompue
+- ✅ Détection du mode (Safari vs PWA standalone) au démarrage de séance
+- ✅ AudioContext conservé comme backup secondaire
+- ✅ Service Worker mis à jour (cache papa-ninja-v2.3)
+
 ## V2.2 — Juin 2026
 - ✅ Gestion automatique des mises à jour (détection, bannière, installation sans manipulation)
 - ✅ Amélioration Bluetooth : keepalive audio pour maintenir la session active durant toute la séance
