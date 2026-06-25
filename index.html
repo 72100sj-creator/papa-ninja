@@ -726,7 +726,9 @@ function speak(text,onend,override){
   let chosen=wn?voices.find(v=>v.name===wn):null;
   if(!chosen&&voices.length)chosen=pickVoice(voices);
   if(chosen)u.voice=chosen;
-  u.onend=()=>{if(onend)onend();};u.onerror=()=>{if(onend)onend();};
+  let fired=false;
+  const done=()=>{if(!fired){fired=true;if(onend)onend();}};
+  u.onend=done;u.onerror=done;
   speechSynthesis.speak(u);
 }
 function openAppleMusic(){window.open('https://music.apple.com/','_blank');}
@@ -924,18 +926,21 @@ document.getElementById('unlockBtn').onclick=async function(){
   // pendant que l'utilisateur voit l'overlay disparaître.
   // Sans ça, la première annonce arrive avant que le moteur soit prêt (200–600 ms de latence iOS).
   if('speechSynthesis' in window){
-    speechSynthesis.cancel(); // vide la file au cas où
-    const warmup=new SpeechSynthesisUtterance('\u00A0'); // espace insécable — quasi-instantané
+    speechSynthesis.cancel();
+    const warmup=new SpeechSynthesisUtterance('\u00A0');
     warmup.volume=0;
     warmup.rate=2;
-    // Choisir la voix dès maintenant pour éviter le délai async de getVoices()
     const voices=getFrenchVoices();
     if(voices.length) warmup.voice=pickVoice(voices);
+    let wStarted=false;
+    const goFirst=()=>{if(!wStarted){wStarted=true;setTimeout(()=>loadExercise(0),300);}};
+    warmup.onend=goFirst;
+    warmup.onerror=goFirst;
+    setTimeout(goFirst,2000); // fallback si onend ne se déclenche jamais
     speechSynthesis.speak(warmup);
+  } else {
+    setTimeout(()=>loadExercise(0),300);
   }
-
-  // 750 ms : délai minimal pour que le moteur TTS et la liste des voix soient prêts
-  setTimeout(()=>loadExercise(0), 750);
 };
 function renderProgressDots(){
   const total=workout.exercises.filter(e=>e.type!=='rest').length;
@@ -1045,10 +1050,10 @@ function skipExercise(){
 function completeCurrentExercise(){
   beep(990,180);
   const enc=ENCOURAGEMENTS[Math.floor(Math.random()*ENCOURAGEMENTS.length)];
-  speak('Exercice terminé. '+enc);
+  const nextIdx=workout.index+1;
   workout.log.push({name:workout.exercises[workout.index].name,completed:true});
   renderProgressDots();
-  setTimeout(()=>loadExercise(workout.index+1),1200);
+  speak('Exercice terminé. '+enc,()=>loadExercise(nextIdx));
 }
 function stopWorkout(){
   if(confirm('Arrêter la séance maintenant ? La progression sera enregistrée comme incomplète.')){
