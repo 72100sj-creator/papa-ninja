@@ -726,9 +726,23 @@ function speak(text,onend,override){
   let chosen=wn?voices.find(v=>v.name===wn):null;
   if(!chosen&&voices.length)chosen=pickVoice(voices);
   if(chosen)u.voice=chosen;
+  console.log('[PN speak] voix dispo:',voices.length,'| choisie:',chosen?chosen.name:'AUCUNE','| texte:',text.slice(0,45));
   let fired=false;
   const done=()=>{if(!fired){fired=true;if(onend)onend();}};
-  u.onend=done;u.onerror=done;
+  u.onstart=()=>console.log('[PN speak] onstart:',text.slice(0,35));
+  u.onend=()=>{console.log('[PN speak] onend:',text.slice(0,35));done();};
+  u.onerror=(e)=>{console.warn('[PN speak] onerror:',e.error,'|',text.slice(0,35));done();};
+  // Timeout de sécurité : si iOS ne déclenche jamais onend ni onerror (bug cold start),
+  // on progresse quand même. Ne s'active que si un callback onend est attendu.
+  if(onend){
+    const ms=Math.min(15000,Math.max(7000,text.length*90));
+    setTimeout(()=>{
+      if(!fired){
+        console.warn('[PN speak] TIMEOUT SÉCURITÉ après',ms,'ms — onend jamais reçu:',text.slice(0,35));
+        done();
+      }
+    },ms);
+  }
   speechSynthesis.speak(u);
 }
 function openAppleMusic(){window.open('https://music.apple.com/','_blank');}
@@ -921,22 +935,40 @@ document.getElementById('unlockBtn').onclick=async function(){
   await requestWakeLock();
   beep(880,80);
   document.getElementById('unlockOverlay').style.display='none';
-
-  // Pré-chauffe le moteur TTS iOS : instancie AVSpeechSynthesizer en silence
-  // pendant que l'utilisateur voit l'overlay disparaître.
-  // Sans ça, la première annonce arrive avant que le moteur soit prêt (200–600 ms de latence iOS).
   if('speechSynthesis' in window){
     speechSynthesis.cancel();
     const warmup=new SpeechSynthesisUtterance('\u00A0');
     warmup.volume=0;
     warmup.rate=2;
-    const voices=getFrenchVoices();
-    if(voices.length) warmup.voice=pickVoice(voices);
+    const voicesAtWarmup=getFrenchVoices();
+    if(voicesAtWarmup.length) warmup.voice=pickVoice(voicesAtWarmup);
+    console.log('[PN init] unlock | voix au warmup:',voicesAtWarmup.length,voicesAtWarmup.length?pickVoice(voicesAtWarmup).name:'aucune');
     let wStarted=false;
-    const goFirst=()=>{if(!wStarted){wStarted=true;setTimeout(()=>loadExercise(0),300);}};
-    warmup.onend=goFirst;
-    warmup.onerror=goFirst;
-    setTimeout(goFirst,2000); // fallback si onend ne se déclenche jamais
+    const startFirst=()=>{
+      if(wStarted) return;
+      wStarted=true;
+      const v=getFrenchVoices();
+      console.log('[PN init] startFirst | voix disponibles:',v.length);
+      if(v.length>0){
+        console.log('[PN init] voix OK → loadExercise(0) dans 300ms');
+        setTimeout(()=>loadExercise(0),300);
+      } else {
+        // Voix pas encore chargées : attendre onvoiceschanged avec fallback 2s
+        console.log('[PN init] voix vides — attente onvoiceschanged...');
+        let vDone=false;
+        const go=()=>{
+          if(vDone) return;
+          vDone=true;
+          console.log('[PN init] onvoiceschanged | voix:',getFrenchVoices().length,'→ loadExercise(0)');
+          setTimeout(()=>loadExercise(0),300);
+        };
+        speechSynthesis.onvoiceschanged=go;
+        setTimeout(go,2000); // fallback si onvoiceschanged ne se déclenche jamais
+      }
+    };
+    warmup.onend=()=>{console.log('[PN init] warmup onend');startFirst();};
+    warmup.onerror=(e)=>{console.warn('[PN init] warmup onerror:',e.error);startFirst();};
+    setTimeout(startFirst,2000); // fallback si warmup reste bloqué
     speechSynthesis.speak(warmup);
   } else {
     setTimeout(()=>loadExercise(0),300);
