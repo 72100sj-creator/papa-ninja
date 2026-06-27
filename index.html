@@ -743,7 +743,28 @@ function speak(text,onend,override){
       }
     },ms);
   }
-  speechSynthesis.speak(u);
+  // Lancer la parole — si le moteur vocal n'est pas encore prêt, attendre onvoiceschanged ou 2s max
+  if(speechSynthesis.getVoices().length===0){
+    console.warn('[PN speak] moteur non prêt — attente voix max 2s:',text.slice(0,40));
+    let waitDone=false;
+    const trySpeak=()=>{
+      if(waitDone) return;
+      waitDone=true;
+      const fv=getFrenchVoices();
+      if(fv.length>0){
+        u.voice=pickVoice(fv);
+        console.log('[PN speak] voix prête après attente:',u.voice.name,'→ parole normale');
+      } else {
+        console.warn('[PN speak] aucune voix après 2s — parole tentée sans voix (fallback)');
+      }
+      speechSynthesis.speak(u);
+    };
+    const prevVCH=speechSynthesis.onvoiceschanged;
+    speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=prevVCH;trySpeak();};
+    setTimeout(trySpeak,2000);
+  } else {
+    speechSynthesis.speak(u);
+  }
 }
 function openAppleMusic(){window.open('https://music.apple.com/','_blank');}
 
