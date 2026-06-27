@@ -1,7 +1,7 @@
 // Papa Ninja 🥷 — Service Worker v2.2
 // Stratégie : network-first pour HTML (mise à jour immédiate), cache-first pour assets
 
-const CACHE_NAME = 'papa-ninja-v2.4';
+const CACHE_NAME = 'papa-ninja-v2.5';
 const ASSETS = [
   './index.html',
   './manifest.json',

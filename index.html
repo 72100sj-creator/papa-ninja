@@ -710,6 +710,14 @@ async function unlockAudioSession(){
     src.buffer=buf;src.connect(ctx.destination);src.start(0);
   }catch(e){}
 }
+let _audioKATimer=null;
+function startAudioKeepAlive(){
+  clearInterval(_audioKATimer);
+  _audioKATimer=setInterval(async()=>{
+    if(workoutPhase==='active') await unlockAudioSession();
+  },25000);
+}
+function stopAudioKeepAlive(){clearInterval(_audioKATimer);_audioKATimer=null;}
 
 /* ===== VOIX ===== */
 const FVHINTS=['amélie','amelie','audrey','céline','celine','charlotte','claire','elise','emma','julie','julia','lea','léa','manon','marie','nathalie','sophie','virginie','female','femme','woman','samantha','siri'];
@@ -727,9 +735,7 @@ function speak(text,onend,override){
   let chosen=wn?voices.find(v=>v.name===wn):null;
   if(!chosen&&voices.length)chosen=pickVoice(voices);
   if(chosen)u.voice=chosen;
-  let fired=false;
-  const done=()=>{if(!fired){fired=true;if(onend)onend();}};
-  u.onend=done;u.onerror=done;
+  u.onend=()=>{if(onend)onend();};u.onerror=()=>{if(onend)onend();};
   speechSynthesis.speak(u);
 }
 function openAppleMusic(){window.open('https://music.apple.com/','_blank');}
@@ -919,6 +925,7 @@ function startWorkout(dayNum){
 }
 document.getElementById('unlockBtn').onclick=async function(){
   await unlockAudioSession();
+  startAudioKeepAlive();
   await requestWakeLock();
   beep(880,80);
   document.getElementById('unlockOverlay').style.display='none';
@@ -1032,15 +1039,16 @@ function skipExercise(){
 function completeCurrentExercise(){
   beep(990,180);
   const enc=ENCOURAGEMENTS[Math.floor(Math.random()*ENCOURAGEMENTS.length)];
-  const nextIdx=workout.index+1;
+  speak('Exercice terminé. '+enc);
   workout.log.push({name:workout.exercises[workout.index].name,completed:true});
   renderProgressDots();
-  speak('Exercice terminé. '+enc,()=>loadExercise(nextIdx));
+  setTimeout(()=>loadExercise(workout.index+1),1200);
 }
 function stopWorkout(){
   if(confirm('Arrêter la séance maintenant ? La progression sera enregistrée comme incomplète.')){
     clearInterval(workout.timerId);
     releaseWakeLock();
+    stopAudioKeepAlive();
     for(let i=workout.index;i<workout.exercises.length;i++){
       const ex=workout.exercises[i];
       if(ex.type!=='rest'&&!workout.log.find(l=>l.name===ex.name))
@@ -1052,6 +1060,7 @@ function stopWorkout(){
 function finishWorkout(reachedEnd){
   clearInterval(workout.timerId);
   releaseWakeLock();
+  stopAudioKeepAlive();
   const durationSec=Math.max(1,Math.round((Date.now()-new Date(workout.startedAt))/1000));
   const completedCount=workout.log.filter(l=>l.completed).length;
   const totalEx=workout.log.length;

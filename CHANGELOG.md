@@ -1,3 +1,18 @@
+## V2.5 — Juin 2026
+- ✅ Retour à la base V2.2 stable (audio simplifié, fiable, sans expérimentations)
+- ✅ Mises à jour automatiques (SW update banner, SKIP_WAITING)
+- ✅ Wake Lock (écran allumé pendant la séance)
+- ✅ Service Worker network-first HTML, cache papa-ninja-v2.5
+- ✅ Version V2.5 affichée en pied de page
+- ✅ Modal Nouveautés affiché à chaque mise à jour
+
+## V2.5 — Juin 2026
+- ✅ Version stable consolidée — base V2.2 (auto-updates, Wake Lock, version display)
+- ✅ Audio simplifié : retrait de tous les correctifs expérimentaux (warmup, timeout, logs, attente voix)
+- ✅ speak() conserve uniquement le verrou fired (prévention double callback iOS)
+- ✅ Aucun changement fonctionnel — programme, progression, historique, stats intacts
+- ✅ Service Worker mis à jour (cache papa-ninja-v2.5)
+
 ## V2.4 — Juin 2026
 - ✅ Correctif démarrage audio : pré-chauffe du moteur TTS iOS (AVSpeechSynthesizer) + délai 750 ms
 - ✅ Première annonce vocale de séance toujours jouée en entier
