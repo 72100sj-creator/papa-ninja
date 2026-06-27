@@ -201,12 +201,13 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V2.4</span>
+      <span class="version-tag">Nouveautés V2.5</span>
       <ul>
-        <li><strong>Correctif démarrage audio</strong> — La première annonce vocale n'est plus perdue. Le moteur vocal iOS est maintenant pré-initialisé avant la première consigne.</li>
-        <li><strong>Audio stabilisé (V2.3)</strong> — Suppression du correctif Bluetooth expérimental qui interrompait Apple Music.</li>
-        <li><strong>Mises à jour automatiques (V2.2)</strong> — Détection et installation sans manipulation.</li>
-        <li><strong>Écran allumé (V2.2)</strong> — Wake Lock actif pendant l'entraînement.</li>
+        <li><strong>Version stable</strong> — Audio simplifié et fiable, base V2.2 consolidée.</li>
+        <li><strong>Mises à jour automatiques</strong> — Détection et installation sans manipulation.</li>
+        <li><strong>Écran allumé</strong> — Wake Lock actif pendant l'entraînement.</li>
+        <li><strong>Programme 7 jours</strong> — Progression automatique sur 12 semaines.</li>
+        <li><strong>Suivi effort et douleur lombaire</strong> — Rapport hebdomadaire intégré.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -397,13 +398,13 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.4</div></div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.5</div></div>
 <script>
 /* =====================================================================
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '2.4';
+const APP_VERSION = '2.5';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
@@ -726,45 +727,10 @@ function speak(text,onend,override){
   let chosen=wn?voices.find(v=>v.name===wn):null;
   if(!chosen&&voices.length)chosen=pickVoice(voices);
   if(chosen)u.voice=chosen;
-  console.log('[PN speak] voix dispo:',voices.length,'| choisie:',chosen?chosen.name:'AUCUNE','| texte:',text.slice(0,45));
   let fired=false;
   const done=()=>{if(!fired){fired=true;if(onend)onend();}};
-  u.onstart=()=>console.log('[PN speak] onstart:',text.slice(0,35));
-  u.onend=()=>{console.log('[PN speak] onend:',text.slice(0,35));done();};
-  u.onerror=(e)=>{console.warn('[PN speak] onerror:',e.error,'|',text.slice(0,35));done();};
-  // Timeout de sécurité : si iOS ne déclenche jamais onend ni onerror (bug cold start),
-  // on progresse quand même. Ne s'active que si un callback onend est attendu.
-  if(onend){
-    const ms=Math.min(15000,Math.max(7000,text.length*90));
-    setTimeout(()=>{
-      if(!fired){
-        console.warn('[PN speak] TIMEOUT SÉCURITÉ après',ms,'ms — onend jamais reçu:',text.slice(0,35));
-        done();
-      }
-    },ms);
-  }
-  // Lancer la parole — si le moteur vocal n'est pas encore prêt, attendre onvoiceschanged ou 2s max
-  if(speechSynthesis.getVoices().length===0){
-    console.warn('[PN speak] moteur non prêt — attente voix max 2s:',text.slice(0,40));
-    let waitDone=false;
-    const trySpeak=()=>{
-      if(waitDone) return;
-      waitDone=true;
-      const fv=getFrenchVoices();
-      if(fv.length>0){
-        u.voice=pickVoice(fv);
-        console.log('[PN speak] voix prête après attente:',u.voice.name,'→ parole normale');
-      } else {
-        console.warn('[PN speak] aucune voix après 2s — parole tentée sans voix (fallback)');
-      }
-      speechSynthesis.speak(u);
-    };
-    const prevVCH=speechSynthesis.onvoiceschanged;
-    speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=prevVCH;trySpeak();};
-    setTimeout(trySpeak,2000);
-  } else {
-    speechSynthesis.speak(u);
-  }
+  u.onend=done;u.onerror=done;
+  speechSynthesis.speak(u);
 }
 function openAppleMusic(){window.open('https://music.apple.com/','_blank');}
 
@@ -956,44 +922,7 @@ document.getElementById('unlockBtn').onclick=async function(){
   await requestWakeLock();
   beep(880,80);
   document.getElementById('unlockOverlay').style.display='none';
-  if('speechSynthesis' in window){
-    speechSynthesis.cancel();
-    const warmup=new SpeechSynthesisUtterance('\u00A0');
-    warmup.volume=0;
-    warmup.rate=2;
-    const voicesAtWarmup=getFrenchVoices();
-    if(voicesAtWarmup.length) warmup.voice=pickVoice(voicesAtWarmup);
-    console.log('[PN init] unlock | voix au warmup:',voicesAtWarmup.length,voicesAtWarmup.length?pickVoice(voicesAtWarmup).name:'aucune');
-    let wStarted=false;
-    const startFirst=()=>{
-      if(wStarted) return;
-      wStarted=true;
-      const v=getFrenchVoices();
-      console.log('[PN init] startFirst | voix disponibles:',v.length);
-      if(v.length>0){
-        console.log('[PN init] voix OK → loadExercise(0) dans 300ms');
-        setTimeout(()=>loadExercise(0),300);
-      } else {
-        // Voix pas encore chargées : attendre onvoiceschanged avec fallback 2s
-        console.log('[PN init] voix vides — attente onvoiceschanged...');
-        let vDone=false;
-        const go=()=>{
-          if(vDone) return;
-          vDone=true;
-          console.log('[PN init] onvoiceschanged | voix:',getFrenchVoices().length,'→ loadExercise(0)');
-          setTimeout(()=>loadExercise(0),300);
-        };
-        speechSynthesis.onvoiceschanged=go;
-        setTimeout(go,2000); // fallback si onvoiceschanged ne se déclenche jamais
-      }
-    };
-    warmup.onend=()=>{console.log('[PN init] warmup onend');startFirst();};
-    warmup.onerror=(e)=>{console.warn('[PN init] warmup onerror:',e.error);startFirst();};
-    setTimeout(startFirst,2000); // fallback si warmup reste bloqué
-    speechSynthesis.speak(warmup);
-  } else {
-    setTimeout(()=>loadExercise(0),300);
-  }
+  loadExercise(0);
 };
 function renderProgressDots(){
   const total=workout.exercises.filter(e=>e.type!=='rest').length;
