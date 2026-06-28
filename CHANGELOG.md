@@ -1,3 +1,9 @@
+## V2.6 — Juin 2026
+- ✅ Écran intermédiaire "Audio prêt / GO" avant le premier exercice
+- ✅ Aucun timer ni annonce ne démarre avant l'appui sur GO
+- ✅ Résout le risque de première annonce perdue pendant l'initialisation audio
+- ✅ Service Worker mis à jour (cache papa-ninja-v2.6)
+
 ## V2.5 — Juin 2026
 - ✅ Retour à la base V2.2 stable (audio simplifié, fiable, sans expérimentations)
 - ✅ Mises à jour automatiques (SW update banner, SKIP_WAITING)

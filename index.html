@@ -98,6 +98,8 @@ nav.bottomnav svg{width:22px;height:22px;}
 .btn-rep:active{transform:scale(0.96);}
 .side-tag{display:inline-block;font-size:12px;font-weight:700;color:var(--accent-2);border:1px solid var(--accent-2-dim);border-radius:999px;padding:4px 12px;margin-bottom:8px;}
 .unlock-overlay{position:absolute;inset:0;background:rgba(11,18,16,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;border-radius:var(--radius);text-align:center;padding:30px;z-index:5;}
+.workout-ready-overlay{position:absolute;inset:0;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;border-radius:var(--radius);text-align:center;padding:30px;z-index:4;}
+.go-btn{min-height:72px;font-size:24px;border-radius:22px;margin-top:8px;max-width:300px;letter-spacing:.02em;}
 /* Rating */
 .num-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0;}
 .num-btn{padding:14px 4px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;transition:.1s;}
@@ -201,11 +203,11 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V2.5</span>
+      <span class="version-tag">Nouveautés V2.6</span>
       <ul>
-        <li><strong>Version stable</strong> — Audio simplifié et fiable, base V2.2 consolidée.</li>
-        <li><strong>Mises à jour automatiques</strong> — Détection et installation sans manipulation.</li>
-        <li><strong>Écran allumé</strong> — Wake Lock actif pendant l'entraînement.</li>
+        <li><strong>Écran GO avant le démarrage</strong> — L'audio s'initialise, puis appuie sur GO quand tu es prêt. Aucun timer ne part avant.</li>
+        <li><strong>Mises à jour automatiques (V2.5)</strong> — Détection et installation sans manipulation.</li>
+        <li><strong>Écran allumé (V2.5)</strong> — Wake Lock actif pendant toute la séance.</li>
         <li><strong>Programme 7 jours</strong> — Progression automatique sur 12 semaines.</li>
         <li><strong>Suivi effort et douleur lombaire</strong> — Rapport hebdomadaire intégré.</li>
       </ul>
@@ -289,6 +291,12 @@ nav.bottomnav svg{width:22px;height:22px;}
         <button class="btn btn-secondary btn-sm" id="openAppleMusicBtnWorkout" style="margin-top:10px;">🎵 Ouvrir Apple Music</button>
         <button class="btn btn-danger btn-sm" id="stopBtn" style="margin-top:10px;">■ Arrêter la séance</button>
         <p class="note" id="wakeLockNote" style="text-align:center;margin-top:8px;display:none;">📺 Écran maintenu allumé</p>
+        <div class="workout-ready-overlay" id="workoutReadyOverlay" style="display:none;">
+          <div style="font-size:52px;">✅</div>
+          <div style="font-size:22px;font-weight:700;color:var(--accent);">Audio prêt</div>
+          <p style="font-size:15px;color:var(--text-dim);margin:0;max-width:280px;">La séance est prête.</p>
+          <button class="btn btn-primary go-btn" id="goBtn">▶ GO</button>
+        </div>
         <div class="unlock-overlay" id="unlockOverlay" style="display:none;">
           <div style="font-size:40px;">🔊</div>
           <p style="font-size:14px;color:var(--text-dim);max-width:260px;">Active le son pour entendre les annonces vocales de Papa Ninja.</p>
@@ -398,13 +406,13 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.5</div></div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.6</div></div>
 <script>
 /* =====================================================================
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '2.5';
+const APP_VERSION = '2.6';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
@@ -920,6 +928,7 @@ function startWorkout(dayNum){
     log:[],programDay:dayNum,programName:prog.name
   };
   setWorkoutPhase('active');
+  document.getElementById('workoutReadyOverlay').style.display='none';
   document.getElementById('unlockOverlay').style.display='flex';
   renderProgressDots();
 }
@@ -929,6 +938,10 @@ document.getElementById('unlockBtn').onclick=async function(){
   await requestWakeLock();
   beep(880,80);
   document.getElementById('unlockOverlay').style.display='none';
+  document.getElementById('workoutReadyOverlay').style.display='flex';
+};
+document.getElementById('goBtn').onclick=function(){
+  document.getElementById('workoutReadyOverlay').style.display='none';
   loadExercise(0);
 };
 function renderProgressDots(){
