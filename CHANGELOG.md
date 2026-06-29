@@ -1,3 +1,10 @@
+## V2.7 — Juin 2026
+- ✅ Rubrique Guide : accès au PDF Papa Ninja 2026 depuis l'accueil et la navigation
+- ✅ Comportement élégant si le PDF est absent (message + bouton Retour)
+- ✅ PDF mis en cache automatiquement par le Service Worker à la première ouverture
+- ✅ Vérification de présence via fetch HEAD (fonctionne aussi hors connexion)
+- ✅ Service Worker mis à jour (cache papa-ninja-v2.7)
+
 ## V2.6 — Juin 2026
 - ✅ Écran intermédiaire "Audio prêt / GO" avant le premier exercice
 - ✅ Aucun timer ni annonce ne démarre avant l'appui sur GO

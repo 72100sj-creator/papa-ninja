@@ -166,6 +166,19 @@ nav.bottomnav svg{width:22px;height:22px;}
 .rest-day-card{text-align:center;padding:30px 20px;}
 .rest-day-card .rdc-emoji{font-size:52px;margin-bottom:12px;}
 .rest-day-card p{color:var(--text-dim);font-size:15px;line-height:1.6;}
+/* ===== GUIDE ===== */
+.guide-cover-card{background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 55%,rgba(62,217,142,.09) 100%);border:1px solid var(--border);border-radius:var(--radius);padding:36px 20px 28px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden;}
+.guide-cover-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 15%,rgba(79,142,247,.07),transparent 55%);pointer-events:none;}
+.guide-ninja-big{font-size:68px;display:block;margin-bottom:10px;}
+.guide-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:6px;}
+.guide-h1{font-size:26px;font-weight:700;color:var(--text);font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-.01em;}
+.guide-year{font-size:15px;color:var(--text-dim);margin-top:4px;letter-spacing:.04em;}
+.guide-meta{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.guide-meta-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-dim);}
+.guide-missing{text-align:center;padding:20px 0 8px;}
+.guide-missing .gm-icon{font-size:46px;margin-bottom:12px;}
+.guide-missing p{color:var(--text-dim);font-size:14px;line-height:1.6;margin:0 0 20px;}
+.guide-missing code{font-size:11px;background:var(--surface-2);padding:3px 8px;border-radius:6px;color:var(--accent-2);}
 /* Bannière mise à jour */
 #updateBanner{display:none;align-items:center;justify-content:space-between;gap:10px;
   padding:12px 16px;background:linear-gradient(135deg,rgba(62,217,142,.18),rgba(79,142,247,.14));
@@ -203,13 +216,12 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V2.6</span>
+      <span class="version-tag">Nouveautés V2.7</span>
       <ul>
-        <li><strong>Écran GO avant le démarrage</strong> — L'audio s'initialise, puis appuie sur GO quand tu es prêt. Aucun timer ne part avant.</li>
-        <li><strong>Mises à jour automatiques (V2.5)</strong> — Détection et installation sans manipulation.</li>
-        <li><strong>Écran allumé (V2.5)</strong> — Wake Lock actif pendant toute la séance.</li>
-        <li><strong>Programme 7 jours</strong> — Progression automatique sur 12 semaines.</li>
-        <li><strong>Suivi effort et douleur lombaire</strong> — Rapport hebdomadaire intégré.</li>
+        <li><strong>Rubrique Guide</strong> — Accès au guide PDF Papa Ninja 2026 depuis l'accueil et la navigation. Disponible hors connexion après première ouverture.</li>
+        <li><strong>Comportement élégant</strong> — Si le PDF n'est pas encore installé, un message clair s'affiche avec un bouton de retour.</li>
+        <li><strong>Écran GO (V2.6)</strong> — Aucun timer ne démarre avant l'appui sur GO.</li>
+        <li><strong>Programme 7 jours (V2.5)</strong> — Progression automatique sur 12 semaines.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -253,7 +265,27 @@ nav.bottomnav svg{width:22px;height:22px;}
         <div class="card-title">Badges</div>
         <div class="badge-grid" id="badgeGrid"></div>
       </div>
+      <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;" onclick="showScreen('guide')">
+        <div>
+          <div style="font-weight:600;font-size:14px;">📖 Guide Papa Ninja 2026</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:2px;">Fiches exercices · Programme 12 semaines</div>
+        </div>
+        <div style="color:var(--accent-2);font-size:20px;font-weight:300;">›</div>
+      </div>
       <button class="btn btn-primary" style="margin-top:4px;" onclick="goToWorkoutTab()">⚔️ Démarrer une séance</button>
+    </section>
+
+    <!-- GUIDE -->
+    <section class="screen" id="screen-guide">
+      <div class="guide-cover-card">
+        <span class="guide-ninja-big">🥷</span>
+        <div class="guide-label">Document officiel</div>
+        <div class="guide-h1">Guide Papa Ninja</div>
+        <div class="guide-year">2026</div>
+      </div>
+      <div class="card" id="guideInfoCard">
+        <p class="note" style="text-align:center;padding:8px 0;">⏳ Vérification du guide...</p>
+      </div>
     </section>
 
     <!-- SÉANCE -->
@@ -405,14 +437,17 @@ nav.bottomnav svg{width:22px;height:22px;}
     <button data-screen="profile" onclick="showScreen('profile')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profil
     </button>
+    <button data-screen="guide" onclick="showScreen('guide')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide
+    </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.6</div></div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.7</div></div>
 <script>
 /* =====================================================================
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '2.6';
+const APP_VERSION = '2.7';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
@@ -466,6 +501,47 @@ function initServiceWorkerUpdates() {
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (!refreshing) { refreshing = true; window.location.reload(); }
   });
+}
+
+/* ===== GUIDE ===== */
+const PDF_PATH='./assets/guide/Papa-Ninja-Guide-2026.pdf';
+
+function renderGuideScreen(){
+  const card=document.getElementById('guideInfoCard');
+  card.innerHTML='<p class="note" style="text-align:center;padding:12px 0;">⏳ Vérification du guide...</p>';
+  fetch(PDF_PATH,{method:'HEAD'})
+    .then(r=>{ if(r.ok) showGuideReady(card); else showGuideMissing(card); })
+    .catch(()=>showGuideMissing(card));
+}
+function showGuideReady(card){
+  card.innerHTML=`
+    <div class="card-title">📖 Guide Papa Ninja 2026</div>
+    <p style="font-size:14px;color:var(--text-dim);line-height:1.6;margin:0 0 14px;">
+      Ce guide accompagne ton programme sur 12 semaines : fiches exercices illustrées,
+      programme hebdomadaire, calendrier de progression et conseils de récupération.
+    </p>
+    <div class="guide-meta">
+      <div class="guide-meta-row"><span>📅</span><span>Version du guide : 2026</span></div>
+      <div class="guide-meta-row"><span>📄</span><span>17 pages</span></div>
+      <div class="guide-meta-row"><span>🕒</span><span>Mis à jour en juin 2026</span></div>
+    </div>
+    <button class="btn btn-primary" id="openGuideBtn">📖 Ouvrir le guide</button>
+    <p class="note" style="margin-top:10px;">
+      Le guide s'ouvre dans le lecteur PDF de ton téléphone.
+      Après la première ouverture, il sera disponible hors connexion.
+    </p>`;
+  document.getElementById('openGuideBtn').onclick=()=>window.open(PDF_PATH,'_blank');
+}
+function showGuideMissing(card){
+  card.innerHTML=`
+    <div class="guide-missing">
+      <div class="gm-icon">📖</div>
+      <p>Le guide n'est pas encore installé.<br>
+         Dépose le fichier PDF dans le dossier<br>
+         <code>assets/guide/</code><br>
+         de ton dépôt GitHub pour l'activer.</p>
+      <button class="btn btn-secondary btn-sm" onclick="showScreen('dashboard')">← Retour à l'accueil</button>
+    </div>`;
 }
 
 /* ===== PROGRAMMES ===== */
@@ -652,6 +728,7 @@ function showScreen(name){
   if(name==='calendar') renderCalendar();
   if(name==='profile') renderProfile();
   if(name==='workout') renderWorkoutScreen();
+  if(name==='guide') renderGuideScreen();
 }
 function goToWorkoutTab(){showScreen('workout');}
 
