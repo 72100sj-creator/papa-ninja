@@ -1,4 +1,5 @@
 ## V2.7 — Juin 2026
+- ✅ icone papa  ninja
 - ✅ Rubrique Guide : accès au PDF Papa Ninja 2026 depuis l'accueil et la navigation
 - ✅ Comportement élégant si le PDF est absent (message + bouton Retour)
 - ✅ PDF mis en cache automatiquement par le Service Worker à la première ouverture
