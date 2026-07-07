@@ -180,12 +180,14 @@ nav.bottomnav svg{width:22px;height:22px;}
 .guide-missing p{color:var(--text-dim);font-size:14px;line-height:1.6;margin:0 0 20px;}
 .guide-missing code{font-size:11px;background:var(--surface-2);padding:3px 8px;border-radius:6px;color:var(--accent-2);}
 /* PDF Overlay */
-#pdfOverlay{display:none;position:fixed;inset:0;z-index:300;flex-direction:column;background:#000;}
+#pdfOverlay{display:none;position:fixed;inset:0;z-index:300;flex-direction:column;background:var(--bg);}
 #pdfOverlay.open{display:flex;}
 .pdf-topbar{flex-shrink:0;display:flex;align-items:center;gap:12px;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;background:var(--surface);border-bottom:1px solid var(--border);}
 .pdf-topbar-title{flex:1;font-size:14px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .pdf-back-btn{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:none;background:var(--surface-3);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;}
-#pdfFrame{flex:1;width:100%;border:none;background:#fff;}
+#pdfObject{flex:1;width:100%;border:none;}
+.pdf-fallback{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px;text-align:center;}
+.pdf-fallback p{color:var(--text-dim);font-size:14px;line-height:1.6;margin:0;}
 /* Bannière mise à jour */
 #updateBanner{display:none;align-items:center;justify-content:space-between;gap:10px;
   padding:12px 16px;background:linear-gradient(135deg,rgba(62,217,142,.18),rgba(79,142,247,.14));
@@ -456,7 +458,16 @@ nav.bottomnav svg{width:22px;height:22px;}
       <button class="pdf-back-btn" onclick="closePdfOverlay()">⬅️ Retour au Guide</button>
       <span class="pdf-topbar-title">Guide Papa Ninja 2026</span>
     </div>
-    <iframe id="pdfFrame" src="" title="Guide Papa Ninja 2026" allowfullscreen></iframe>
+    <!-- <object> a meilleur support PDF que <iframe> (Chrome, Safari, Edge) -->
+    <!-- Le fallback s'affiche si le navigateur ne peut pas rendre le PDF inline (Firefox, iOS PWA) -->
+    <object id="pdfObject" data="" type="application/pdf" width="100%" style="flex:1;">
+      <div class="pdf-fallback" id="pdfFallback">
+        <div style="font-size:48px;">📄</div>
+        <p>Ce navigateur ne peut pas afficher le PDF directement.<br>
+           Tu peux l'ouvrir dans ton lecteur PDF.</p>
+        <button class="btn btn-primary btn-sm" id="pdfOpenExtBtn">Ouvrir le guide 📖</button>
+      </div>
+    </object>
   </div>
 </div>
 <script>
@@ -842,18 +853,21 @@ function speak(text,onend,override){
 }
 /* PDF Overlay */
 function openPdfOverlay(){
-  var frame=document.getElementById('pdfFrame');
-  // Charger le PDF une seule fois : si src déjà défini, la position est conservée
-  if(!frame.src||frame.src==='about:blank'||frame.src===''){
-    frame.src=PDF_PATH;
+  var obj=document.getElementById('pdfObject');
+  // Charger une seule fois — la position de lecture est conservée entre ouvertures
+  if(!obj.data||obj.data===''){
+    obj.data=PDF_PATH;
+    // Bouton fallback pour les navigateurs qui ne supportent pas PDF inline (Firefox, iOS PWA)
+    var extBtn=document.getElementById('pdfOpenExtBtn');
+    if(extBtn) extBtn.onclick=function(){ window.open(PDF_PATH,'_blank'); };
   }
   document.getElementById('pdfOverlay').classList.add('open');
-  document.body.style.overflow='hidden'; // empêche le scroll de l'app derrière
+  document.body.style.overflow='hidden';
 }
 function closePdfOverlay(){
   document.getElementById('pdfOverlay').classList.remove('open');
-  document.body.style.overflow=''; // restaure le scroll
-  // L'iframe reste chargée en mémoire → la position de lecture est conservée
+  document.body.style.overflow='';
+  // <object> reste en mémoire → position de lecture conservée pour la session
 }
 
 function openAppleMusic(){window.open('https://music.apple.com/','_blank');}
