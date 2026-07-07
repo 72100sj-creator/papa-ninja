@@ -179,15 +179,7 @@ nav.bottomnav svg{width:22px;height:22px;}
 .guide-missing .gm-icon{font-size:46px;margin-bottom:12px;}
 .guide-missing p{color:var(--text-dim);font-size:14px;line-height:1.6;margin:0 0 20px;}
 .guide-missing code{font-size:11px;background:var(--surface-2);padding:3px 8px;border-radius:6px;color:var(--accent-2);}
-/* PDF Overlay */
-#pdfOverlay{display:none;position:fixed;inset:0;z-index:300;flex-direction:column;background:var(--bg);}
-#pdfOverlay.open{display:flex;}
-.pdf-topbar{flex-shrink:0;display:flex;align-items:center;gap:12px;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;background:var(--surface);border-bottom:1px solid var(--border);}
-.pdf-topbar-title{flex:1;font-size:14px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pdf-back-btn{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:none;background:var(--surface-3);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;}
-#pdfObject{flex:1;width:100%;border:none;}
-.pdf-fallback{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px;text-align:center;}
-.pdf-fallback p{color:var(--text-dim);font-size:14px;line-height:1.6;margin:0;}
+/* PDF : ouverture via window.open - pas d'overlay inline */
 /* Bannière mise à jour */
 #updateBanner{display:none;align-items:center;justify-content:space-between;gap:10px;
   padding:12px 16px;background:linear-gradient(135deg,rgba(62,217,142,.18),rgba(79,142,247,.14));
@@ -452,23 +444,6 @@ nav.bottomnav svg{width:22px;height:22px;}
   </nav>
   <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.7</div>
 
-  <!-- PDF Overlay — s'affiche par-dessus tout sans quitter l'app -->
-  <div id="pdfOverlay" role="dialog" aria-modal="true" aria-label="Guide Papa Ninja PDF">
-    <div class="pdf-topbar">
-      <button class="pdf-back-btn" onclick="closePdfOverlay()">⬅️ Retour au Guide</button>
-      <span class="pdf-topbar-title">Guide Papa Ninja 2026</span>
-    </div>
-    <!-- <object> a meilleur support PDF que <iframe> (Chrome, Safari, Edge) -->
-    <!-- Le fallback s'affiche si le navigateur ne peut pas rendre le PDF inline (Firefox, iOS PWA) -->
-    <object id="pdfObject" data="" type="application/pdf" width="100%" style="flex:1;">
-      <div class="pdf-fallback" id="pdfFallback">
-        <div style="font-size:48px;">📄</div>
-        <p>Ce navigateur ne peut pas afficher le PDF directement.<br>
-           Tu peux l'ouvrir dans ton lecteur PDF.</p>
-        <button class="btn btn-primary btn-sm" id="pdfOpenExtBtn">Ouvrir le guide 📖</button>
-      </div>
-    </object>
-  </div>
 </div>
 <script>
 /* =====================================================================
@@ -555,10 +530,11 @@ function showGuideReady(card){
     </div>
     <button class="btn btn-primary" id="openGuideBtn">📖 Ouvrir le guide</button>
     <p class="note" style="margin-top:10px;">
-      Le guide s'ouvre directement dans Papa Ninja.
+      Le guide s'ouvre dans Safari avec un lecteur PDF natif.
+      Utilise le bouton Retour de ton iPhone pour revenir à Papa Ninja.
       Après la première ouverture, il sera disponible hors connexion.
     </p>`;
-  document.getElementById('openGuideBtn').onclick=()=>openPdfOverlay();
+  document.getElementById('openGuideBtn').onclick=()=>window.open(PDF_PATH,'_blank');
 }
 function showGuideMissing(card){
   card.innerHTML=`
@@ -851,24 +827,7 @@ function speak(text,onend,override){
   u.onend=()=>{if(onend)onend();};u.onerror=()=>{if(onend)onend();};
   speechSynthesis.speak(u);
 }
-/* PDF Overlay */
-function openPdfOverlay(){
-  var obj=document.getElementById('pdfObject');
-  // Charger une seule fois — la position de lecture est conservée entre ouvertures
-  if(!obj.data||obj.data===''){
-    obj.data=PDF_PATH;
-    // Bouton fallback pour les navigateurs qui ne supportent pas PDF inline (Firefox, iOS PWA)
-    var extBtn=document.getElementById('pdfOpenExtBtn');
-    if(extBtn) extBtn.onclick=function(){ window.open(PDF_PATH,'_blank'); };
-  }
-  document.getElementById('pdfOverlay').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closePdfOverlay(){
-  document.getElementById('pdfOverlay').classList.remove('open');
-  document.body.style.overflow='';
-  // <object> reste en mémoire → position de lecture conservée pour la session
-}
+
 
 function openAppleMusic(){window.open('https://music.apple.com/','_blank');}
 
