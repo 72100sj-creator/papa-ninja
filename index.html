@@ -475,7 +475,9 @@ nav.bottomnav svg{width:22px;height:22px;}
         <div class="card-title">Données</div>
         <p class="note" style="margin-top:0;">Toutes tes données restent sur ton téléphone. Aucun compte, aucun envoi sur internet.</p>
         <button class="btn btn-secondary btn-sm" id="exportBtn" style="margin-bottom:10px;">💾 Exporter mes données (JSON)</button>
-        <p class="note">Sauvegarde manuelle de ton historique, statistiques et réglages. Conserve ce fichier au cas où tu changes de téléphone ou de navigateur.</p>
+        <button class="btn btn-secondary btn-sm" id="importBtn" style="margin-bottom:10px;">📂 Importer une sauvegarde</button>
+        <input type="file" id="importFile" accept=".json,application/json" style="display:none;">
+        <p class="note">Exporte pour sauvegarder, importe pour restaurer. L'import remplace toutes les données actuelles — fais un export d'abord si tu veux conserver l'historique en cours.</p>
         <button class="btn btn-danger btn-sm" id="resetBtn">Réinitialiser mes données</button>
       </div>
     </section>
@@ -1526,6 +1528,38 @@ document.getElementById('exportBtn').onclick=function(){
     a.click();
     setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},1000);
   }catch(e){alert('Export impossible sur cet appareil. Essaie depuis Safari sur Mac.');}
+};
+document.getElementById('importBtn').onclick=function(){
+  document.getElementById('importFile').value='';
+  document.getElementById('importFile').click();
+};
+document.getElementById('importFile').onchange=function(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const parsed=JSON.parse(ev.target.result);
+      // Validation minimale de structure
+      if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.sessions)||typeof parsed.settings!=='object'){
+        alert('❌ Fichier invalide. Ce n\'est pas une sauvegarde Papa Ninja valide.');
+        return;
+      }
+      const count=parsed.sessions.length;
+      if(!confirm('Importer cette sauvegarde ?\n\n'+count+' séance(s) trouvée(s).\n\n⚠️ Toutes tes données actuelles seront remplacées.\nFais un export d\'abord si tu veux les conserver.')){
+        return;
+      }
+      // Fusionner avec defaultData pour s'assurer que tous les champs existent
+      DATA=Object.assign(defaultData(),parsed,{settings:Object.assign(defaultData().settings,parsed.settings||{})});
+      saveData();
+      renderDashboard();
+      showScreen('dashboard');
+      alert('✅ Sauvegarde importée avec succès !\n'+count+' séance(s) restaurée(s).');
+    }catch(err){
+      alert('❌ Erreur lors de la lecture du fichier.\nVérifie que c\'est bien un fichier .json exporté depuis Papa Ninja.');
+    }
+  };
+  reader.readAsText(file);
 };
 document.getElementById('resetBtn').onclick=function(){
   if(confirm('Supprimer toutes tes données Papa Ninja ? Cette action est définitive.')){
