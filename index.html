@@ -187,6 +187,20 @@ nav.bottomnav svg{width:22px;height:22px;}
 .guide-missing .gm-icon{font-size:46px;margin-bottom:12px;}
 .guide-missing p{color:var(--text-dim);font-size:14px;line-height:1.6;margin:0 0 20px;}
 .guide-missing code{font-size:11px;background:var(--surface-2);padding:3px 8px;border-radius:6px;color:var(--accent-2);}
+/* Portrait guard — masqué en portrait, visible en landscape */
+#portraitGuard{
+  display:none;
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;text-align:center;padding:40px;
+}
+@media (orientation:landscape){
+  #portraitGuard{display:flex;}
+}
+.pg-emoji{font-size:56px;}
+.pg-title{font-size:20px;font-weight:700;color:var(--text);}
+.pg-sub{font-size:14px;color:var(--text-dim);line-height:1.6;}
 /* PDF : ouverture via window.open - pas d'overlay inline */
 /* Bannière mise à jour */
 #updateBanner{display:none;align-items:center;justify-content:space-between;gap:10px;
@@ -325,11 +339,9 @@ nav.bottomnav svg{width:22px;height:22px;}
           </div>
           <button class="btn btn-primary btn-rep" id="repBtn" style="margin-bottom:14px;">➕ 1 répétition</button>
         </div>
-        <div class="row" style="margin-top:6px;">
-          <button class="btn btn-secondary btn-sm" id="pauseBtn">⏸ Pause</button>
-          <button class="btn btn-secondary btn-sm" id="skipBtn">⏭ Passer</button>
-        </div>
+        <button class="btn btn-secondary btn-sm" id="pauseBtn" style="margin-top:6px;">⏸ Pause</button>
         <button class="btn btn-secondary btn-sm" id="openAppleMusicBtnWorkout" style="margin-top:10px;">🎵 Ouvrir Apple Music</button>
+        <button class="btn btn-secondary btn-sm" id="skipBtn" style="margin-top:10px;">⏭ Passer</button>
         <button class="btn btn-danger btn-sm" id="stopBtn" style="margin-top:10px;">■ Arrêter la séance</button>
         <p class="note" id="wakeLockNote" style="text-align:center;margin-top:8px;display:none;">📺 Écran maintenu allumé</p>
         <div class="workout-ready-overlay" id="workoutReadyOverlay" style="display:none;">
@@ -456,6 +468,13 @@ nav.bottomnav svg{width:22px;height:22px;}
     </button>
   </nav>
   <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.7</div>
+
+  <!-- Portrait guard : s'affiche si l'écran bascule en paysage -->
+  <div id="portraitGuard" aria-live="polite">
+    <div class="pg-emoji">🥷</div>
+    <div class="pg-title">Tourne ton écran</div>
+    <div class="pg-sub">Papa Ninja fonctionne uniquement<br>en mode portrait.</div>
+  </div>
 
 </div>
 <script>
@@ -776,6 +795,40 @@ function beep(freq,ms){
     setTimeout(()=>osc.stop(),ms||150);}catch(e){}
 }
 
+/* ===== MÉLODIE DE FIN DE SÉANCE ===== */
+function playSuccessChime(){
+  try{
+    const ctx=getCtx();
+    if(ctx.state==='suspended') ctx.resume();
+    // Pentatonique montante : Mi4 Sol4 Si4 Do5 La4 Do5 Mi5 Sol5 La5 Do6
+    const notes=[
+      {f:330, t:0.00, d:0.55},
+      {f:392, t:0.35, d:0.55},
+      {f:494, t:0.70, d:0.55},
+      {f:523, t:1.05, d:0.60},
+      {f:440, t:1.45, d:0.45},
+      {f:523, t:1.70, d:0.55},
+      {f:659, t:2.05, d:0.65},
+      {f:784, t:2.50, d:0.65},
+      {f:880, t:2.95, d:0.70},
+      {f:1047,t:3.35, d:1.30},
+    ];
+    const now=ctx.currentTime;
+    notes.forEach(({f,t,d})=>{
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.type='sine';
+      osc.frequency.value=f;
+      gain.gain.setValueAtTime(0,now+t);
+      gain.gain.linearRampToValueAtTime(0.22,now+t+0.025); // attaque douce
+      gain.gain.exponentialRampToValueAtTime(0.001,now+t+d); // extinction progressive
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.start(now+t);
+      osc.stop(now+t+d+0.05);
+    });
+  }catch(e){}
+}
+
 /* ===== WAKE LOCK (écran allumé pendant la séance) ===== */
 let wakeLock=null;
 async function requestWakeLock(){
@@ -1051,6 +1104,7 @@ function loadExercise(i){
   if(i>=workout.exercises.length){finishWorkout(true);return;}
   workout.index=i;workout.side=0;workout.repsCount=0;
   clearInterval(workout.timerId);
+  speechSynthesis.cancel(); // vider la file audio avant tout nouvel exercice
   const ex=workout.exercises[i];
   renderProgressDots();
   document.getElementById('sectionLabel').textContent=ex.section||'';
@@ -1063,7 +1117,6 @@ function loadExercise(i){
     document.getElementById('pauseBtn').disabled=true;
     const nextEx=workout.exercises[i+1];
     const roundMsg=ex._nextRound?` Tour ${ex._nextRound} dans ${Math.ceil(ex.duration/60)} minute.`:'';
-    speak('Repos.'+roundMsg+' Récupère et respire profondément.');
     workout.timeRemaining=ex.duration;
     drawTimerRing(ex.duration,workout.timeRemaining,true);
     workout.timerId=setInterval(()=>{
@@ -1073,6 +1126,8 @@ function loadExercise(i){
       if(workout.timeRemaining===10&&nextEx){speak('Prépare-toi pour '+nextEx.name+'.');}
       if(workout.timeRemaining<=0){clearInterval(workout.timerId);loadExercise(i+1);}
     },1000);
+    // Délai 150ms : laisse iOS traiter le cancel() avant de parler
+    setTimeout(()=>speak('Repos.'+roundMsg+' Récupère et respire profondément.'),150);
   } else {
     document.getElementById('pauseBtn').disabled=false;
     document.getElementById('sideTag').style.display=ex.perSide?'inline-block':'none';
@@ -1084,13 +1139,16 @@ function loadExercise(i){
     if(ex.isFirstInRound) announce+=`Tour ${ex.roundNum} sur ${ex.totalRounds}. `;
     announce+=`Prépare-toi pour ${ex.name}. ${ex.instruction}`;
     if(ex.perSide) announce+=' On commence par le côté gauche.';
-    speak(announce,()=>{
-      speak("3, 2, 1, c'est parti.",()=>{
-        beep(660,120);
-        if(ex.type==='time') startTimedExercise(ex);
-        else startRepsExercise(ex);
+    // Délai 150ms : laisse iOS traiter le cancel() avant de parler
+    setTimeout(()=>{
+      speak(announce,()=>{
+        speak("3, 2, 1, c'est parti.",()=>{
+          beep(660,120);
+          if(ex.type==='time') startTimedExercise(ex);
+          else startRepsExercise(ex);
+        });
       });
-    });
+    },150);
   }
 }
 function drawTimerRing(total,remaining,isRest){
@@ -1131,6 +1189,7 @@ function addRep(){
       workout.side=1;workout.repsCount=0;
       document.getElementById('repsCount').textContent=0;
       document.getElementById('sideTag').textContent='Côté droit';
+      speechSynthesis.cancel();
       speak("Côté droit, c'est parti.",()=>beep(660,120));
     } else {completeCurrentExercise();}
   }
@@ -1148,10 +1207,10 @@ function skipExercise(){
 function completeCurrentExercise(){
   beep(990,180);
   const enc=ENCOURAGEMENTS[Math.floor(Math.random()*ENCOURAGEMENTS.length)];
-  speak('Exercice terminé. '+enc);
+  const nextIdx=workout.index+1;
   workout.log.push({name:workout.exercises[workout.index].name,completed:true});
   renderProgressDots();
-  setTimeout(()=>loadExercise(workout.index+1),1200);
+  speak('Exercice terminé. '+enc,()=>loadExercise(nextIdx));
 }
 function stopWorkout(){
   if(confirm('Arrêter la séance maintenant ? La progression sera enregistrée comme incomplète.')){
@@ -1183,6 +1242,7 @@ function finishWorkout(reachedEnd){
   if(!DATA.settings.startDate) DATA.settings.startDate=session.date;
   DATA.sessions.push(session);saveData();
   _pendingSession=session;_pendingRate=rate;
+  if(reachedEnd) playSuccessChime();
   speak("Séance terminée. Excellent travail. Prenons un moment pour noter comment tu te sens.");
   showRatingScreen();
 }
@@ -1414,6 +1474,10 @@ function init(){
   renderDashboard();
   checkShowChangelog();
   initServiceWorkerUpdates();
+  // Verrouillage portrait : fonctionne en PWA standalone iOS 16.4+ et Android Chrome
+  if(screen.orientation&&screen.orientation.lock){
+    screen.orientation.lock('portrait').catch(()=>{});
+  }
   if('speechSynthesis' in window){
     speechSynthesis.onvoiceschanged=()=>{
       if(document.getElementById('screen-profile').classList.contains('active'))renderVoiceOptions();
