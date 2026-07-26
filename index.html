@@ -147,6 +147,14 @@ nav.bottomnav svg{width:22px;height:22px;}
 .badge .b-name{font-size:10.5px;color:var(--text-dim);margin-top:6px;line-height:1.3;}
 .badge.unlocked .b-name{color:var(--text);}
 .banner{background:linear-gradient(135deg,rgba(62,217,142,.14),rgba(79,142,247,.1));border:1px solid var(--accent-dim);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+.garmin-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:rgba(79,142,247,.10);border:1px solid var(--accent-2-dim);border-radius:var(--radius-sm);
+  padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--text);cursor:pointer;}
+.garmin-banner span{flex:1;line-height:1.4;}
+.garmin-banner .dismiss{color:var(--text-faint);font-size:18px;flex-shrink:0;padding:0 4px;}
+.garmin-report-note{display:flex;align-items:center;gap:10px;
+  background:rgba(79,142,247,.08);border:1px solid var(--accent-2-dim);border-radius:var(--radius-sm);
+  padding:12px 14px;margin-top:14px;font-size:13px;color:var(--text);}
 .banner p{font-size:14px;margin:0 0 12px;line-height:1.4;}
 .radio-line{display:flex;align-items:center;gap:10px;padding:10px 0;}
 .radio-line input{width:18px;height:18px;accent-color:var(--accent);}
@@ -329,6 +337,7 @@ nav.bottomnav svg{width:22px;height:22px;}
           <div style="font-size:22px;font-weight:700;color:var(--accent);">Audio prêt</div>
           <p style="font-size:15px;color:var(--text-dim);margin:0;max-width:280px;">La séance est prête.</p>
           <button class="btn btn-primary go-btn" id="goBtn">▶ GO</button>
+          <p style="font-size:13px;color:var(--accent-2);margin:4px 0 0;text-align:center;">⌚ Pense à démarrer l'activité <strong>Pilates</strong> sur ta Garmin.</p>
         </div>
         <div class="unlock-overlay" id="unlockOverlay" style="display:none;">
           <div style="font-size:40px;">🔊</div>
@@ -345,6 +354,9 @@ nav.bottomnav svg{width:22px;height:22px;}
           <div class="card-title" style="margin-top:14px;">Douleur lombaire (0 = aucune · 10 = forte)</div>
           <div class="num-grid" id="painGrid"></div>
           <button class="btn btn-primary" id="submitRatingBtn" style="margin-top:20px;">Voir mon rapport 📊</button>
+          <div class="garmin-report-note" style="margin-top:12px;">
+            ✅ N'oublie pas d'enregistrer ton activité <strong>Garmin</strong>.
+          </div>
         </div>
       </div>
 
@@ -361,6 +373,7 @@ nav.bottomnav svg{width:22px;height:22px;}
           <div id="reportPainWarning" style="display:none;background:rgba(226,97,79,.1);border:1px solid rgba(226,97,79,.4);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:13px;color:var(--danger);"></div>
           <div class="report-comment" id="reportComment">—</div>
           <div id="newBadgesBox"></div>
+
         </div>
         <button class="btn btn-primary" onclick="backToDashboardFromReport()">Retour à l'accueil</button>
       </div>
