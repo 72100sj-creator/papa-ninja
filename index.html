@@ -747,7 +747,10 @@ function loadData(){
     return Object.assign(defaultData(),p,{settings:Object.assign(defaultData().settings,p.settings||{})});
   }catch(e){return defaultData();}
 }
-function saveData(){localStorage.setItem(STORE_KEY,JSON.stringify(DATA));}
+function saveData(){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(DATA));}
+  catch(e){console.warn('[PapaNinja] saveData échoué:',e);}
+}
 
 /* ===== UTILS ===== */
 function pad(n){return String(n).padStart(2,'0');}
