@@ -1,3 +1,11 @@
+## V2.8 — Juillet 2026
+- ✅ Enchaînement audio : cancel() avant chaque exercice + délai 150ms iOS
+- ✅ Bouton Passer : coupe proprement l'annonce en cours
+- ✅ Mélodie de fin de séance : arpège pentatonique 10 notes (~4.5s)
+- ✅ Verrouillage portrait : screen.orientation.lock + overlay CSS landscape
+- ✅ Bouton Passer repositionné entre Apple Music et Arrêter la séance
+- ✅ Service Worker mis à jour (cache papa-ninja-v2.8)
+
 ## V2.7 — Juin 2026
 - ✅ Rubrique Guide : accès au PDF Papa Ninja 2026 depuis l'accueil et la navigation
 - ✅ Comportement élégant si le PDF est absent (message + bouton Retour)

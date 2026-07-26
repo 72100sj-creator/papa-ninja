@@ -239,12 +239,12 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V2.7</span>
+      <span class="version-tag">Nouveautés V2.8</span>
       <ul>
-        <li><strong>Rubrique Guide</strong> — Accès au guide PDF Papa Ninja 2026 depuis l'accueil et la navigation. Disponible hors connexion après première ouverture.</li>
-        <li><strong>Comportement élégant</strong> — Si le PDF n'est pas encore installé, un message clair s'affiche avec un bouton de retour.</li>
-        <li><strong>Écran GO (V2.6)</strong> — Aucun timer ne démarre avant l'appui sur GO.</li>
-        <li><strong>Programme 7 jours (V2.5)</strong> — Progression automatique sur 12 semaines.</li>
+        <li><strong>Enchaînement audio corrigé</strong> — Les annonces ne se chevauchent plus. Appuyer sur Passer coupe proprement la voix en cours.</li>
+        <li><strong>Mélodie de fin de séance</strong> — Arpège zen de 10 notes à la fin de chaque séance complète.</li>
+        <li><strong>Verrouillage portrait</strong> — L'écran ne pivote plus en paysage.</li>
+        <li><strong>Guide Papa Ninja (V2.7)</strong> — Accès au PDF depuis l'accueil et la navigation.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -467,7 +467,7 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.7</div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.8</div>
 
   <!-- Portrait guard : s'affiche si l'écran bascule en paysage -->
   <div id="portraitGuard" aria-live="polite">
@@ -482,7 +482,7 @@ nav.bottomnav svg{width:22px;height:22px;}
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '2.7';
+const APP_VERSION = '2.8';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
