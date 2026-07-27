@@ -926,7 +926,9 @@ function speak(text,onend,override){
   let chosen=wn?voices.find(v=>v.name===wn):null;
   if(!chosen&&voices.length)chosen=pickVoice(voices);
   if(chosen)u.voice=chosen;
-  u.onend=()=>{if(onend)onend();};u.onerror=()=>{if(onend)onend();};
+  let fired=false;
+  const done=()=>{if(!fired){fired=true;if(onend)onend();}};
+  u.onend=done;u.onerror=done;
   speechSynthesis.speak(u);
 }
 
@@ -1232,6 +1234,7 @@ function drawTimerRing(total,remaining,isRest){
     </div></div>`;
 }
 function startTimedExercise(ex){
+  clearInterval(workout.timerId); // sécurité : annule tout timer orphelin avant d'en créer un nouveau
   document.getElementById('timeModeUI').style.display='block';
   document.getElementById('repsModeUI').style.display='none';
   workout.timeRemaining=ex.duration;
