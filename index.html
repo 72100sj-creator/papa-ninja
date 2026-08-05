@@ -211,6 +211,28 @@ nav.bottomnav svg{width:22px;height:22px;}
 .guide-missing .gm-icon{font-size:46px;margin-bottom:12px;}
 .guide-missing p{color:var(--text-dim);font-size:14px;line-height:1.6;margin:0 0 20px;}
 .guide-missing code{font-size:11px;background:var(--surface-2);padding:3px 8px;border-radius:6px;color:var(--accent-2);}
+/* Guide natif — liste des fiches */
+.gx-row{display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--radius-sm);
+  background:var(--surface);border:1px solid var(--border);margin-bottom:8px;cursor:pointer;}
+.gx-row:active{transform:scale(.99);}
+.gx-thumb{width:58px;height:58px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--surface-2);}
+.gx-info{flex:1;min-width:0;}
+.gx-name{font-weight:600;font-size:14.5px;color:var(--text);}
+.gx-sub{font-size:12px;color:var(--text-dim);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.gx-dose{font-size:11.5px;color:var(--accent-2);margin-top:3px;font-weight:600;}
+.gx-chev{color:var(--text-faint);font-size:20px;font-weight:300;flex-shrink:0;}
+/* Fiche détaillée */
+.gx-hero{width:100%;border-radius:var(--radius);display:block;background:var(--surface-2);}
+.gx-back{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;
+  border:1px solid var(--border);background:var(--surface-2);color:var(--text-dim);
+  font-size:13px;cursor:pointer;font-family:inherit;margin-bottom:12px;}
+.gx-sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.gx-step{display:flex;gap:10px;margin-bottom:10px;}
+.gx-step-n{width:22px;height:22px;border-radius:50%;background:var(--surface-3);color:var(--accent);
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gx-step-t{font-size:14px;line-height:1.5;color:var(--text);}
+.gx-err{font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:5px;}
+.gx-err b{color:var(--danger);font-weight:400;margin-right:5px;}
 /* Portrait guard — masqué en portrait, visible en landscape */
 #portraitGuard{
   display:none;
@@ -263,12 +285,12 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V2.8</span>
+      <span class="version-tag">Nouveautés V2.9</span>
       <ul>
-        <li><strong>Enchaînement audio corrigé</strong> — Les annonces ne se chevauchent plus. Appuyer sur Passer coupe proprement la voix en cours.</li>
-        <li><strong>Mélodie de fin de séance</strong> — Arpège zen de 10 notes à la fin de chaque séance complète.</li>
-        <li><strong>Verrouillage portrait</strong> — L'écran ne pivote plus en paysage.</li>
-        <li><strong>Guide Papa Ninja (V2.7)</strong> — Accès au PDF depuis l'accueil et la navigation.</li>
+        <li><strong>Guide intégré</strong> — Les 10 fiches exercices sont maintenant consultables directement dans l'app : illustration, déroulé, erreurs à éviter et variante lombaires.</li>
+        <li><strong>Guide PDF enrichi</strong> — 22 pages, 10 fiches détaillées, aligné sur le programme réel.</li>
+        <li><strong>Rappels par phase</strong> — Les jours de rappel s'ajustent seuls : 3 séances en Phase 1, 4 en Phase 2, 5 en Phase 3.</li>
+        <li><strong>Correctif audio (V2.8)</strong> — Plus de boucle vocale ni de timers parasites.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -330,9 +352,17 @@ nav.bottomnav svg{width:22px;height:22px;}
         <div class="guide-h1">Guide Papa Ninja</div>
         <div class="guide-year">2026</div>
       </div>
-      <div class="card" id="guideInfoCard">
-        <p class="note" style="text-align:center;padding:8px 0;">⏳ Vérification du guide...</p>
+      <div id="guideListView">
+        <div class="card">
+          <div class="card-title">📖 Les 10 exercices fondamentaux</div>
+          <p class="note" style="margin:0 0 12px;">Appuie sur un exercice pour voir sa fiche : le geste juste, les erreurs à éviter et la variante adaptée aux lombaires.</p>
+          <div id="guideList"></div>
+        </div>
+        <div class="card" id="guideInfoCard">
+          <p class="note" style="text-align:center;padding:8px 0;">⏳ Vérification du guide...</p>
+        </div>
       </div>
+      <div id="guideFicheView" style="display:none;"></div>
     </section>
 
     <!-- SÉANCE -->
@@ -506,7 +536,7 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.8</div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.9</div>
 
   <!-- Portrait guard : s'affiche si l'écran bascule en paysage -->
   <div id="portraitGuard" aria-live="polite">
@@ -521,7 +551,7 @@ nav.bottomnav svg{width:22px;height:22px;}
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '2.8';
+const APP_VERSION = '2.9';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
@@ -579,8 +609,209 @@ function initServiceWorkerUpdates() {
 
 /* ===== GUIDE ===== */
 const PDF_PATH='./assets/guide/Papa-Ninja-Guide-2026.pdf';
+const EX_IMG='./assets/exercices/';
+
+/* Fiches du guide — mêmes contenus que le PDF */
+const GUIDE_FICHES=[
+ {id:'squat',n:'Squat',img:'ex-01-squat.jpg',
+  m:'Quadriceps, fessiers, ischio-jambiers, gainage',d:'Débutant',
+  j:'Lundi · Mercredi · Vendredi',dose:'12 répétitions',prog:'14 répétitions en Phase 3',
+  r:'Inspire en descendant, expire en remontant.',
+  e:["Pieds écartés à largeur des épaules, orteils légèrement tournés vers l'extérieur.",
+     "Inspire. Recule les hanches comme pour t'asseoir sur une chaise imaginaire.",
+     "Genoux dans l'axe des pieds, dos droit, regard vers l'avant.",
+     "Descends jusqu'à cuisses parallèles au sol, ou selon ta mobilité du jour.",
+     "Expire en poussant sur les talons pour remonter. Fessiers contractés en haut."],
+  c:"Imagine que tu tiens un plateau : le buste reste droit et fier pendant toute la descente.",
+  err:["Genoux qui rentrent vers l'intérieur","Dos qui s'arrondit en bas","Talons qui décollent du sol","Descendre trop vite sans contrôle"],
+  v:"Tiens le dossier d'une chaise devant toi et ne descends qu'à mi-hauteur. Commence par un quart de squat, puis descends un peu plus chaque semaine."},
+
+ {id:'pont',n:'Pont fessier',img:'ex-02-pont-fessier.jpg',
+  m:'Fessiers, ischio-jambiers, érecteurs spinaux',d:'Débutant',
+  j:'Lundi · Mercredi',dose:'12 répétitions',prog:'14 répétitions en Phase 3',
+  r:'Inspire en bas, expire en montant les hanches.',
+  e:["Allonge-toi sur le dos, genoux fléchis, pieds à plat écartés à largeur des hanches.",
+     "Bras le long du corps, paumes vers le bas.",
+     "Inspire. Contracte les fessiers et pousse sur les talons pour lever les hanches.",
+     "Monte jusqu'à former une ligne droite épaules – hanches – genoux.",
+     "Expire en haut, tiens 2 secondes, puis redescends lentement vertèbre par vertèbre."],
+  c:"Pousse sur les talons, pas sur les orteils : c'est ce qui active vraiment les fessiers.",
+  err:["Hanches trop hautes (cambrure excessive)","Genoux qui s'écartent","Ne pas contracter les fessiers","Redescendre trop vite"],
+  v:"Même mouvement, amplitude réduite : monte les hanches à mi-hauteur seulement. C'est l'un des exercices les plus doux pour les lombaires."},
+
+ {id:'birddog',n:'Bird Dog',img:'ex-03-bird-dog.jpg',
+  m:'Érecteurs spinaux, gainage profond, fessiers, épaules',d:'Coordination',
+  j:'Lundi · Mardi · Vendredi',dose:'8 répétitions par côté',prog:'10 par côté en Phase 3',
+  r:'Expire en tendant, inspire en revenant.',
+  e:["À quatre pattes : mains sous les épaules, genoux sous les hanches, dos plat.",
+     "Contracte légèrement le ventre pour stabiliser le tronc.",
+     "Étends en même temps le bras droit vers l'avant et la jambe gauche vers l'arrière.",
+     "Maintiens l'alignement : les hanches ne tournent pas, le dos ne s'affaisse pas.",
+     "Tiens 3 secondes, reviens lentement, puis alterne les côtés."],
+  c:"Imagine un verre d'eau posé sur ton bas du dos : il ne doit pas se renverser.",
+  err:["Hanches qui pivotent sur le côté","Dos qui s'affaisse au milieu","Monter la jambe trop haut","Regarder en l'air, nuque tendue"],
+  v:"Décompose : tends d'abord seulement le bras, puis seulement la jambe. Combine les deux quand tu te sens stable, sans à-coups."},
+
+ {id:'deadbug',n:'Dead Bug',img:'ex-04-dead-bug.jpg',
+  m:'Gainage profond (transverse), lombaires, coordination',d:'Gainage profond',
+  j:'Mardi · Vendredi',dose:'8 répétitions par côté',prog:'10 par côté en Phase 3',
+  r:'Inspire en descendant, expire en revenant.',
+  e:["Allonge-toi sur le dos. Genoux fléchis en l'air, tibias horizontaux.",
+     "Bras tendus vers le plafond, bas du dos bien plaqué au sol.",
+     "Inspire. Abaisse lentement le bras droit et la jambe gauche vers le sol.",
+     "Expire en revenant à la position de départ, sans à-coups.",
+     "Le bas du dos reste en contact avec le sol pendant tout l'exercice."],
+  c:"Si ton bas du dos se décolle, tu es allé trop loin. Réduis l'amplitude, c'est tout.",
+  err:["Le bas du dos qui se décolle du sol","Aller trop vite","Bloquer la respiration","Descendre bras et jambe du même côté"],
+  v:"Ne descends la jambe qu'à mi-course au lieu de frôler le sol. Travaille d'abord les bras seuls, puis les jambes seules."},
+
+ {id:'pompes',n:'Pompes inclinées',img:'ex-05-pompes-inclinees.jpg',
+  m:'Pectoraux, épaules, triceps, gainage',d:'Haut du corps',
+  j:'Lundi · Mercredi · Vendredi',dose:'10 répétitions',prog:'12 répétitions en Phase 3',
+  r:'Inspire en descendant, expire en poussant.',
+  e:["Mains sur une surface stable et surélevée : plan de travail, table, banc, rebord.",
+     "Corps en ligne droite des talons aux épaules, gainage contracté.",
+     "Mains légèrement plus larges que les épaules.",
+     "Descends lentement, coudes à 45 degrés du corps et non écartés à 90.",
+     "Expire en poussant pour revenir. Le corps reste rigide du début à la fin."],
+  c:"Plus la surface est haute, plus c'est facile : plan de travail, puis table, puis chaise.",
+  err:["Les hanches qui tombent","Les coudes qui s'écartent à 90 degrés","Amplitude insuffisante","Tête qui dépasse, cou tendu"],
+  v:"Commence contre un mur, debout. Puis passe au plan de travail, puis à la table. Descends d'un niveau seulement quand 10 répétitions deviennent faciles."},
+
+ {id:'fentes',n:'Fentes arrière',img:'ex-06-fentes-arriere.jpg',
+  m:'Quadriceps, fessiers, ischio-jambiers, équilibre',d:'Jambes et équilibre',
+  j:'Mercredi',dose:'8 répétitions par jambe',prog:'10 par jambe en Phase 3',
+  r:'Inspire en descendant, expire en remontant.',
+  e:["Debout, tiens le dossier d'une chaise d'une main pour l'équilibre.",
+     "Fais un grand pas en arrière avec le pied droit.",
+     "Fléchis les deux genoux : genou avant à 90 degrés, genou arrière vers le sol.",
+     "Garde le torse droit et le regard vers l'avant.",
+     "Pousse sur le talon avant pour revenir debout, puis alterne les jambes."],
+  c:"Recule loin plutôt que de descendre bas : ton genou avant te remerciera.",
+  err:["Le genou avant qui dépasse la pointe du pied","Le torse qui penche en avant","Poser le genou arrière brutalement","Amplitude insuffisante"],
+  v:"Tiens-toi des deux mains à une chaise ou un plan de travail. Réduis la descente selon ton confort : pas de douleur, bonne profondeur."},
+
+ {id:'gainage',n:'Gainage sur genoux',img:'ex-07-gainage-genoux.jpg',
+  m:'Gainage profond, transverse, épaules, dos',d:'Gainage et stabilité',
+  j:'Lundi · Mercredi',dose:'20 secondes',prog:'Durée identique dans les trois phases',
+  r:'Respire normalement, sans jamais bloquer.',
+  e:["À quatre pattes, puis descends sur les avant-bras. Coudes bien sous les épaules.",
+     "Recule légèrement les genoux : corps en ligne droite des genoux aux épaules.",
+     "Contracte le ventre et serre légèrement les fessiers.",
+     "Respire normalement, regard posé au sol devant tes mains.",
+     "Maintiens la position sans laisser les hanches monter ni s'affaisser."],
+  err:["Hanches qui montent, le corps forme un triangle","Bas du dos qui s'affaisse","Coudes trop en avant","Bloquer la respiration"],
+  v:"Cet exercice est déjà la version douce du gainage. Si 20 secondes sont trop longues, fais deux fois 10 secondes avec une courte pause."},
+
+ {id:'chatvache',n:'Chat-Vache',img:'ex-08-chat-vache.jpg',
+  m:'Mobilité vertébrale, érecteurs spinaux, abdominaux',d:'Mobilité dorsale',
+  j:'Mardi',dose:'2 minutes',prog:'Durée identique dans les trois phases',
+  r:'Expire en arrondissant, inspire en creusant.',
+  e:["À quatre pattes, mains sous les épaules, genoux sous les hanches.",
+     "Le chat : expire en arrondissant le dos vers le plafond, tête relâchée vers le bas.",
+     "Sens chaque vertèbre s'écarter doucement, tiens 2 secondes.",
+     "La vache : inspire en laissant le ventre descendre, tête qui remonte.",
+     "Ondule lentement entre les deux positions, sans jamais forcer l'amplitude."],
+  c:"C'est le meilleur réveil pour ton dos. Fais-le aussi le matin, cinq fois, avant le café.",
+  err:["Aller trop vite et perdre le lien avec la respiration","Forcer l'amplitude","Poignets mal alignés sous les épaules","Bloquer la respiration"],
+  v:"Si tes poignets sont sensibles, appuie-toi sur les poings fermés ou sur les avant-bras. Le mouvement du dos reste le même."},
+
+ {id:'rotation',n:'Rotation thoracique',img:'ex-09-rotation-thoracique.jpg',
+  m:'Mobilité thoracique, obliques, muscles paravertébraux',d:'Mobilité',
+  j:'Mardi',dose:'2 minutes',prog:'Durée identique dans les trois phases',
+  r:'Expire en tournant, inspire en revenant au centre.',
+  e:["Debout, pieds écartés à largeur des hanches, genoux légèrement fléchis.",
+     "Mains jointes devant la poitrine, bras tendus à l'horizontale.",
+     "Expire en tournant lentement le buste vers la droite, le bassin reste immobile.",
+     "Reviens au centre en inspirant, puis tourne vers la gauche.",
+     "Alterne lentement, environ une minute de chaque côté."],
+  c:"Ce sont les épaules qui voyagent, pas les hanches. Garde les pieds bien ancrés au sol.",
+  err:["Faire tourner le bassin en même temps que le buste","Aller trop vite, par à-coups","Forcer l'amplitude en fin de rotation","Bloquer la respiration"],
+  v:"Fais-le assis sur une chaise, mains croisées sur la poitrine. Le bassin est bloqué par l'assise : la rotation vient forcément du haut du dos."},
+
+ {id:'psoas',n:'Étirement psoas',img:'ex-10-etirement-psoas.jpg',
+  m:'Psoas, fléchisseurs de hanche, quadriceps',d:'Souplesse',
+  j:'Mardi',dose:'2 minutes',prog:'Une minute par côté',
+  r:'Respire lentement et profondément, sans jamais forcer.',
+  e:["Place-toi en fente, genou arrière posé au sol sur un tapis ou un coussin.",
+     "Le genou avant est à la verticale de la cheville, pied bien à plat.",
+     "Redresse le buste, épaules basses, regard vers l'avant.",
+     "Pousse doucement le bassin vers l'avant jusqu'à sentir l'étirement devant la cuisse arrière.",
+     "Tiens une minute en respirant calmement, puis change de côté."],
+  c:"Rentre légèrement le bassin, comme pour rentrer le ventre, avant de pousser : l'étirement devient bien plus net.",
+  err:["Cambrer le bas du dos au lieu d'avancer le bassin","Genou avant qui dépasse la pointe du pied","Buste penché vers l'avant","Chercher la douleur plutôt que l'étirement"],
+  v:"Pose un coussin sous le genou arrière et tiens-toi à une chaise d'une main si l'équilibre est incertain. Réduis l'avancée du bassin."},
+];
+
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderGuideList(){
+  document.getElementById('guideList').innerHTML=GUIDE_FICHES.map((f,i)=>`
+    <div class="gx-row" onclick="openGuideFiche(${i})">
+      <img class="gx-thumb" src="${EX_IMG}${f.img}" alt="" loading="lazy">
+      <div class="gx-info">
+        <div class="gx-name">${esc(f.n)}</div>
+        <div class="gx-sub">${esc(f.j)}</div>
+        <div class="gx-dose">${esc(f.dose)}</div>
+      </div>
+      <div class="gx-chev">›</div>
+    </div>`).join('');
+}
+
+function ficheHTML(f,withBack){
+  return `
+    ${withBack?`<button class="gx-back" onclick="closeGuideFiche()">← Retour</button>`:''}
+    <div class="card">
+      <img class="gx-hero" src="${EX_IMG}${f.img}" alt="${esc(f.n)}">
+      <h2 style="font-size:22px;margin:14px 0 2px;">${esc(f.n)}</h2>
+      <div style="font-size:13px;color:var(--text-dim);">${esc(f.m)}</div>
+      <div style="font-size:12px;color:var(--gold);margin-top:4px;">${esc(f.d)}</div>
+
+      <div style="background:var(--surface-2);border:1px solid var(--accent-2-dim);border-radius:var(--radius-sm);padding:12px 14px;margin-top:14px;">
+        <div class="gx-sec" style="color:var(--accent-2);margin-bottom:6px;">Dans l'application</div>
+        <div style="font-size:12.5px;color:var(--text-dim);">${esc(f.j)}</div>
+        <div style="font-size:17px;font-weight:700;margin-top:4px;">${esc(f.dose)}</div>
+        <div style="font-size:11.5px;color:var(--text-faint);margin-top:3px;">${esc(f.prog)}</div>
+      </div>
+
+      <div class="gx-sec" style="color:var(--accent);margin-top:16px;">Respiration</div>
+      <div style="font-size:13.5px;color:var(--text-dim);">${esc(f.r)}</div>
+
+      <div class="gx-sec" style="color:var(--accent);margin-top:16px;">Déroulé</div>
+      ${f.e.map((st,i)=>`<div class="gx-step"><div class="gx-step-n">${i+1}</div><div class="gx-step-t">${esc(st)}</div></div>`).join('')}
+
+      ${f.c?`<div style="background:rgba(224,178,85,.08);border:1px solid rgba(224,178,85,.35);border-radius:var(--radius-sm);padding:12px 14px;margin-top:6px;">
+        <div class="gx-sec" style="color:var(--gold);margin-bottom:5px;">Conseil du vieux maître</div>
+        <div style="font-size:13.5px;color:var(--text-dim);font-style:italic;line-height:1.5;">${esc(f.c)}</div></div>`:''}
+
+      <div style="background:rgba(226,97,79,.07);border:1px solid rgba(226,97,79,.3);border-radius:var(--radius-sm);padding:12px 14px;margin-top:12px;">
+        <div class="gx-sec" style="color:var(--danger);">Erreurs fréquentes</div>
+        ${f.err.map(e=>`<div class="gx-err"><b>×</b>${esc(e)}</div>`).join('')}
+      </div>
+
+      <div style="background:rgba(62,217,142,.06);border:1px solid var(--accent-dim);border-radius:var(--radius-sm);padding:12px 14px;margin-top:12px;">
+        <div class="gx-sec" style="color:var(--accent);">Variante lombaires sensibles</div>
+        <div style="font-size:13.5px;color:var(--text-dim);line-height:1.5;">${esc(f.v)}</div>
+      </div>
+    </div>`;
+}
+
+function openGuideFiche(i){
+  const f=GUIDE_FICHES[i];
+  document.getElementById('guideFicheView').innerHTML=ficheHTML(f,true);
+  document.getElementById('guideListView').style.display='none';
+  document.getElementById('guideFicheView').style.display='block';
+  window.scrollTo(0,0);
+}
+function closeGuideFiche(){
+  document.getElementById('guideFicheView').style.display='none';
+  document.getElementById('guideListView').style.display='block';
+  window.scrollTo(0,0);
+}
 
 function renderGuideScreen(){
+  closeGuideFiche();
+  renderGuideList();
   const card=document.getElementById('guideInfoCard');
   card.innerHTML='<p class="note" style="text-align:center;padding:12px 0;">⏳ Vérification du guide...</p>';
   fetch(PDF_PATH,{method:'HEAD'})

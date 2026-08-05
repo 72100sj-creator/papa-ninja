@@ -1,3 +1,10 @@
+## V2.9 — Août 2026
+- ✅ Guide intégré à l'app : 10 fiches exercices consultables sans quitter Papa Ninja
+- ✅ Illustrations embarquées dans assets/exercices/ (280 Ko)
+- ✅ Le PDF 22 pages reste accessible depuis l'écran Guide
+- ✅ Rappels d'entraînement ajustés automatiquement selon la phase (3 / 4 / 5 séances)
+- ✅ Service Worker mis à jour (cache papa-ninja-v2.9)
+
 ## V2.8 — Juillet 2026
 - ✅ Enchaînement audio : cancel() avant chaque exercice + délai 150ms iOS
 - ✅ Bouton Passer : coupe proprement l'annonce en cours
