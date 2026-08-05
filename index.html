@@ -773,7 +773,7 @@ function defaultData(){
   return{sessions:[],settings:{
     level:1,startDate:null,
     reminderDays:[1,3,5],reminderTime:'18:00',remindersEnabled:false,
-    lastNotifFiredDate:null,lastLevelUpPromptDate:null,
+    lastNotifFiredDate:null,lastLevelUpPromptDate:null,lastReminderPhase:0,
     voiceEnabled:true,voiceName:'',voiceRate:0.87,voicePitch:1.03
   },badgesSeen:[]};
 }
@@ -1616,9 +1616,29 @@ if('serviceWorker' in navigator){
   });
 }
 
+/* ===== RAPPELS PAR PHASE ===== */
+// Jours recommandés par phase (0=Dim, 1=Lun, 2=Mar, 3=Mer, 4=Jeu, 5=Ven, 6=Sam)
+const PHASE_REMINDER_DAYS={
+  1:[1,3,5],   // Phase 1 : Lundi · Mercredi · Vendredi
+  2:[1,2,4,5], // Phase 2 : Lundi · Mardi · Jeudi · Vendredi
+  3:[1,2,3,4,5], // Phase 3 : Lundi · Mardi · Mercredi · Jeudi · Vendredi
+};
+function checkPhaseReminderUpdate(){
+  const pi=getProgressionInfo();
+  const phase=pi.phase;
+  const saved=DATA.settings.lastReminderPhase||0;
+  if(phase!==saved){
+    DATA.settings.reminderDays=PHASE_REMINDER_DAYS[phase]||PHASE_REMINDER_DAYS[1];
+    DATA.settings.lastReminderPhase=phase;
+    saveData();
+    console.log('[PapaNinja] Rappels mis à jour → Phase',phase,DATA.settings.reminderDays);
+  }
+}
+
 /* ===== INIT ===== */
 function init(){
   renderDashboard();
+  checkPhaseReminderUpdate(); // met à jour les rappels si la phase a changé
   checkShowChangelog();
   initServiceWorkerUpdates();
   // Verrouillage portrait : fonctionne en PWA standalone iOS 16.4+ et Android Chrome
