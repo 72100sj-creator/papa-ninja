@@ -1,4 +1,4 @@
-# 🥷 Papa Ninja V2.8
+# 🥷 Papa Ninja V3.0
 
 Application de coaching sportif personnel orientée remise en forme douce et protection des lombaires.
 Conçue pour iPhone, installable comme une vraie application (PWA).
@@ -25,22 +25,38 @@ Conçue pour iPhone, installable comme une vraie application (PWA).
 | Phase 2 | 5–8 | +1 tour par circuit | L · Ma · J · V |
 | Phase 3 | 9–12 | +2 répétitions | L · Ma · Me · J · V |
 
+Les jours de rappel s'ajustent seuls au passage d'une phase à l'autre.
+
 ---
 
 ## Fonctionnalités
 
-- **Assistant vocal** — annonces automatiques des exercices, consignes, encouragements, mélodie de fin
-- **Minuteur animé** — cercle de progression, couleur orange → rouge dans les 10 dernières secondes
-- **Répétitions** — bouton +1 avec flash de confirmation, compteur par côté (Bird Dog, Dead Bug…)
-- **Badge de tour** — indicateur visuel Tour X/Y pendant les circuits
-- **Écran GO** — l'audio s'initialise avant le démarrage, aucun timer ne part avant le tap
-- **Historique & Calendrier** — suivi des séances, taux de réussite, streaks
-- **Tableau de bord** — score Ninja, assiduité, progression par semaine
-- **Badges** — récompenses de progression
-- **Guide PDF** — accès intégré au guide Papa Ninja 2026
-- **Export / Import JSON** — sauvegarde et restauration des données
-- **Verrouillage portrait** — l'écran ne pivote pas pendant les séances
-- **Hors-ligne** — fonctionne sans connexion après la première installation
+### Pendant la séance
+- **Assistant vocal** — annonces des exercices, consignes, encouragements, mélodie de fin. Désactivable.
+- **Écran GO** — l'audio s'initialise d'abord, aucun minuteur ne démarre avant le tap
+- **Minuteur animé** — cercle de progression, vert → orange → rouge dans les 10 dernières secondes
+- **Répétitions** — grand bouton +1 avec flash de confirmation, compteur par côté
+- **Badge de tour** — indicateur Tour X/Y avec points de progression pendant les circuits
+- **❔ Fiche** — consulte la fiche de l'exercice en cours sans interrompre le minuteur
+- **🔁 Répéter** — réénonce la consigne à la demande
+- **Écran maintenu allumé** pendant tout l'entraînement
+
+### Guide
+- **10 fiches intégrées** — illustration, muscles, dose, respiration, déroulé, erreurs, variante lombaires
+- **Guide PDF 22 pages** — règles d'or, plan 12 semaines, récupération, à lire ou imprimer
+
+### Suivi
+- **Tableau de bord** — score Ninja, assiduité, séries, progression par semaine
+- **Calendrier & Historique** — séances cochées, taux de réussite
+- **Effort et douleur** — notés après chaque séance, avec alerte si la douleur monte
+- **Bilan hebdomadaire** et **badges** de progression
+
+### Technique
+- **Export / Import JSON** — sauvegarde et restauration complètes
+- **Mises à jour automatiques** — bannière dès qu'une nouvelle version est en ligne
+- **Verrouillage portrait**
+- **Hors-ligne** — fonctionne sans connexion après la première visite
+- **Données 100 % locales** — aucun compte, rien n'est envoyé sur internet
 
 ---
 
@@ -61,11 +77,18 @@ papa-ninja/
 ├── service-worker.js   Cache hors-ligne
 ├── CHANGELOG.md        Historique des versions
 ├── assets/
-│   └── guide/
-│       └── Papa-Ninja-Guide-2026.pdf
+│   ├── guide/
+│   │   └── Papa-Ninja-Guide-2026.pdf     Guide 22 pages
+│   └── exercices/
+│       └── ex-01…ex-10.jpg               Illustrations des fiches
 └── Icônes (icon-192.png, icon-512.png, icon-512-maskable.png…)
 ```
 
 ---
 
-*Projet personnel — Seb · 2026*
+## Crédits
+
+Illustrations des exercices générées avec Google Gemini.
+Conception et développement réalisés avec Claude (Anthropic).
+
+*Projet personnel · 2026*
