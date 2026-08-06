@@ -1,3 +1,11 @@
+## V3.2 — Août 2026
+- ✅ Nouvelle icône : ninja aux haltères, graduée dans la charte de l'app, lisible en petit sur iPhone
+- ✅ Icône Apple renommée apple-touch-icon-v2.png (iOS mémorise l'icône par nom de fichier)
+- ✅ Le guide PDF se télécharge au lieu d'ouvrir Safari : plus de sortie d'app sans retour
+- ✅ Annonce « Change de côté » à mi-parcours des Étirements des hanches (mécanisme midCue)
+- ✅ Guide PDF : version corrigée en 3.1, rubrique Mobilité quotidienne remplacée par Morning Ninja
+- ✅ Service Worker mis à jour (cache papa-ninja-v3.2)
+
 ## V3.1 — Août 2026
 - ✅ 4 nouvelles fiches : Étirements du dos et des hanches, Montées de genoux, Cercles d'épaules, Bascule du bassin
 - ✅ 14 fiches au total, 17 exercices de séance reconnus par le bouton ❔ Fiche

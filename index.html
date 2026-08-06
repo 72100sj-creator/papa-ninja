@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon-v2.png">
 <style>
 :root{
   --bg:#0B1210; --surface:#121A17; --surface-2:#1A2420; --surface-3:#212D27;
@@ -301,12 +301,12 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V3.1</span>
+      <span class="version-tag">Nouveautés V3.2</span>
       <ul>
-        <li><strong>14 fiches</strong> — Étirements du dos et des hanches, Montées de genoux, Cercles d'épaules et Bascule du bassin ont désormais leur fiche.</li>
-        <li><strong>Illustrations recadrées</strong> — Toutes les images ont été reprises pour que la posture remplisse l'écran.</li>
-        <li><strong>Guide PDF 25 pages</strong> — Mis à jour avec les 4 nouvelles fiches.</li>
-        <li><strong>Fiche pendant la séance (V3.0)</strong> — Le bouton ❔ Fiche couvre maintenant 17 exercices.</li>
+        <li><strong>Nouvelle icône</strong> — Le ninja aux haltères, dans les couleurs de l'app.</li>
+        <li><strong>Guide PDF téléchargé</strong> — Il s'enregistre sur ton téléphone au lieu d'ouvrir Safari : tu ne quittes plus l'app.</li>
+        <li><strong>Changement de côté annoncé</strong> — Sur les Étirements des hanches, la voix te prévient à mi-parcours.</li>
+        <li><strong>14 fiches (V3.1)</strong> — Illustrations recadrées, guide PDF de 25 pages.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -553,7 +553,7 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V3.1</div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V3.2</div>
 
   <!-- Fiche de l'exercice consultée sans quitter la séance -->
   <div id="wkFicheOverlay" role="dialog" aria-modal="true">
@@ -580,7 +580,7 @@ nav.bottomnav svg{width:22px;height:22px;}
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '3.1';
+const APP_VERSION = '3.2';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
@@ -955,13 +955,22 @@ function showGuideReady(card){
       <div class="guide-meta-row"><span>📄</span><span>17 pages</span></div>
       <div class="guide-meta-row"><span>🕒</span><span>Mis à jour en juin 2026</span></div>
     </div>
-    <button class="btn btn-primary" id="openGuideBtn">📖 Ouvrir le guide</button>
+    <button class="btn btn-primary" id="openGuideBtn">📥 Télécharger le guide (PDF)</button>
     <p class="note" style="margin-top:10px;">
-      Le guide s'ouvre dans Safari avec un lecteur PDF natif.
-      Utilise le bouton Retour de ton iPhone pour revenir à Papa Ninja.
-      Après la première ouverture, il sera disponible hors connexion.
+      Le PDF de 25 pages est enregistré sur ton téléphone : tu restes dans Papa Ninja.
+      Les 14 fiches ci-dessus sont déjà consultables directement dans l'app.
     </p>`;
-  document.getElementById('openGuideBtn').onclick=()=>window.open(PDF_PATH,'_blank');
+  document.getElementById('openGuideBtn').onclick=()=>{
+    // En PWA iOS, ouvrir un PDF quitte l'app sans retour possible.
+    // On déclenche un téléchargement : la feuille de partage s'ouvre, on reste dans Papa Ninja.
+    const a=document.createElement('a');
+    a.href=PDF_PATH;
+    a.download='Papa-Ninja-Guide-2026.pdf';
+    a.rel='noopener';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>document.body.removeChild(a),500);
+  };
 }
 function showGuideMissing(card){
   card.innerHTML=`
@@ -1048,7 +1057,7 @@ const DAY_PROGRAMS = {
       return [
         {name:'Marche rapide',type:'time',duration:600,section:'Cardio doux 🚶',instruction:'Marche à bon rythme, bras actifs, dos droit. Tu peux marcher dehors ou sur place.'},
         {name:'Étirements du dos',type:'time',duration:90,section:'Mobilité 🌿',instruction:'Assis, penche-toi doucement vers l\'avant en laissant le dos s\'arrondir. Respire et relâche.'},
-        {name:'Étirements des hanches',type:'time',duration:90,section:'Mobilité 🌿',instruction:'En position allongée, ramène un genou vers la poitrine, tiens 45 secondes. Change de côté.'},
+        {name:'Étirements des hanches',type:'time',duration:90,section:'Mobilité 🌿',midCue:'Change de côté.',instruction:'En position allongée, ramène un genou vers la poitrine, tiens 45 secondes. Change de côté.'},
         {name:'Respiration du vieux maître 🥷',type:'time',duration:120,section:'Retour au calme 🌿',instruction:'Inspire profondément par le nez, expire lentement par la bouche.'},
       ];
     }
@@ -1605,10 +1614,12 @@ function startTimedExercise(ex){
   document.getElementById('repsModeUI').style.display='none';
   workout.timeRemaining=ex.duration;
   drawTimerRing(ex.duration,workout.timeRemaining,false);
+  const mid=ex.midCue?Math.floor(ex.duration/2):-1;
   workout.timerId=setInterval(()=>{
     if(workout.paused)return;
     workout.timeRemaining--;
     drawTimerRing(ex.duration,workout.timeRemaining,false);
+    if(workout.timeRemaining===mid){beep(660,120);speak(ex.midCue);}
     if(workout.timeRemaining<=0){clearInterval(workout.timerId);completeCurrentExercise();}
   },1000);
 }

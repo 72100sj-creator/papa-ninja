@@ -1,4 +1,4 @@
-# 🥷 Papa Ninja V3.1
+# 🥷 Papa Ninja V3.2
 
 Application de coaching sportif personnel orientée remise en forme douce et protection des lombaires.
 Conçue pour iPhone, installable comme une vraie application (PWA).

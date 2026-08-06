@@ -1,14 +1,14 @@
 // Papa Ninja 🥷 — Service Worker v2.2
 // Stratégie : network-first pour HTML (mise à jour immédiate), cache-first pour assets
 
-const CACHE_NAME = 'papa-ninja-v3.1';
+const CACHE_NAME = 'papa-ninja-v3.2';
 const ASSETS = [
   './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
   './icon-512-maskable.png',
-  './apple-touch-icon.png',
+  './apple-touch-icon-v2.png',
   './favicon.png'
 ];
 
