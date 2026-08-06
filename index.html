@@ -233,6 +233,22 @@ nav.bottomnav svg{width:22px;height:22px;}
 .gx-step-t{font-size:14px;line-height:1.5;color:var(--text);}
 .gx-err{font-size:13px;color:var(--text-dim);line-height:1.5;margin-bottom:5px;}
 .gx-err b{color:var(--danger);font-weight:400;margin-right:5px;}
+/* Fiche consultée pendant la séance */
+#wkFicheOverlay{display:none;position:fixed;inset:0;z-index:400;background:var(--bg);overflow-y:auto;
+  -webkit-overflow-scrolling:touch;}
+#wkFicheOverlay.open{display:block;}
+.wkf-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;
+  padding:calc(12px + var(--safe-top)) 16px 12px;background:var(--surface);
+  border-bottom:1px solid var(--border);}
+.wkf-bar .t{flex:1;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.wkf-close{flex-shrink:0;padding:8px 16px;border-radius:10px;border:none;
+  background:var(--accent);color:#062019;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.wkf-body{padding:16px 20px calc(30px + var(--safe-bottom));max-width:480px;margin:0 auto;}
+.wkf-note{font-size:12px;color:var(--text-faint);text-align:center;margin-bottom:12px;}
+.btn-help{display:inline-flex;align-items:center;gap:5px;margin-top:10px;margin-left:8px;
+  padding:6px 14px;border-radius:999px;border:1px solid var(--border);
+  background:var(--surface-2);color:var(--text-dim);font-size:12px;cursor:pointer;font-family:inherit;}
+.btn-help:active{transform:scale(.95);}
 /* Portrait guard — masqué en portrait, visible en landscape */
 #portraitGuard{
   display:none;
@@ -285,12 +301,12 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V2.9</span>
+      <span class="version-tag">Nouveautés V3.0</span>
       <ul>
-        <li><strong>Guide intégré</strong> — Les 10 fiches exercices sont maintenant consultables directement dans l'app : illustration, déroulé, erreurs à éviter et variante lombaires.</li>
-        <li><strong>Guide PDF enrichi</strong> — 22 pages, 10 fiches détaillées, aligné sur le programme réel.</li>
-        <li><strong>Rappels par phase</strong> — Les jours de rappel s'ajustent seuls : 3 séances en Phase 1, 4 en Phase 2, 5 en Phase 3.</li>
-        <li><strong>Correctif audio (V2.8)</strong> — Plus de boucle vocale ni de timers parasites.</li>
+        <li><strong>Fiche pendant la séance</strong> — Un bouton « ❔ Fiche » à côté de Répéter ouvre la fiche de l'exercice en cours. Ta séance continue derrière, tu refermes et tu reprends.</li>
+        <li><strong>Guide intégré (V2.9)</strong> — Les 10 fiches consultables directement dans l'onglet Guide.</li>
+        <li><strong>Rappels par phase (V2.9)</strong> — 3 séances en Phase 1, 4 en Phase 2, 5 en Phase 3.</li>
+        <li><strong>Guide PDF 22 pages</strong> — Toujours accessible depuis l'écran Guide.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -388,6 +404,7 @@ nav.bottomnav svg{width:22px;height:22px;}
           <div class="ex-title" id="exTitle">—</div>
           <div class="ex-instruction" id="exInstruction">—</div>
           <button class="btn-repeat" id="repeatBtn" onclick="repeatAnnounce()" aria-label="Répéter la consigne">🔁 Répéter</button>
+          <button class="btn-help" id="helpBtn" onclick="openWorkoutFiche()" style="display:none;" aria-label="Voir la fiche de l'exercice">❔ Fiche</button>
         </div>
         <div id="timeModeUI" style="display:none;">
           <div class="ring-wrap" id="timerRingWrap"></div>
@@ -536,7 +553,19 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V2.9</div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V3.0</div>
+
+  <!-- Fiche de l'exercice consultée sans quitter la séance -->
+  <div id="wkFicheOverlay" role="dialog" aria-modal="true">
+    <div class="wkf-bar">
+      <button class="wkf-close" onclick="closeWorkoutFiche()">← Reprendre</button>
+      <span class="t" id="wkFicheTitle">Fiche</span>
+    </div>
+    <div class="wkf-body">
+      <p class="wkf-note">⏱ Ta séance continue en arrière-plan.</p>
+      <div id="wkFicheBody"></div>
+    </div>
+  </div>
 
   <!-- Portrait guard : s'affiche si l'écran bascule en paysage -->
   <div id="portraitGuard" aria-live="polite">
@@ -551,7 +580,7 @@ nav.bottomnav svg{width:22px;height:22px;}
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '2.9';
+const APP_VERSION = '3.0';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
@@ -794,6 +823,45 @@ function ficheHTML(f,withBack){
         <div style="font-size:13.5px;color:var(--text-dim);line-height:1.5;">${esc(f.v)}</div>
       </div>
     </div>`;
+}
+
+/* Correspondance entre les exercices de séance et les fiches du guide */
+const EX_TO_FICHE={
+  'Squat':'squat',
+  'Pont fessier':'pont',
+  'Bird Dog':'birddog',
+  'Dead Bug':'deadbug',
+  'Pompes inclinées':'pompes',
+  'Pompes sur plan de travail':'pompes',
+  'Fentes arrière assistées':'fentes',
+  'Gainage sur genoux':'gainage',
+  'Gainage':'gainage',
+  'Chat-vache':'chatvache',
+  'Rotation thoracique':'rotation',
+  'Étirement psoas':'psoas',
+};
+function ficheForExercise(name){
+  const id=EX_TO_FICHE[name];
+  return id?GUIDE_FICHES.find(f=>f.id===id):null;
+}
+function updateHelpBtn(ex){
+  const b=document.getElementById('helpBtn');
+  if(!b) return;
+  b.style.display=(ex&&ex.type!=='rest'&&ficheForExercise(ex.name))?'inline-flex':'none';
+}
+function openWorkoutFiche(){
+  if(!workout||workout.index==null) return;
+  const ex=workout.exercises[workout.index];
+  const f=ficheForExercise(ex&&ex.name);
+  if(!f) return;
+  document.getElementById('wkFicheTitle').textContent=f.n;
+  document.getElementById('wkFicheBody').innerHTML=ficheHTML(f,false);
+  document.getElementById('wkFicheOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeWorkoutFiche(){
+  document.getElementById('wkFicheOverlay').classList.remove('open');
+  document.body.style.overflow='';
 }
 
 function openGuideFiche(i){
@@ -1409,6 +1477,7 @@ function loadExercise(i){
     document.getElementById('exTitle').textContent='Repos';
     document.getElementById('exInstruction').textContent=ex.instruction||'Récupère et respire.';
     document.getElementById('sideTag').style.display='none';
+    updateHelpBtn(ex);
     document.getElementById('timeModeUI').style.display='block';
     document.getElementById('repsModeUI').style.display='none';
     document.getElementById('pauseBtn').disabled=true;
@@ -1431,6 +1500,7 @@ function loadExercise(i){
     if(ex.perSide) document.getElementById('sideTag').textContent='Côté gauche';
     document.getElementById('exTitle').textContent=ex.name;
     document.getElementById('exInstruction').textContent=ex.instruction;
+    updateHelpBtn(ex);
     let announce='';
     if(i===0){const w=WELCOME_PHRASES[Math.floor(Math.random()*WELCOME_PHRASES.length)];announce=w+' ';}
     if(ex.isFirstInRound) announce+=`Tour ${ex.roundNum} sur ${ex.totalRounds}. `;
@@ -1532,6 +1602,7 @@ function completeCurrentExercise(){
 function stopWorkout(){
   if(confirm('Arrêter la séance maintenant ? La progression sera enregistrée comme incomplète.')){
     clearInterval(workout.timerId);
+    closeWorkoutFiche();
     releaseWakeLock();
     stopAudioKeepAlive();
     for(let i=workout.index;i<workout.exercises.length;i++){
@@ -1544,6 +1615,7 @@ function stopWorkout(){
 }
 function finishWorkout(reachedEnd){
   clearInterval(workout.timerId);
+  closeWorkoutFiche();
   releaseWakeLock();
   stopAudioKeepAlive();
   const durationSec=Math.max(1,Math.round((Date.now()-new Date(workout.startedAt))/1000));

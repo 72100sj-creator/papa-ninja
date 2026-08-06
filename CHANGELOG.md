@@ -1,3 +1,10 @@
+## V3.0 — Août 2026
+- ✅ Bouton « ❔ Fiche » pendant la séance : consulte la fiche de l'exercice en cours sans interrompre le minuteur
+- ✅ 12 exercices reconnus, variantes incluses (pompes sur plan de travail, gainage)
+- ✅ Le bouton se masque sur les échauffements, marches et temps de repos
+- ✅ Fermeture automatique de la fiche en fin ou à l'arrêt de séance
+- ✅ Service Worker mis à jour (cache papa-ninja-v3.0)
+
 ## V2.9 — Août 2026
 - ✅ Guide intégré à l'app : 10 fiches exercices consultables sans quitter Papa Ninja
 - ✅ Illustrations embarquées dans assets/exercices/ (280 Ko)
