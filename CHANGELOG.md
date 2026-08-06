@@ -1,3 +1,11 @@
+## V3.1 — Août 2026
+- ✅ 4 nouvelles fiches : Étirements du dos et des hanches, Montées de genoux, Cercles d'épaules, Bascule du bassin
+- ✅ 14 fiches au total, 17 exercices de séance reconnus par le bouton ❔ Fiche
+- ✅ Toutes les illustrations recadrées : la posture remplit le cadre, plus de bandes vides
+- ✅ Images à deux vignettes empilées verticalement (Dead Bug, Chat-Vache, Étirements)
+- ✅ Guide PDF porté à 25 pages
+- ✅ Service Worker mis à jour (cache papa-ninja-v3.1)
+
 ## V3.0 — Août 2026
 - ✅ Bouton « ❔ Fiche » pendant la séance : consulte la fiche de l'exercice en cours sans interrompre le minuteur
 - ✅ 12 exercices reconnus, variantes incluses (pompes sur plan de travail, gainage)

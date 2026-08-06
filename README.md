@@ -1,4 +1,4 @@
-# 🥷 Papa Ninja V3.0
+# 🥷 Papa Ninja V3.1
 
 Application de coaching sportif personnel orientée remise en forme douce et protection des lombaires.
 Conçue pour iPhone, installable comme une vraie application (PWA).
@@ -42,8 +42,8 @@ Les jours de rappel s'ajustent seuls au passage d'une phase à l'autre.
 - **Écran maintenu allumé** pendant tout l'entraînement
 
 ### Guide
-- **10 fiches intégrées** — illustration, muscles, dose, respiration, déroulé, erreurs, variante lombaires
-- **Guide PDF 22 pages** — règles d'or, plan 12 semaines, récupération, à lire ou imprimer
+- **14 fiches intégrées** — illustration, muscles, dose, respiration, déroulé, erreurs, variante lombaires
+- **Guide PDF 25 pages** — règles d'or, plan 12 semaines, récupération, à lire ou imprimer
 
 ### Suivi
 - **Tableau de bord** — score Ninja, assiduité, séries, progression par semaine
@@ -78,9 +78,9 @@ papa-ninja/
 ├── CHANGELOG.md        Historique des versions
 ├── assets/
 │   ├── guide/
-│   │   └── Papa-Ninja-Guide-2026.pdf     Guide 22 pages
+│   │   └── Papa-Ninja-Guide-2026.pdf     Guide 25 pages
 │   └── exercices/
-│       └── ex-01…ex-10.jpg               Illustrations des fiches
+│       └── ex-01…ex-14.jpg               Illustrations des fiches
 └── Icônes (icon-192.png, icon-512.png, icon-512-maskable.png…)
 ```
 

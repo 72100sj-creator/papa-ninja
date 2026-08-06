@@ -301,12 +301,12 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V3.0</span>
+      <span class="version-tag">Nouveautés V3.1</span>
       <ul>
-        <li><strong>Fiche pendant la séance</strong> — Un bouton « ❔ Fiche » à côté de Répéter ouvre la fiche de l'exercice en cours. Ta séance continue derrière, tu refermes et tu reprends.</li>
-        <li><strong>Guide intégré (V2.9)</strong> — Les 10 fiches consultables directement dans l'onglet Guide.</li>
-        <li><strong>Rappels par phase (V2.9)</strong> — 3 séances en Phase 1, 4 en Phase 2, 5 en Phase 3.</li>
-        <li><strong>Guide PDF 22 pages</strong> — Toujours accessible depuis l'écran Guide.</li>
+        <li><strong>14 fiches</strong> — Étirements du dos et des hanches, Montées de genoux, Cercles d'épaules et Bascule du bassin ont désormais leur fiche.</li>
+        <li><strong>Illustrations recadrées</strong> — Toutes les images ont été reprises pour que la posture remplisse l'écran.</li>
+        <li><strong>Guide PDF 25 pages</strong> — Mis à jour avec les 4 nouvelles fiches.</li>
+        <li><strong>Fiche pendant la séance (V3.0)</strong> — Le bouton ❔ Fiche couvre maintenant 17 exercices.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -370,7 +370,7 @@ nav.bottomnav svg{width:22px;height:22px;}
       </div>
       <div id="guideListView">
         <div class="card">
-          <div class="card-title">📖 Les 10 exercices fondamentaux</div>
+          <div class="card-title">📖 Les 14 fiches exercices</div>
           <p class="note" style="margin:0 0 12px;">Appuie sur un exercice pour voir sa fiche : le geste juste, les erreurs à éviter et la variante adaptée aux lombaires.</p>
           <div id="guideList"></div>
         </div>
@@ -553,7 +553,7 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V3.0</div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V3.1</div>
 
   <!-- Fiche de l'exercice consultée sans quitter la séance -->
   <div id="wkFicheOverlay" role="dialog" aria-modal="true">
@@ -580,7 +580,7 @@ nav.bottomnav svg{width:22px;height:22px;}
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '3.0';
+const APP_VERSION = '3.1';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
@@ -770,6 +770,58 @@ const GUIDE_FICHES=[
   c:"Rentre légèrement le bassin, comme pour rentrer le ventre, avant de pousser : l'étirement devient bien plus net.",
   err:["Cambrer le bas du dos au lieu d'avancer le bassin","Genou avant qui dépasse la pointe du pied","Buste penché vers l'avant","Chercher la douleur plutôt que l'étirement"],
   v:"Pose un coussin sous le genou arrière et tiens-toi à une chaise d'une main si l'équilibre est incertain. Réduis l'avancée du bassin."},
+
+ {id:'etirdos',n:'Étirements du dos et des hanches',img:'ex-11-etirements-dos-hanches.jpg',
+  m:'Chaîne postérieure, lombaires, fessiers, ischio-jambiers',d:'Souplesse',
+  j:'Jeudi',dose:'1 min 30 chacun',prog:'Durée identique dans les trois phases',
+  r:'Souffle long et régulier, relâche un peu plus à chaque expiration.',
+  e:["Le dos : assis jambes tendues, penche-toi vers l'avant en laissant le dos s'arrondir.",
+     "Descends jusqu'où c'est confortable, mains sur les tibias ou les chevilles. Tiens 1 min 30.",
+     "Les hanches : allonge-toi sur le dos, une jambe tendue au sol.",
+     "Ramène l'autre genou vers la poitrine avec les mains, sans décoller la tête.",
+     "Tiens 45 secondes, puis change de côté."],
+  c:"Jamais d'à-coups ni de rebond : on cherche le relâchement, pas la performance.",
+  err:["Rebondir pour aller plus loin","Bloquer la respiration","Décoller la tête du sol sur l'étirement des hanches","Tirer jusqu'à la douleur"],
+  v:"Plie légèrement les genoux sur l'étirement du dos, ou assieds-toi sur un coussin. Pour les hanches, garde l'autre jambe pliée, pied au sol."},
+
+ {id:'genoux',n:'Montées de genoux',img:'ex-12-montees-genoux.jpg',
+  m:'Cardio, fléchisseurs de hanche, gainage, mollets',d:'Cardio doux',
+  j:'Vendredi',dose:'30 secondes',prog:'Durée identique dans les trois phases',
+  r:'Respire en rythme, sans jamais retenir ton souffle.',
+  e:["Debout, pieds à largeur des hanches, buste droit et regard vers l'avant.",
+     "Monte un genou vers la poitrine, puis repose le pied.",
+     "Alterne les jambes à un rythme régulier, bras actifs comme à la course.",
+     "Reste sur l'avant du pied, réception souple, genoux jamais bloqués.",
+     "Tiens le rythme 30 secondes sans laisser le dos se cambrer."],
+  c:"Le buste reste droit : ce sont les genoux qui montent, pas le torse qui descend.",
+  err:["Se pencher en arrière pour monter plus haut","Retomber lourdement sur les talons","Cambrer le bas du dos","Aller trop vite et perdre la posture"],
+  v:"Fais-le sans sauter : marche sur place en levant bien les genoux. Même bénéfice, aucun impact pour le dos."},
+
+ {id:'epaules',n:"Cercles d'épaules",img:'ex-13-cercles-epaules.jpg',
+  m:'Deltoïdes, trapèzes, mobilité de la ceinture scapulaire',d:'Mobilité',
+  j:'Lundi',dose:'1 minute',prog:'Durée identique dans les trois phases',
+  r:'Respire amplement, le mouvement suit le souffle.',
+  e:["Debout, pieds à largeur des hanches, bras tendus sur les côtés à l'horizontale.",
+     "Dessine de petits cercles vers l'avant pendant 15 secondes.",
+     "Inverse le sens : petits cercles vers l'arrière, 15 secondes.",
+     "Agrandis progressivement les cercles, épaules basses et loin des oreilles.",
+     "Termine bras le long du corps, en roulant les épaules vers l'arrière."],
+  c:"Garde les épaules basses : si elles montent vers les oreilles, réduis l'amplitude.",
+  err:["Remonter les épaules vers les oreilles","Cambrer le bas du dos","Aller trop vite","Bloquer la respiration"],
+  v:"Fais-le assis, ou bras semi-fléchis si tenir les bras tendus tire dans la nuque."},
+
+ {id:'bassin',n:'Bascule du bassin',img:'ex-14-bascule-bassin.jpg',
+  m:'Transverse, lombaires, mobilité du bassin',d:'Mobilité lombaire',
+  j:'Lundi · Vendredi',dose:'1 minute',prog:'Durée identique dans les trois phases',
+  r:'Expire en plaquant le dos, inspire en relâchant.',
+  e:["Allonge-toi sur le dos, genoux fléchis, pieds à plat au sol.",
+     "Bras le long du corps, nuque longue et relâchée.",
+     "Expire en basculant le bassin vers toi : le bas du dos se plaque au sol.",
+     "Inspire en relâchant : une petite cambrure naturelle revient.",
+     "Alterne lentement pendant une minute, sans jamais forcer."],
+  c:"C'est l'échauffement le plus important pour ton dos. Ne le saute jamais, même pressé.",
+  err:["Pousser sur les pieds au lieu de basculer le bassin","Contracter les fessiers","Aller trop vite","Forcer la cambrure sur le relâchement"],
+  v:"Fais-le debout, dos contre un mur : même mouvement de bascule, en cherchant à coller le bas du dos au mur."},
 ];
 
 function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -839,6 +891,11 @@ const EX_TO_FICHE={
   'Chat-vache':'chatvache',
   'Rotation thoracique':'rotation',
   'Étirement psoas':'psoas',
+  'Étirements du dos':'etirdos',
+  'Étirements des hanches':'etirdos',
+  'Montées de genoux':'genoux',
+  "Cercles d'épaules":'epaules',
+  'Bascule du bassin':'bassin',
 };
 function ficheForExercise(name){
   const id=EX_TO_FICHE[name];
