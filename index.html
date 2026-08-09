@@ -301,12 +301,11 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V3.3</span>
+      <span class="version-tag">Nouveautés V3.4</span>
       <ul>
-        <li><strong>Rappels par le calendrier</strong> — Un bouton crée un fichier calendrier avec une alerte hebdomadaire pour chacun de tes jours de séance. De vraies notifications système, sans serveur.</li>
-        <li><strong>Notifications retirées</strong> — Elles ne fonctionnaient que si l'app était déjà ouverte : la promesse était trompeuse.</li>
+        <li><strong>Feuille de partage iOS</strong> — Le fichier calendrier et le guide PDF passent par la feuille de partage : elle s'ouvre par-dessus l'app et propose directement Calendrier ou Fichiers. Plus besoin d'aller chercher le fichier.</li>
+        <li><strong>Rappels calendrier (V3.3)</strong> — Une alerte hebdomadaire par jour de séance, bornée à la fin de la phase.</li>
         <li><strong>Nouvelle icône (V3.2)</strong> — Le ninja aux haltères dans la charte de l'app.</li>
-        <li><strong>14 fiches (V3.1)</strong> — Consultables dans l'app et pendant la séance.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -498,7 +497,7 @@ nav.bottomnav svg{width:22px;height:22px;}
         <label class="field-label">Heure du rappel</label>
         <input type="time" id="reminderTime" value="18:00">
         <button class="btn btn-secondary btn-sm" style="margin-top:14px;" id="calendarBtn">📅 Ajouter à mon calendrier</button>
-        <p class="note">Un fichier calendrier est enregistré sur ton téléphone : ouvre-le et iOS ajoute une alerte hebdomadaire pour chaque jour coché. Les vraies notifications système ne sont pas possibles pour une application web sans serveur d'envoi.</p>
+        <p class="note">La feuille de partage s'ouvre : choisis <strong>Calendrier</strong> pour ajouter une alerte hebdomadaire à chacun de tes jours de séance. Les vraies notifications système ne sont pas possibles pour une application web sans serveur d'envoi.</p>
         <p class="note">Les rappels s'arrêtent à la fin de la phase en cours : au changement de phase, tes jours de séance changent. Regénère simplement le fichier à ce moment-là.</p>
       </div>
       <div class="card">
@@ -554,7 +553,7 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V3.3</div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V3.4</div>
 
   <!-- Fiche de l'exercice consultée sans quitter la séance -->
   <div id="wkFicheOverlay" role="dialog" aria-modal="true">
@@ -581,7 +580,7 @@ nav.bottomnav svg{width:22px;height:22px;}
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '3.3';
+const APP_VERSION = '3.4';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
@@ -961,16 +960,23 @@ function showGuideReady(card){
       Le PDF de 25 pages est enregistré sur ton téléphone : tu restes dans Papa Ninja.
       Les 14 fiches ci-dessus sont déjà consultables directement dans l'app.
     </p>`;
-  document.getElementById('openGuideBtn').onclick=()=>{
-    // En PWA iOS, ouvrir un PDF quitte l'app sans retour possible.
-    // On déclenche un téléchargement : la feuille de partage s'ouvre, on reste dans Papa Ninja.
-    const a=document.createElement('a');
-    a.href=PDF_PATH;
-    a.download='Papa-Ninja-Guide-2026.pdf';
-    a.rel='noopener';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(()=>document.body.removeChild(a),500);
+  document.getElementById('openGuideBtn').onclick=async()=>{
+    // Ouvrir un PDF en PWA iOS quitte l'app sans retour possible.
+    // On passe par la feuille de partage, qui reste par-dessus l'app.
+    try{
+      const r=await fetch(PDF_PATH);
+      const blob=await r.blob();
+      const fichier=new File([blob],'Papa-Ninja-Guide-2026.pdf',{type:'application/pdf'});
+      if(navigator.canShare && navigator.canShare({files:[fichier]})){
+        await navigator.share({files:[fichier],title:'Guide Papa Ninja 2026'});
+        return;
+      }
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download='Papa-Ninja-Guide-2026.pdf';
+      document.body.appendChild(a); a.click();
+      setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},800);
+    }catch(e){}
   };
 }
 function showGuideMissing(card){
@@ -1964,14 +1970,30 @@ document.getElementById('calendarBtn').onclick=function(){
   });
   L.push('END:VCALENDAR');
 
+  const contenu=L.map(icsPlier).join('\r\n');
+  const nom='papa-ninja-rappels.ics';
+  const resume=`${nbSemaines} semaine${nbSemaines>1?'s':''} de rappels, jusqu'à la fin de la Phase ${pi.phase}.`;
+
+  // Feuille de partage iOS : elle s'ouvre par-dessus l'app et propose « Calendrier ».
+  // Sans elle, en PWA installée, le fichier part dans Fichiers sans aucun indicateur visible.
   try{
-    const blob=new Blob([L.map(icsPlier).join('\r\n')],{type:'text/calendar;charset=utf-8'});
+    const fichier=new File([contenu],nom,{type:'text/calendar'});
+    if(navigator.canShare && navigator.canShare({files:[fichier]})){
+      navigator.share({files:[fichier],title:'Rappels Papa Ninja'})
+        .catch(()=>{});
+      return;
+    }
+  }catch(e){}
+
+  // Repli : téléchargement classique
+  try{
+    const blob=new Blob([contenu],{type:'text/calendar;charset=utf-8'});
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
-    a.href=url; a.download='papa-ninja-rappels.ics';
+    a.href=url; a.download=nom;
     document.body.appendChild(a); a.click();
     setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},800);
-    setTimeout(()=>alert(`Fichier créé : ${nbSemaines} semaine${nbSemaines>1?'s':''} de rappels, jusqu'à la fin de la Phase ${pi.phase}.\n\nOuvre-le depuis Fichiers pour les ajouter à ton calendrier.`),900);
+    setTimeout(()=>alert(`${resume}\n\nLe fichier est enregistré dans Fichiers, dossier Téléchargements. Ouvre-le pour ajouter les rappels à ton calendrier.`),900);
   }catch(e){alert("Impossible de créer le fichier calendrier sur cet appareil.");}
 };
 document.getElementById('exportBtn').onclick=function(){
