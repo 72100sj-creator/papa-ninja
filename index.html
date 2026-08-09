@@ -499,7 +499,7 @@ nav.bottomnav svg{width:22px;height:22px;}
         <input type="time" id="reminderTime" value="18:00">
         <button class="btn btn-secondary btn-sm" style="margin-top:14px;" id="calendarBtn">📅 Ajouter à mon calendrier</button>
         <p class="note">Un fichier calendrier est enregistré sur ton téléphone : ouvre-le et iOS ajoute une alerte hebdomadaire pour chaque jour coché. Les vraies notifications système ne sont pas possibles pour une application web sans serveur d'envoi.</p>
-        <p class="note">Pense à regénérer le fichier au passage d'une phase : les jours de séance changent.</p>
+        <p class="note">Les rappels s'arrêtent à la fin de la phase en cours : au changement de phase, tes jours de séance changent. Regénère simplement le fichier à ce moment-là.</p>
       </div>
       <div class="card">
         <div class="card-title">🎙️ Voix de Papa Ninja</div>
@@ -1931,6 +1931,12 @@ document.getElementById('calendarBtn').onclick=function(){
   saveData();
   if(!s.reminderDays.length){alert('Choisis au moins un jour de séance.');return;}
 
+  // Les rappels s'arrêtent à la fin de la phase : c'est là que les jours changent.
+  // Sans cette borne, un jour retiré au changement de phase resterait éternellement au calendrier.
+  const pi=getProgressionInfo();
+  const finDePhase=pi.phase*4;                       // phases de 4 semaines : 4, 8, 12
+  const nbSemaines=pi.week>12 ? 4 : Math.max(1,Math.min(4,finDePhase-pi.week+1));
+
   const [hh,mm]=s.reminderTime.split(':').map(Number);
   const p=n=>String(n).padStart(2,'0');
   const stamp=new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
@@ -1949,7 +1955,7 @@ document.getElementById('calendarBtn').onclick=function(){
       `DTSTAMP:${stamp}`,
       `DTSTART:${base}`,
       `DTEND:${bEnd}`,
-      `RRULE:FREQ=WEEKLY;BYDAY=${ICS_DAYS[jour]}`,
+      `RRULE:FREQ=WEEKLY;BYDAY=${ICS_DAYS[jour]};COUNT=${nbSemaines}`,
       `SUMMARY:${icsEchapper('Papa Ninja — '+prog.name)}`,
       `DESCRIPTION:${icsEchapper('Séance de '+(prog.durationLabel||'')+'. Ton armure lombaire gagne en puissance.')}`,
       'BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY',
@@ -1965,6 +1971,7 @@ document.getElementById('calendarBtn').onclick=function(){
     a.href=url; a.download='papa-ninja-rappels.ics';
     document.body.appendChild(a); a.click();
     setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},800);
+    setTimeout(()=>alert(`Fichier créé : ${nbSemaines} semaine${nbSemaines>1?'s':''} de rappels, jusqu'à la fin de la Phase ${pi.phase}.\n\nOuvre-le depuis Fichiers pour les ajouter à ton calendrier.`),900);
   }catch(e){alert("Impossible de créer le fichier calendrier sur cet appareil.");}
 };
 document.getElementById('exportBtn').onclick=function(){
