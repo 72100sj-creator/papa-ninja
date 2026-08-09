@@ -301,12 +301,12 @@ nav.bottomnav svg{width:22px;height:22px;}
   <div class="modal-overlay" id="changelogModal" style="display:none;" onclick="closeChangelog(event)">
     <div class="modal-sheet">
       <h2>🥷 Papa Ninja</h2>
-      <span class="version-tag">Nouveautés V3.2</span>
+      <span class="version-tag">Nouveautés V3.3</span>
       <ul>
-        <li><strong>Nouvelle icône</strong> — Le ninja aux haltères, dans les couleurs de l'app.</li>
-        <li><strong>Guide PDF téléchargé</strong> — Il s'enregistre sur ton téléphone au lieu d'ouvrir Safari : tu ne quittes plus l'app.</li>
-        <li><strong>Changement de côté annoncé</strong> — Sur les Étirements des hanches, la voix te prévient à mi-parcours.</li>
-        <li><strong>14 fiches (V3.1)</strong> — Illustrations recadrées, guide PDF de 25 pages.</li>
+        <li><strong>Rappels par le calendrier</strong> — Un bouton crée un fichier calendrier avec une alerte hebdomadaire pour chacun de tes jours de séance. De vraies notifications système, sans serveur.</li>
+        <li><strong>Notifications retirées</strong> — Elles ne fonctionnaient que si l'app était déjà ouverte : la promesse était trompeuse.</li>
+        <li><strong>Nouvelle icône (V3.2)</strong> — Le ninja aux haltères dans la charte de l'app.</li>
+        <li><strong>14 fiches (V3.1)</strong> — Consultables dans l'app et pendant la séance.</li>
       </ul>
       <button class="btn btn-primary btn-sm" style="margin-top:16px;" onclick="closeChangelog()">C'est parti 🥷</button>
     </div>
@@ -497,8 +497,9 @@ nav.bottomnav svg{width:22px;height:22px;}
         <div class="checkbox-days" id="dayChips"></div>
         <label class="field-label">Heure du rappel</label>
         <input type="time" id="reminderTime" value="18:00">
-        <button class="btn btn-secondary btn-sm" style="margin-top:14px;" id="enableNotifBtn">🔔 Activer les notifications</button>
-        <p class="note">Le rappel fonctionne quand Papa Ninja est ouvert ou installé sur ton écran d'accueil.</p>
+        <button class="btn btn-secondary btn-sm" style="margin-top:14px;" id="calendarBtn">📅 Ajouter à mon calendrier</button>
+        <p class="note">Un fichier calendrier est enregistré sur ton téléphone : ouvre-le et iOS ajoute une alerte hebdomadaire pour chaque jour coché. Les vraies notifications système ne sont pas possibles pour une application web sans serveur d'envoi.</p>
+        <p class="note">Pense à regénérer le fichier au passage d'une phase : les jours de séance changent.</p>
       </div>
       <div class="card">
         <div class="card-title">🎙️ Voix de Papa Ninja</div>
@@ -553,7 +554,7 @@ nav.bottomnav svg{width:22px;height:22px;}
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Guide
     </button>
   </nav>
-  <div class="version-footer" onclick="openChangelog()">Papa Ninja V3.2</div>
+  <div class="version-footer" onclick="openChangelog()">Papa Ninja V3.3</div>
 
   <!-- Fiche de l'exercice consultée sans quitter la séance -->
   <div id="wkFicheOverlay" role="dialog" aria-modal="true">
@@ -580,7 +581,7 @@ nav.bottomnav svg{width:22px;height:22px;}
    PAPA NINJA 🥷 v2.2 — Programme 7 jours avec progression automatique
    ===================================================================== */
 
-const APP_VERSION = '3.2';
+const APP_VERSION = '3.3';
 
 /* ===== MISE À JOUR AUTOMATIQUE ===== */
 let _swRegistration = null;
@@ -1840,7 +1841,7 @@ function renderProfile(){
     return `<div class="day-chip ${on?'on':''}" onclick="toggleDay(${val})">${d}</div>`;
   }).join('');
   document.getElementById('reminderTime').value=s.reminderTime;
-  document.getElementById('enableNotifBtn').textContent=s.remindersEnabled?'🔕 Désactiver les rappels':'🔔 Activer les notifications';
+
   renderVoiceOptions();renderProgressionInfo();
 }
 function renderVoiceOptions(){
@@ -1904,15 +1905,67 @@ document.getElementById('saveVoiceBtn').onclick=function(){
   DATA.settings.voiceName=document.getElementById('voiceSelect').value;
   saveData();alert('Voix enregistrée 🥷');
 };
-document.getElementById('enableNotifBtn').onclick=function(){
-  if(DATA.settings.remindersEnabled){DATA.settings.remindersEnabled=false;saveData();renderProfile();return;}
-  if(!('Notification' in window)){alert("Les notifications ne sont pas disponibles sur ce navigateur.");return;}
-  Notification.requestPermission().then(perm=>{
-    DATA.settings.remindersEnabled=perm==='granted';
-    DATA.settings.reminderTime=document.getElementById('reminderTime').value||'18:00';
-    saveData();renderProfile();
-    if(perm!=='granted')alert("Autorisation refusée. Change-la dans les réglages du navigateur.");
+const ICS_DAYS=['SU','MO','TU','WE','TH','FR','SA'];
+function prochaineOccurrence(jour){
+  const d=new Date(); d.setHours(0,0,0,0);
+  d.setDate(d.getDate()+((jour-d.getDay()+7)%7));
+  return d;
+}
+function icsEchapper(t){return String(t).replace(/([,;\\])/g,'\\$1').replace(/\n/g,'\\n');}
+function icsPlier(ligne){
+  // Norme iCalendar : 75 octets par ligne, les suites commencent par une espace
+  const enc=new TextEncoder();
+  if(enc.encode(ligne).length<=74) return ligne;
+  const out=[]; let cur='';
+  for(const ch of ligne){
+    if(enc.encode(cur+ch).length>73){out.push(cur);cur=' '+ch;}
+    else cur+=ch;
+  }
+  if(cur) out.push(cur);
+  return out.join('\r\n');
+}
+
+document.getElementById('calendarBtn').onclick=function(){
+  const s=DATA.settings;
+  s.reminderTime=document.getElementById('reminderTime').value||'18:00';
+  saveData();
+  if(!s.reminderDays.length){alert('Choisis au moins un jour de séance.');return;}
+
+  const [hh,mm]=s.reminderTime.split(':').map(Number);
+  const p=n=>String(n).padStart(2,'0');
+  const stamp=new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Papa Ninja//Rappels//FR',
+           'CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+
+  s.reminderDays.slice().sort().forEach(jour=>{
+    const prog=DAY_PROGRAMS[jour];
+    if(!prog||prog.isRest) return;
+    const d=prochaineOccurrence(jour);
+    const base=`${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}T${p(hh)}${p(mm)}00`;
+    const fin=new Date(d); fin.setHours(hh,mm+20,0,0);
+    const bEnd=`${fin.getFullYear()}${p(fin.getMonth()+1)}${p(fin.getDate())}T${p(fin.getHours())}${p(fin.getMinutes())}00`;
+    L.push('BEGIN:VEVENT',
+      `UID:papa-ninja-${ICS_DAYS[jour]}@papa-ninja`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART:${base}`,
+      `DTEND:${bEnd}`,
+      `RRULE:FREQ=WEEKLY;BYDAY=${ICS_DAYS[jour]}`,
+      `SUMMARY:${icsEchapper('Papa Ninja — '+prog.name)}`,
+      `DESCRIPTION:${icsEchapper('Séance de '+(prog.durationLabel||'')+'. Ton armure lombaire gagne en puissance.')}`,
+      'BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY',
+      `DESCRIPTION:${icsEchapper('Papa Ninja — il est temps de renforcer ton armure.')}`,
+      'END:VALARM','END:VEVENT');
   });
+  L.push('END:VCALENDAR');
+
+  try{
+    const blob=new Blob([L.map(icsPlier).join('\r\n')],{type:'text/calendar;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download='papa-ninja-rappels.ics';
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},800);
+  }catch(e){alert("Impossible de créer le fichier calendrier sur cet appareil.");}
 };
 document.getElementById('exportBtn').onclick=function(){
   try{
@@ -1967,17 +2020,6 @@ document.getElementById('resetBtn').onclick=function(){
 };
 
 /* ===== NOTIFICATIONS ===== */
-function checkAndFireReminder(){
-  const s=DATA.settings;if(!s.remindersEnabled)return;
-  const now=new Date(),day=now.getDay(),hhmm=pad(now.getHours())+':'+pad(now.getMinutes());
-  if(s.reminderDays.includes(day)&&hhmm===s.reminderTime&&s.lastNotifFiredDate!==todayISO()){
-    if(Notification.permission==='granted'){
-      new Notification('Papa Ninja 🥷',{body:"Il est temps de renforcer ton armure."});
-      s.lastNotifFiredDate=todayISO();saveData();
-    }
-  }
-}
-setInterval(checkAndFireReminder,20000);
 
 /* ===== SERVICE WORKER ===== */
 if('serviceWorker' in navigator){

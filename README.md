@@ -1,4 +1,4 @@
-# 🥷 Papa Ninja V3.2
+# 🥷 Papa Ninja V3.3
 
 Application de coaching sportif personnel orientée remise en forme douce et protection des lombaires.
 Conçue pour iPhone, installable comme une vraie application (PWA).
@@ -53,6 +53,7 @@ Les jours de rappel s'ajustent seuls au passage d'une phase à l'autre.
 
 ### Technique
 - **Export / Import JSON** — sauvegarde et restauration complètes
+- **Rappels par calendrier** — un fichier .ics ajoute une alerte hebdomadaire par jour de séance
 - **Mises à jour automatiques** — bannière dès qu'une nouvelle version est en ligne
 - **Verrouillage portrait**
 - **Hors-ligne** — fonctionne sans connexion après la première visite

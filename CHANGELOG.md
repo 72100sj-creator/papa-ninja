@@ -1,3 +1,11 @@
+## V3.3 — Août 2026
+- ✅ Bouton « 📅 Ajouter à mon calendrier » : génère un fichier .ics avec un événement hebdomadaire récurrent par jour de séance
+- ✅ Chaque événement porte le nom du programme du jour, sa durée et une alerte à l'heure choisie
+- ✅ Identifiants stables par jour : régénérer le fichier au changement de phase met à jour les événements
+- ✅ Repli des lignes conforme à la norme iCalendar (75 octets)
+- ✅ Notifications web retirées : elles ne se déclenchaient que si l'app était ouverte
+- ✅ Service Worker mis à jour (cache papa-ninja-v3.3)
+
 ## V3.2 — Août 2026
 - ✅ Nouvelle icône : ninja aux haltères, graduée dans la charte de l'app, lisible en petit sur iPhone
 - ✅ Icône Apple renommée apple-touch-icon-v2.png (iOS mémorise l'icône par nom de fichier)
