@@ -1,6 +1,13 @@
+## V3.4 — Août 2026
+- ✅ Fichier calendrier et guide PDF passés par la feuille de partage iOS (navigator.share)
+- ✅ En PWA installée il n'y a aucune barre Safari, donc aucun indicateur de téléchargement : le fichier partait dans Fichiers sans que rien ne le signale
+- ✅ Repli automatique sur le téléchargement classique si le partage de fichiers n'est pas disponible, avec le chemin exact indiqué
+- ✅ Service Worker mis à jour (cache papa-ninja-v3.4)
+
 ## V3.3 — Août 2026
 - ✅ Bouton « 📅 Ajouter à mon calendrier » : génère un fichier .ics avec un événement hebdomadaire récurrent par jour de séance
 - ✅ Chaque événement porte le nom du programme du jour, sa durée et une alerte à l'heure choisie
+- ✅ Récurrence bornée à la fin de la phase en cours : un jour retiré au changement de phase ne reste pas éternellement au calendrier
 - ✅ Identifiants stables par jour : régénérer le fichier au changement de phase met à jour les événements
 - ✅ Repli des lignes conforme à la norme iCalendar (75 octets)
 - ✅ Notifications web retirées : elles ne se déclenchaient que si l'app était ouverte
