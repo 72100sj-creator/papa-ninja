@@ -1,129 +1,88 @@
-## V3.4 — Août 2026
-- ✅ Fichier calendrier et guide PDF passés par la feuille de partage iOS (navigator.share)
-- ✅ En PWA installée il n'y a aucune barre Safari, donc aucun indicateur de téléchargement : le fichier partait dans Fichiers sans que rien ne le signale
-- ✅ Repli automatique sur le téléchargement classique si le partage de fichiers n'est pas disponible, avec le chemin exact indiqué
-- ✅ Service Worker mis à jour (cache papa-ninja-v3.4)
-
-## V3.3 — Août 2026
-- ✅ Bouton « 📅 Ajouter à mon calendrier » : génère un fichier .ics avec un événement hebdomadaire récurrent par jour de séance
-- ✅ Chaque événement porte le nom du programme du jour, sa durée et une alerte à l'heure choisie
-- ✅ Récurrence bornée à la fin de la phase en cours : un jour retiré au changement de phase ne reste pas éternellement au calendrier
-- ✅ Identifiants stables par jour : régénérer le fichier au changement de phase met à jour les événements
-- ✅ Repli des lignes conforme à la norme iCalendar (75 octets)
-- ✅ Notifications web retirées : elles ne se déclenchaient que si l'app était ouverte
-- ✅ Service Worker mis à jour (cache papa-ninja-v3.3)
-
-## V3.2 — Août 2026
-- ✅ Nouvelle icône : ninja aux haltères, graduée dans la charte de l'app, lisible en petit sur iPhone
-- ✅ Icône Apple renommée apple-touch-icon-v2.png (iOS mémorise l'icône par nom de fichier)
-- ✅ Le guide PDF se télécharge au lieu d'ouvrir Safari : plus de sortie d'app sans retour
-- ✅ Annonce « Change de côté » à mi-parcours des Étirements des hanches (mécanisme midCue)
-- ✅ Guide PDF : version corrigée en 3.1, rubrique Mobilité quotidienne remplacée par Morning Ninja
-- ✅ Service Worker mis à jour (cache papa-ninja-v3.2)
-
-## V3.1 — Août 2026
-- ✅ 4 nouvelles fiches : Étirements du dos et des hanches, Montées de genoux, Cercles d'épaules, Bascule du bassin
-- ✅ 14 fiches au total, 17 exercices de séance reconnus par le bouton ❔ Fiche
-- ✅ Toutes les illustrations recadrées : la posture remplit le cadre, plus de bandes vides
-- ✅ Images à deux vignettes empilées verticalement (Dead Bug, Chat-Vache, Étirements)
-- ✅ Guide PDF porté à 25 pages
-- ✅ Service Worker mis à jour (cache papa-ninja-v3.1)
-
-## V3.0 — Août 2026
-- ✅ Bouton « ❔ Fiche » pendant la séance : consulte la fiche de l'exercice en cours sans interrompre le minuteur
-- ✅ 12 exercices reconnus, variantes incluses (pompes sur plan de travail, gainage)
-- ✅ Le bouton se masque sur les échauffements, marches et temps de repos
-- ✅ Fermeture automatique de la fiche en fin ou à l'arrêt de séance
-- ✅ Service Worker mis à jour (cache papa-ninja-v3.0)
-
-## V2.9 — Août 2026
-- ✅ Guide intégré à l'app : 10 fiches exercices consultables sans quitter Papa Ninja
-- ✅ Illustrations embarquées dans assets/exercices/ (280 Ko)
-- ✅ Le PDF 22 pages reste accessible depuis l'écran Guide
-- ✅ Rappels d'entraînement ajustés automatiquement selon la phase (3 / 4 / 5 séances)
-- ✅ Service Worker mis à jour (cache papa-ninja-v2.9)
-
-## V2.8 — Juillet 2026
-- ✅ Enchaînement audio : cancel() avant chaque exercice + délai 150ms iOS
-- ✅ Bouton Passer : coupe proprement l'annonce en cours
-- ✅ Mélodie de fin de séance : arpège pentatonique 10 notes (~4.5s)
-- ✅ Verrouillage portrait : screen.orientation.lock + overlay CSS landscape
-- ✅ Bouton Passer repositionné entre Apple Music et Arrêter la séance
-- ✅ Service Worker mis à jour (cache papa-ninja-v2.8)
-
-## V2.7 — Juin 2026
-- ✅ Rubrique Guide : accès au PDF Papa Ninja 2026 depuis l'accueil et la navigation
-- ✅ Comportement élégant si le PDF est absent (message + bouton Retour)
-- ✅ PDF mis en cache automatiquement par le Service Worker à la première ouverture
-- ✅ Vérification de présence via fetch HEAD (fonctionne aussi hors connexion)
-- ✅ Service Worker mis à jour (cache papa-ninja-v2.7)
-
-## V2.6 — Juin 2026
-- ✅ Écran intermédiaire "Audio prêt / GO" avant le premier exercice
-- ✅ Aucun timer ni annonce ne démarre avant l'appui sur GO
-- ✅ Résout le risque de première annonce perdue pendant l'initialisation audio
-- ✅ Service Worker mis à jour (cache papa-ninja-v2.6)
-
-## V2.5 — Juin 2026
-- ✅ Retour à la base V2.2 stable (audio simplifié, fiable, sans expérimentations)
-- ✅ Mises à jour automatiques (SW update banner, SKIP_WAITING)
-- ✅ Wake Lock (écran allumé pendant la séance)
-- ✅ Service Worker network-first HTML, cache papa-ninja-v2.5
-- ✅ Version V2.5 affichée en pied de page
-- ✅ Modal Nouveautés affiché à chaque mise à jour
-
-## V2.5 — Juin 2026
-- ✅ Version stable consolidée — base V2.2 (auto-updates, Wake Lock, version display)
-- ✅ Audio simplifié : retrait de tous les correctifs expérimentaux (warmup, timeout, logs, attente voix)
-- ✅ speak() conserve uniquement le verrou fired (prévention double callback iOS)
-- ✅ Aucun changement fonctionnel — programme, progression, historique, stats intacts
-- ✅ Service Worker mis à jour (cache papa-ninja-v2.5)
-
-## V2.4 — Juin 2026
-- ✅ Correctif démarrage audio : pré-chauffe du moteur TTS iOS (AVSpeechSynthesizer) + délai 750 ms
-- ✅ Première annonce vocale de séance toujours jouée en entier
-- ✅ speechSynthesis.cancel() au démarrage pour vider toute file résiduelle
-- ✅ Voix sélectionnée dès l'unlock pour éviter le délai async de getVoices()
-- ✅ Service Worker mis à jour (cache papa-ninja-v2.4)
-
 # Papa Ninja 🥷 — Journal des versions
 
-## V2.3 — Juin 2026
-- ✅ Audio stabilisé : suppression du correctif Bluetooth expérimental (interrompait Apple Music)
-- ℹ️  Bluetooth PWA standalone iOS : limitation Apple non contournable en JavaScript
-- ✅ Bluetooth fonctionne normalement en mode Safari
-- ✅ Service Worker mis à jour (cache papa-ninja-v2.3)
+## V3.4 — Août 2026
+- Fichier calendrier et guide PDF partagés via la feuille de partage iOS (`navigator.share`) plutôt que téléchargés
+- En PWA installée, il n'y a aucune barre Safari donc aucun indicateur de téléchargement visible : le fichier partait dans Fichiers sans que rien ne le signale
+- Repli automatique sur le téléchargement classique si le partage de fichiers n'est pas disponible, avec le chemin exact indiqué
 
-## V2.2 — Juin 2026
-- ✅ Gestion automatique des mises à jour (détection, bannière, installation sans manipulation)
-- ✅ Amélioration Bluetooth : keepalive audio pour maintenir la session active durant toute la séance
-- ✅ Wake Lock : écran maintenu allumé pendant l'entraînement
-- ✅ Service Worker revu : network-first pour index.html, suppression automatique des anciens caches
-- ✅ Affichage de la version (V2.2) en bas du tableau de bord
-- ✅ Écran "Nouveautés" affiché automatiquement à chaque mise à jour
-- ✅ Optimisation de la compatibilité iPhone Safari / PWA / Android Chrome
+## V3.3 — Août 2026
+- Notifications web retirées : elles ne se déclenchaient que si l'app était déjà ouverte, ce qui était trompeur
+- Bouton **📅 Ajouter à mon calendrier** : génère un fichier `.ics` avec un événement hebdomadaire récurrent par jour de séance
+- Récurrence bornée à la fin de la phase en cours — pas de rappel obsolète après un changement de phase
+- Identifiants d'événements stables par jour : régénérer le fichier met à jour les événements existants plutôt que d'en créer des doublons
+- Repli des lignes conforme à la norme iCalendar (75 octets)
+
+## V3.2 — Août 2026
+- Nouvelle icône (ninja aux haltères), graduée dans les couleurs de l'app
+- Icône Apple renommée `apple-touch-icon-v2.png` — iOS mémorise l'icône par nom de fichier, pas par son contenu
+- Le guide PDF se télécharge au lieu d'ouvrir Safari, qui ne permettait aucun retour à l'app en PWA iOS
+- Annonce vocale « Change de côté » à mi-parcours des Étirements des hanches
+- Version du guide PDF corrigée, rubrique Mobilité quotidienne remplacée par une présentation de Morning Ninja
+
+## V3.1 — Août 2026
+- 4 fiches ajoutées : Étirements du dos et des hanches, Montées de genoux, Cercles d'épaules, Bascule du bassin
+- 14 fiches au total, dans l'app et dans le guide PDF (25 pages)
+- Toutes les illustrations recadrées pour que la posture remplisse le cadre
+- Images à deux vignettes désormais empilées verticalement plutôt que côte à côte
+
+## V3.0 — Juillet 2026
+- Bouton **❔ Fiche** pendant la séance : consulte la fiche de l'exercice en cours sans interrompre le minuteur
+- 12 exercices reconnus, variantes incluses
+- Bouton masqué automatiquement sur les échauffements, marches et temps de repos
+
+## V2.9 — Juillet 2026
+- Écran Guide natif intégré à l'app : liste des exercices avec vignettes, fiche complète en un tap
+- Illustrations dédiées, stockées localement pour le fonctionnement hors-ligne
+- Le PDF complet reste accessible depuis l'écran Guide
+
+## V2.8 — Juillet 2026
+Version charnière : correctifs audio majeurs, archivée comme base stable et testée en conditions réelles.
+- Correctif du bug de boucle vocale (verrou empêchant un double déclenchement de `speechSynthesis` sur iOS)
+- Délai de sécurité après chaque annulation d'annonce, avant la suivante
+- Sécurité supplémentaire sur le démarrage des minuteurs
+- Voix désactivable dans Profil
+- Mélodie de fin de séance (générée, aucun fichier son)
+- Bouton Répéter l'annonce
+- Minuteur qui change de couleur en fin de compte à rebours
+- Badge « Tour X/Y » pendant les circuits
+- Confirmation visuelle sur le bouton +1 répétition
+- Transition douce entre les exercices
+- Écran verrouillé en portrait
+- Écran maintenu allumé pendant la séance
+- Écran de confirmation audio avant le démarrage
+- Mises à jour automatiques avec bannière et fenêtre Nouveautés
+- Export et import des données (sauvegarde JSON)
+
+## V2.2 – V2.7 — Juin – Juillet 2026
+- Mise en place du système de mise à jour automatique de l'application
+- Plusieurs itérations sur l'initialisation audio au premier lancement
+- Tentative d'amélioration du son en Bluetooth sur iPhone, finalement abandonnée : c'est une limite du système iOS, pas un problème réparable dans l'application
+- Retour à un système audio simple et stable
 
 ## V2.1 — Juin 2026
-- ✅ Programme 7 jours : Renforcement A/B, Mobilité, Récupération, Full Body Ninja
-- ✅ Sélecteur de jours dans l'écran Séance
-- ✅ Suivi effort (1–10) et douleur lombaire (0–10) après chaque séance
-- ✅ Rapport hebdomadaire avec alertes douleur
-- ✅ Progression automatique en 3 phases (semaines 1–4, 5–8, 9–12)
-- ✅ Voix féminine prioritaire, paramètres vitesse/tonalité
-- ✅ Bouton Apple Music intégré dans l'écran Séance
+- Programme complet sur 7 jours : Renforcement A, Mobilité lombaire, Renforcement B, Récupération active, Full Body Ninja
+- Sélecteur de jour dans l'écran Séance
+- Suivi de l'effort et de la douleur lombaire après chaque séance
+- Rapport hebdomadaire
+- Progression automatique en 3 phases sur 12 semaines
+- Réglages de voix (vitesse, tonalité, choix parmi les voix du téléphone)
+- Bouton Apple Music intégré à l'écran Séance
 
 ## V2.0 — Mai 2026
-- ✅ PWA complète avec manifest.json et service worker
-- ✅ Icônes personnalisées (ninja sur fond vert)
-- ✅ Programme 10 exercices avec minuteur et compteur de répétitions
-- ✅ Assistant vocal (Web Speech API)
-- ✅ Tableau de bord : score Ninja, badges, graphiques
-- ✅ Calendrier mensuel et historique des séances
-- ✅ Notifications de rappel configurables
-- ✅ Données 100 % locales, aucun compte requis
+- Passage en application installable (PWA) : icônes, fonctionnement hors-ligne
+- Programme de 10 exercices avec minuteur et compteur de répétitions
+- Assistant vocal
+- Tableau de bord : score Ninja, badges, graphiques de progression
+- Calendrier mensuel et historique des séances
+- Rappels configurables
+- Données 100 % locales, aucun compte requis
 
 ## V1.0 — Avril 2026
-- ✅ Version MVP HTML autonome
-- ✅ 10 exercices guidés par la voix
-- ✅ Timer et compteur de répétitions
-- ✅ Rapport de séance automatique
+- Première version : un seul fichier, simple et autonome
+- 10 exercices guidés par la voix
+- Minuteur et compteur de répétitions
+- Rapport de séance automatique
+
+---
+
+*Papa Ninja est un projet personnel, développé progressivement avec l'aide de Claude (Anthropic).*
